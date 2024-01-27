@@ -13,7 +13,6 @@ namespace DolphinForces;
 public partial class Dolphin : RigidBody3D {
 
     public static bool IsCameraUnderwater => _camera.GlobalPosition.Y <= -0.3f;
-    private static float ElapsedTimeS => Time.GetTicksMsec() / 1000f;
     private static Camera3D _camera = null!;
 
     private AnimationTree _animTree = null!;
@@ -24,6 +23,11 @@ public partial class Dolphin : RigidBody3D {
 
     private const float DEFAULT_SPEED = 25f;
     private float _speed = DEFAULT_SPEED;
+
+    private const float LARGE_TORPEDO_COOLDOWN = 3f;
+    private PackedScene _largeTorpedoPackedScene = GD.Load<PackedScene>("res://torpedos/large_torpedo.tscn");
+    private Node3D _largeTorpedoSpawnLocation = null!;
+    private float _lastLargeTorpedoFireTime;
 
     private bool IsUnderwater => GlobalPosition.Y <= 0;
 
@@ -40,6 +44,18 @@ public partial class Dolphin : RigidBody3D {
                 Input.MouseModeEnum.Captured => Input.MouseModeEnum.Visible,
                 _ => throw new NotImplementedException(),
             };
+        }
+
+        var isTorpedoOffCooldown = Main.ElapsedTimeS > _lastLargeTorpedoFireTime + LARGE_TORPEDO_COOLDOWN;
+        if (@event.IsActionReleased("attack") && isTorpedoOffCooldown) { // TODO: Cooldown bar async fill.
+            var torpedo = _largeTorpedoPackedScene.Instantiate<LargeTorpedo>();
+            GetTree().CurrentScene.AddChild(torpedo);
+            torpedo.AddCollisionExceptionWith(this);
+            torpedo.GlobalPosition = _largeTorpedoSpawnLocation.GlobalPosition;
+            torpedo.GlobalRotation = _largeTorpedoSpawnLocation.GlobalRotation;
+            var torpedoForce = 40f + _speed;
+            torpedo.ApplyImpulse(-torpedoForce * torpedo.Basis.Z);
+            _lastLargeTorpedoFireTime = Main.ElapsedTimeS;
         }
 
         const float speedScrollDelta = 1f;
@@ -65,15 +81,18 @@ public partial class Dolphin : RigidBody3D {
         Debug.Assert(_underwaterEnv is not null);
 
         Debug.Assert(ContactMonitor);
+        Debug.Assert(MaxContactsReported >= 1);
         BodyEntered += KillBoat;
 
         static void KillBoat(Node body) {
-            GD.Print("Body entered!");
-            if (body is Boat boat) {
-                GD.Print("killed boat!");
+            if (body is Boat boat && !boat.IsDead) {
                 boat.IsDead = true;
             }
         }
+
+        _lastLargeTorpedoFireTime = -LARGE_TORPEDO_COOLDOWN;
+        _largeTorpedoSpawnLocation = GetNode<Node3D>("%LargeTorpedoSpawnLocation");
+        Debug.Assert(_largeTorpedoSpawnLocation is not null);
     }
 
 

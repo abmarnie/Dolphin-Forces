@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -5,21 +6,23 @@ namespace DolphinForces;
 
 public partial class Main : Node3D {
 
-    private List<Terrain> _terrains = new();
+    public static float ElapsedTimeS => Time.GetTicksMsec() / 1000f;
+
+    private List<Terrain> _terrains = [];
+
     // private Node3D _terrain = null!;
+    // _terrain = GetNode<Node3D>("%UnderwaterTerrain");
+    // _terrain.Visible = Dolphin.IsCameraUnderwater;
 
     public override void _Ready() =>
         _terrains = GetDescendantsOfType<Terrain>();
-
-    // _terrain = GetNode<Node3D>("%UnderwaterTerrain");
+    // Getting terrains this way is **extremely** stupid.
 
     public override void _Process(double delta) {
         foreach (var t in _terrains)
             t.Visible = Dolphin.IsCameraUnderwater;
-        // _terrain.Visible = Dolphin.IsCameraUnderwater;
     }
 
-    // This is **extremely** stupid but I'm too lazy to fix.
     public List<T> GetDescendantsOfType<T>() {
         var matches = new List<T>();
         var queue = new Queue<Node>();

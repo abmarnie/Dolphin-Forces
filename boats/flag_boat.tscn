@@ -12,7 +12,7 @@ height = 24.355
 gravity_scale = 0.0
 can_sleep = false
 script = ExtResource("1_ex7w5")
-_boatSpeed = 10.0
+_boatSpeed = 100.0
 _changeTargetInterval = 1.5
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]

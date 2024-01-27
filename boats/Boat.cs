@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Godot;
 
 namespace DolphinForces;
@@ -12,8 +13,18 @@ public partial class Boat : RigidBody3D {
     private float _newtargetPositionTimer;
 
     private bool IsUnderwater => GlobalPosition.Y <= 0;
-    public bool IsDead;
 
+    private bool _justDied;
+    private bool _isDead;
+    public bool IsDead {
+        get => _isDead;
+        set {
+            Debug.Assert(value);
+            Debug.Assert(!_isDead);
+            _justDied = true;
+            _isDead = value;
+        }
+    }
 
     public override void _Ready() {
         _targetPosition = GetRandomTargetPosition();
@@ -22,7 +33,9 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (IsDead) return;
+        if (IsDead) {
+            return;
+        }
 
         _newtargetPositionTimer += (float)delta;
         if (_newtargetPositionTimer > _changeTargetInterval) {
@@ -33,7 +46,11 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
-        if (IsDead) return;
+        GravityScale = IsUnderwater ? 0.0f : 9.8f;
+
+        if (IsDead) {
+            return;
+        }
 
         if (GlobalPosition.DistanceTo(_targetPosition) > 1f) {
             var direction = (_targetPosition - GlobalPosition).Normalized();
@@ -42,7 +59,6 @@ public partial class Boat : RigidBody3D {
             state.LinearVelocity = Vector3.Zero;
         }
 
-        GravityScale = IsUnderwater ? 0.0f : 9.8f;
     }
 
     private Vector3 GetRandomTargetPosition() {
