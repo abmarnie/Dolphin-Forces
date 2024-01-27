@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3 uid="uid://boonqn8pmnf32"]
+
+[ext_resource type="Script" path="res://kevin/FishSwarms.gd" id="1_6jpmf"]
+[ext_resource type="PackedScene" uid="uid://chsrx0nmdky71" path="res://kevin/fish_swarm.tscn" id="2_0aykc"]
+
+[node name="FishSwarmGuide" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.69358, -27.2746, 0)
+script = ExtResource("1_6jpmf")
+bounds = Vector3(399.45, 21.755, 399.45)
+min_speed = 3.105
+max_speed = 13.76
+
+[node name="FishSwarms" parent="." instance=ExtResource("2_0aykc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -117)
+min_speed = 4.945
+max_speed = 12.97
+
+[node name="FishSwarms2" parent="." instance=ExtResource("2_0aykc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, 0, -95)
+
+[node name="FishSwarms3" parent="." instance=ExtResource("2_0aykc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, 0, -104)
+
+[node name="FishSwarms4" parent="." instance=ExtResource("2_0aykc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -68, 0, 0)
+
+[node name="FishSwarms5" parent="." instance=ExtResource("2_0aykc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, 0, 96)
+
+[node name="FishSwarms6" parent="." instance=ExtResource("2_0aykc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 0, 53)
+
+[node name="FishSwarms7" parent="." instance=ExtResource("2_0aykc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -116, 1, 40)
+
+[node name="FishSwarms8" parent="." instance=ExtResource("2_0aykc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 142, 0, 0)
+
+[node name="FishSwarms9" parent="." instance=ExtResource("2_0aykc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 24, 17)
+
+[node name="FishSwarms10" parent="." instance=ExtResource("2_0aykc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 104)
+
+[node name="FishSwarms11" parent="." instance=ExtResource("2_0aykc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 85, 0, 0)
