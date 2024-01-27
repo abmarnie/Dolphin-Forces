@@ -1,19 +1,20 @@
 [gd_resource type="Environment" load_steps=4 format=3 uid="uid://cs6kgh1egp0xf"]
 
-[ext_resource type="Texture2D" uid="uid://ycv5m56c2qo5" path="res://dome_sky.png" id="1_j41ao"]
+[ext_resource type="Texture2D" uid="uid://mdjouoi2ra1e" path="res://dome_sky2.png" id="1_24g55"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_c44ah"]
-panorama = ExtResource("1_j41ao")
+panorama = ExtResource("1_24g55")
 
 [sub_resource type="Sky" id="Sky_1pxg1"]
 sky_material = SubResource("PanoramaSkyMaterial_c44ah")
 
 [resource]
 background_mode = 2
-background_color = Color(0.282353, 0.282353, 0.282353, 1)
+background_color = Color(1, 1, 1, 1)
+background_energy_multiplier = 2.1
 sky = SubResource("Sky_1pxg1")
 ambient_light_source = 2
-ambient_light_color = Color(0, 0.239216, 0.568627, 1)
+ambient_light_color = Color(0.290196, 0.129412, 0.592157, 1)
 ambient_light_energy = 0.0
 tonemap_mode = 2
 tonemap_white = 16.0

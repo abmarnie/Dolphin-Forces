@@ -17,9 +17,9 @@ size = Vector2(1000, 1000)
 render_priority = 0
 shader = ExtResource("5_aptly")
 shader_parameter/Speed = 0.3
-shader_parameter/Scale = 22.12
+shader_parameter/Scale = 26.12
 shader_parameter/Scale2 = 19.68
-shader_parameter/CausticOpacity = 0.1
+shader_parameter/CausticOpacity = 0.2
 shader_parameter/ColorParameter = Color(1, 0.709804, 1, 1)
 
 [node name="Main" type="Node3D"]
