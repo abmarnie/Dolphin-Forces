@@ -1,12 +1,12 @@
 using System;
 using Godot;
 
-public partial class Main : Node3D {
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready() {
-    }
+namespace DolphinForces;
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta) {
-    }
+public partial class Main : Node3D {
+
+    [Export] private Node3D _terrain = null!;
+
+    public override void _Process(double delta) => _terrain.Visible = Dolphin.IsCameraUnderwater;
+
 }

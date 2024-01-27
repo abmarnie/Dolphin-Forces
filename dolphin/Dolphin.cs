@@ -11,9 +11,10 @@ namespace DolphinForces;
 public partial class Dolphin : RigidBody3D {
 
     private static float ElapsedTimeS => Time.GetTicksMsec() / 1000f;
+    public static bool IsCameraUnderwater => Camera.GlobalPosition.Y <= -0.3f;
+    public static Camera3D Camera = null!;
 
     [Export] private AnimationTree _animTree = null!;
-    [Export] private Camera3D _camera = null!;
 
     private Godot.Environment _underwaterEnv = null!;
     private const float DEFAULT_SPEED = 15f;
@@ -57,6 +58,7 @@ public partial class Dolphin : RigidBody3D {
         _underwaterEnv = (Godot.Environment)GD.Load("res://water/underwater_environment.tres");
         Debug.Assert(_underwaterEnv is not null);
         Input.MouseMode = Input.MouseModeEnum.Captured;
+        Camera = GetNode<Camera3D>("%Camera3D");
     }
 
 
@@ -72,8 +74,9 @@ public partial class Dolphin : RigidBody3D {
             _rotationFromMouse = Rotation;
         }
 
-        var isCameraUnderwater = _camera.GlobalPosition.Y <= -0.3f;
-        _camera.Environment = isCameraUnderwater ? _underwaterEnv : null;
+        var isCameraUnderwater = Camera.GlobalPosition.Y <= -0.3f;
+        Camera.Environment = isCameraUnderwater ? _underwaterEnv : null;
+
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {

@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://cc6ij0vhq6iyh"]
+[gd_scene load_steps=9 format=3 uid="uid://cc6ij0vhq6iyh"]
 
 [ext_resource type="Script" path="res://main/Main.cs" id="1_11si0"]
 [ext_resource type="Environment" uid="uid://cefclkylmgwxx" path="res://main/main_environment.tres" id="2_3coom"]
 [ext_resource type="PackedScene" uid="uid://li41t3qh0gpx" path="res://dolphin/dolphin.tscn" id="2_ofsg3"]
 [ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://water/water_caustic_visualshader.tres" id="5_aptly"]
+[ext_resource type="PackedScene" uid="uid://dosonc0o3fxy5" path="res://terrain/terrain.tscn" id="5_flkfk"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y0os8"]
 transparency = 1
@@ -22,8 +23,9 @@ shader_parameter/Scale2 = 19.68
 shader_parameter/CausticOpacity = 0.2
 shader_parameter/ColorParameter = Color(1, 0.709804, 1, 1)
 
-[node name="Main" type="Node3D"]
+[node name="Main" type="Node3D" node_paths=PackedStringArray("_terrain")]
 script = ExtResource("1_11si0")
+_terrain = NodePath("UnderwaterTerrain")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
@@ -37,3 +39,6 @@ mesh = SubResource("PlaneMesh_g2oyq")
 surface_material_override/0 = SubResource("ShaderMaterial_ymolu")
 
 [node name="Dolphin" parent="." instance=ExtResource("2_ofsg3")]
+
+[node name="UnderwaterTerrain" parent="." instance=ExtResource("5_flkfk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1000, 0)

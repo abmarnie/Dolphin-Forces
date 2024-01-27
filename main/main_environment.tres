@@ -13,6 +13,7 @@ background_mode = 2
 background_color = Color(0, 0, 0.721569, 1)
 sky = SubResource("Sky_np072")
 tonemap_mode = 2
+fog_light_color = Color(0.454902, 0.556863, 0.709804, 1)
 fog_sun_scatter = 0.15
 fog_density = 0.0
 fog_sky_affect = 0.36
