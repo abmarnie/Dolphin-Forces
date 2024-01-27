@@ -1,0 +1,39 @@
+[gd_scene load_steps=8 format=3 uid="uid://cc6ij0vhq6iyh"]
+
+[ext_resource type="Script" path="res://Main.cs" id="1_11si0"]
+[ext_resource type="Environment" uid="uid://cefclkylmgwxx" path="res://main_environment.tres" id="2_3coom"]
+[ext_resource type="PackedScene" uid="uid://li41t3qh0gpx" path="res://dolphin.tscn" id="2_ofsg3"]
+[ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://water_caustic_visualshader.tres" id="5_aptly"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y0os8"]
+transparency = 1
+albedo_color = Color(0.360784, 0.521569, 1, 0.176471)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_g2oyq"]
+material = SubResource("StandardMaterial3D_y0os8")
+size = Vector2(1000, 1000)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ymolu"]
+render_priority = 0
+shader = ExtResource("5_aptly")
+shader_parameter/Speed = 0.3
+shader_parameter/Scale = 22.12
+shader_parameter/Scale2 = 19.68
+shader_parameter/CausticOpacity = 0.1
+shader_parameter/ColorParameter = Color(1, 0.709804, 1, 1)
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_11si0")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("2_3coom")
+
+[node name="WaterSurface" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_g2oyq")
+surface_material_override/0 = SubResource("ShaderMaterial_ymolu")
+
+[node name="Dolphin" parent="." instance=ExtResource("2_ofsg3")]

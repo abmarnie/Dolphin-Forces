@@ -1,0 +1,436 @@
+# This file configures how .NET Code Analysis works, among other things. For
+# details about .NET Code Analysis see: 
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/overview
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-files#editorconfig
+
+# In summary, this config file defines the coding style used across the entire
+# project. When combined with most popular IDEs, this file should define
+# how code is automatically formatted (code linting).
+
+# This is the top-most .editorconfig file.
+root = true
+
+##########################################
+# Base settings for all files.
+##########################################
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+##########################################
+# File extension setting overrides.
+##########################################
+
+# Visual Studio Solution files.
+[*.sln]
+indent_style = tab
+
+# Visual Studio XML Project files.
+[*.{csproj,vbproj,vcxproj.filters,proj,projitems,shproj}]
+indent_size = 2
+
+# XML Configuration files.
+[*.{xml,config,props,targets,nuspec,resx,ruleset,vsixmanifest,vsct}]
+indent_size = 2
+
+# JSON files.
+[*.{json,json5,webmanifest}]
+indent_size = 2
+
+# YAML files.
+[*.{yml,yaml}]
+indent_size = 2
+
+# Markdown files.
+[*.{md,mdx}]
+trim_trailing_whitespace = false
+
+# Web files.
+[*.{htm,html,js,jsm,ts,tsx,cjs,cts,ctsx,mjs,mts,mtsx,css,sass,scss,less,pcss,svg,vue}]
+indent_size = 2
+
+# Batch files.
+[*.{cmd,bat}]
+end_of_line = crlf
+
+# Bash files.
+[*.sh]
+end_of_line = lf
+
+# Makefiles.
+[Makefile]
+indent_style = tab
+
+##########################################
+# .NET files
+##########################################
+
+[*.{cs,csx,cake,vb,vbx}]
+
+# .NET code style rules below are warnings by default.
+dotnet_analyzer_diagnostic.severity = warning 
+
+# System `using` directives should be ordered first.
+dotnet_sort_system_directives_first = true
+
+# Don't add new blank lines between `using` directive (groups).
+dotnet_separate_import_directive_groups = false
+
+# Don't use `this.` qualifier unless required to do so, for succinctness.
+dotnet_style_qualification_for_field = false
+dotnet_style_qualification_for_property = false
+dotnet_style_qualification_for_method = false
+dotnet_style_qualification_for_event = false
+
+# Use language keywords for types when possible, e.g., use `int` over `Int32`, for uniformity.
+dotnet_style_predefined_type_for_locals_parameters_members = true
+dotnet_style_predefined_type_for_member_access = true
+
+# Explicitly write access modifiers for clarity. 
+# Use readonly modifier when possible for expressiveness.
+dotnet_style_require_accessibility_modifiers = always
+dotnet_style_readonly_field = true
+
+# Explicitly add parenthesis when doing arithmetic or binary operators for clarity. 
+# Don't use them for other operators, for succinctness.
+dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity
+dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity
+dotnet_style_parentheses_in_other_binary_operators = always_for_clarity
+dotnet_style_parentheses_in_other_operators = never_if_unnecessary
+
+# Use object initializers when possible for succinctness. 
+# https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/object-and-collection-initializers#object-initializers
+dotnet_style_object_initializer = true
+
+# Use collection initializers when possible for succinctness and uniformity.
+# In .NET 8+, this means preferring collection expression syntax during initialization.
+# https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/collection-expressions
+dotnet_style_collection_initializer = true
+
+# When accessing tuple fields, use that field's explicit name for clarity. 
+# When initializing a tuple, infer parameter names for succinctness. 
+# https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/value-tuples#tuple-field-names
+dotnet_style_explicit_tuple_names = true
+dotnet_style_prefer_inferred_tuple_names = true
+
+# For anonymous types, infer member names when possible for succinctness.
+# https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/anonymous-types
+dotnet_style_prefer_inferred_anonymous_type_member_names = true
+
+# Use auto-properties when possible for succinctness. 
+# https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/auto-implemented-properties
+dotnet_style_prefer_auto_properties = true
+
+# Use ternaries (over if-else) for assignment and returns when possible, for succinctness.
+# These are merely *suggestions* (instead of *warnings*); do whatever is the most readable.
+dotnet_style_prefer_conditional_expression_over_assignment = true:suggestion
+dotnet_style_prefer_conditional_expression_over_return = true:suggestion
+
+# Use compound assignment for binary operators (e.g., x += y over x = x + y) when possible, for succinctness.
+dotnet_style_prefer_compound_assignment = true
+
+# Don't unnecessarily cast to string when doing string interpolation, for succinctness.
+dotnet_style_prefer_simplified_interpolation = true
+
+# Don't unnecessarily use `true` and `false` keywords in boolean expressions, for succinctness.
+dotnet_style_prefer_simplified_boolean_expressions = true
+
+# Use null-coalescing operators when possible, for succinctness.
+# https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/null-coalescing-operator
+dotnet_style_coalesce_expression = true
+
+# Use null-propagation (null-conditional operators `?.` and `?[]`) when possible, for succinctness.
+# https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/member-access-operators#null-conditional-operators--and-
+dotnet_style_null_propagation = true
+
+# Use `is null` pattern matching to check for null (over the numerous other options), for uniformity.
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true
+
+# Keep operators beginning of line wrapping, for uniformity.
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
+
+# Namespaces should not be forced to match folder names, for flexibility.
+dotnet_style_namespace_match_folder = false
+
+# Don't require culture info for ToString()
+dotnet_diagnostic.CA1304.severity = none
+
+# Don't require a string comparison for comparing strings.
+dotnet_diagnostic.CA1310.severity = none
+
+# Don't require a string format specifier.
+dotnet_diagnostic.CA1305.severity = none
+
+# Allow protected fields.
+dotnet_diagnostic.CA1051.severity = none
+
+# Don't warn about checking values that are supposedly never null. Sometimes
+# they are actually null.
+dotnet_diagnostic.CS8073.severity = none
+
+# Switch/case should always have a default clause. Tell that to Roslynator.
+dotnet_diagnostic.RCS1070.severity = none
+
+# Tell roslynator not to remove `partial` modifiers.
+dotnet_diagnostic.RCS1043.severity = none
+
+# Tell roslynator not to make classes static so aggressively.
+dotnet_diagnostic.RCS1102.severity = none
+
+# Enums don't need to declare explicit values. Everyone knows they start at 0.
+dotnet_diagnostic.RCS1161.severity = none
+
+# Allow unconstrained type parameter to be checked for null.
+dotnet_diagnostic.RCS1165.severity = none
+
+# Allow keyword-based names so that parameter names like `@event` can be used.
+dotnet_diagnostic.CA1716.severity = none
+
+# Populating switch should be a suggestion.
+dotnet_diagnostic.IDE0072.severity = suggestion
+
+# Allow underscores in names.
+dotnet_diagnostic.CA1707.severity = none
+
+# Naming styles:
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+dotnet_naming_style.upper_case_style.capitalization = all_upper
+dotnet_naming_style.upper_case_style.word_separator = _
+
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+
+dotnet_naming_style.camel_case_underscore_style.required_prefix = _
+dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
+
+# Use uppercase for all constant fields.
+dotnet_naming_rule.constants_uppercase.severity = suggestion
+dotnet_naming_rule.constants_uppercase.symbols = constant_fields
+dotnet_naming_rule.constants_uppercase.style = upper_case_style
+dotnet_naming_symbols.constant_fields.applicable_kinds = field
+dotnet_naming_symbols.constant_fields.applicable_accessibilities = *
+dotnet_naming_symbols.constant_fields.required_modifiers = const
+
+# Non-public fields should be _camelCase
+dotnet_naming_rule.non_public_fields_under_camel.severity = suggestion
+dotnet_naming_rule.non_public_fields_under_camel.symbols = non_public_fields
+dotnet_naming_rule.non_public_fields_under_camel.style = camel_case_underscore_style
+dotnet_naming_symbols.non_public_fields.applicable_kinds = field
+dotnet_naming_symbols.non_public_fields.required_modifiers =
+dotnet_naming_symbols.non_public_fields.applicable_accessibilities = private,private_protected,protected,internal,protected,protected_internal
+
+# Public fields should be PascalCase
+dotnet_naming_rule.public_fields_pascal.severity = suggestion
+dotnet_naming_rule.public_fields_pascal.symbols = public_fields
+dotnet_naming_rule.public_fields_pascal.style = pascal_case_style
+dotnet_naming_symbols.public_fields.applicable_kinds = field
+dotnet_naming_symbols.public_fields.required_modifiers =
+dotnet_naming_symbols.public_fields.applicable_accessibilities = public
+
+# Async methods should have "Async" suffix.
+dotnet_naming_style.end_in_async.required_suffix = Async
+dotnet_naming_style.end_in_async.capitalization = pascal_case
+dotnet_naming_rule.methods_end_in_async.symbols = methods_async
+dotnet_naming_rule.methods_end_in_async.style = end_in_async
+dotnet_naming_rule.methods_end_in_async.severity = warning
+dotnet_naming_symbols.methods_async.applicable_kinds = method
+dotnet_naming_symbols.methods_async.required_modifiers = async
+dotnet_naming_symbols.methods_async.applicable_accessibilities = *
+
+# All of the following must be PascalCase:
+dotnet_naming_symbols.element_group.applicable_kinds = namespace, class, enum, struct, delegate, event, method, property, local_function
+dotnet_naming_rule.element_rule.symbols = element_group
+dotnet_naming_rule.element_rule.style = pascal_case_style
+dotnet_naming_rule.element_rule.severity = warning
+
+# Interfaces use PascalCase and are prefixed with uppercase 'I'
+# https://docs.microsoft.com/dotnet/standard/design-guidelines/names-of-classes-structs-and-interfaces
+dotnet_naming_style.prefix_interface_with_i_style.capitalization = pascal_case
+dotnet_naming_style.prefix_interface_with_i_style.required_prefix = I
+dotnet_naming_symbols.interface_group.applicable_kinds = interface
+dotnet_naming_rule.interface_rule.symbols = interface_group
+dotnet_naming_rule.interface_rule.style = prefix_interface_with_i_style
+dotnet_naming_rule.interface_rule.severity = warning
+
+# Generics Type Parameters use PascalCase and are prefixed with uppercase 'T'
+# https://docs.microsoft.com/dotnet/standard/design-guidelines/names-of-classes-structs-and-interfaces
+dotnet_naming_style.prefix_type_parameters_with_t_style.capitalization = pascal_case
+dotnet_naming_style.prefix_type_parameters_with_t_style.required_prefix = T
+dotnet_naming_symbols.type_parameter_group.applicable_kinds = type_parameter
+dotnet_naming_rule.type_parameter_rule.symbols = type_parameter_group
+dotnet_naming_rule.type_parameter_rule.style = prefix_type_parameters_with_t_style
+dotnet_naming_rule.type_parameter_rule.severity = warning
+
+# Function parameters use camelCase
+dotnet_naming_symbols.parameters_group.applicable_kinds = parameter
+dotnet_naming_rule.parameters_rule.symbols = parameters_group
+dotnet_naming_rule.parameters_rule.style = camel_case_style
+dotnet_naming_rule.parameters_rule.severity = warning
+
+# Anything not specified uses camel case.
+dotnet_naming_rule.unspecified_naming.severity = warning
+dotnet_naming_rule.unspecified_naming.symbols = unspecified
+dotnet_naming_rule.unspecified_naming.style = camel_case_style
+dotnet_naming_symbols.unspecified.applicable_kinds = *
+dotnet_naming_symbols.unspecified.applicable_accessibilities = *
+
+##########################################
+# Generated C# files
+##########################################
+
+[*_Generated.cs, *.g.cs, *.generated.cs]
+dotnet_diagnostic.CS1591.severity = none # Ignore lack of documentation.
+
+##########################################
+# C# files
+##########################################
+
+[*.{cs,csx,cake}]
+
+# Put `using` directives at the top (outside of the namespace), for uniformity.
+csharp_using_directive_placement = outside_namespace
+
+# Order modifiers in a specific way, for uniformity. 
+csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async
+
+# Omit curly braces when possible, for succinctness.
+# The exception is when what would be a one-line expression is broken up across multiple lines.
+csharp_prefer_braces = when_multiline
+csharp_prefer_simple_using_statement = true:suggestion
+
+# Use 'var' when possible (type inference), for succinctness.
+# https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/implicitly-typed-local-variables
+csharp_style_var_for_built_in_types = true
+csharp_style_var_when_type_is_apparent = true
+csharp_style_var_elsewhere = true
+
+# Use simple `new()` to construct objects when possible (type inference), for succinctness.
+csharp_style_implicit_object_creation_when_type_is_apparent = true
+
+# Use `default` literal when possible (type inference), for succinctness.
+# https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/default#default-literal
+csharp_prefer_simple_default_expression = true
+
+# Use expression-body syntax `=>` when possible, for succinctness.
+# https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/expression-bodied-members
+csharp_style_expression_bodied_methods = true
+csharp_style_expression_bodied_constructors = true
+csharp_style_expression_bodied_operators = true
+csharp_style_expression_bodied_properties = true
+csharp_style_expression_bodied_indexers = true
+csharp_style_expression_bodied_accessors = true
+csharp_style_expression_bodied_lambdas = true
+csharp_style_expression_bodied_local_functions = true
+
+# Use pattern-matching when possible, for succinctness.
+# https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/pattern-matching
+csharp_style_pattern_matching_over_is_with_cast_check = true
+csharp_style_pattern_matching_over_as_with_null_check = true
+csharp_style_prefer_switch_expression = true
+csharp_style_prefer_pattern_matching = true
+csharp_style_prefer_not_pattern = true
+csharp_style_prefer_null_check_over_type_check = true
+
+# Inline `out` variable declarations, for succinctness.
+# https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/method-parameters#out-parameter-modifier
+csharp_style_inlined_variable_declaration = true
+
+# Use named local functions over anonymous functions (lambda expressions) when possible, to avoid unnecessary memory overhead.
+# Marking them `static` is suggested to avoid unwanted capture. 
+# https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/local-functions
+csharp_style_pattern_local_over_anonymous_function = true
+csharp_prefer_static_local_function = true:suggestion
+
+# Use tuple deconstruction `var (a, b) = ReturnTuple();` when possible, for succinctness. 
+# https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/functional/deconstruct#tuples
+csharp_style_deconstructed_variable_declaration = true
+
+# Use index-from-end operator `^`  and range operator `..` when possible, for succinctness.
+# https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/member-access-operators#index-from-end-operator-
+# https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/member-access-operators#range-operator-
+csharp_style_prefer_index_operator = true
+csharp_style_prefer_range_operator = true
+
+# Use throw expressions over throw statements when possible, for succinctness.
+# https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/statements/exception-handling-statements#the-throw-expression
+csharp_style_throw_expression = true
+
+# Invoke delegates using `?.Invoke(args)` (instead of manually checking for null), for succinctness.
+csharp_style_conditional_delegate_call = true
+
+# Use discard `_` for unused expression values when necessary, for clarity.
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/ide0058#overview
+csharp_style_unused_value_expression_statement_preference = discard_variable
+
+# Force namespaces to be file scoped, so that curly braces are always unnecessary. 
+csharp_style_namespace_declarations = file_scoped
+
+# Use K&R style braces (over Allman).
+csharp_new_line_before_open_brace = none
+
+# Allow for ` } keyword` style, instead of requiring a new line before keyword. 
+csharp_new_line_before_else = false
+csharp_new_line_before_catch = false
+csharp_new_line_before_finally = false
+
+# Allow for members of initializers and anonymous types to be on same line, for flexibility.
+csharp_new_line_before_members_in_object_initializers = false
+csharp_new_line_before_members_in_anonymous_types = false
+
+# Force a new line before query expression clauses, for uniformity.
+csharp_new_line_between_query_expression_clauses = true
+
+# Indent sanely. (Mostly) using defaults from:
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/csharp-formatting-options#indentation-options
+csharp_indent_switch_labels = true
+csharp_indent_case_contents = true
+csharp_indent_case_contents_when_block = true
+csharp_indent_labels = flush_left # Changed for personal preference.
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+
+# Space sanely. Using defaults from:
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/csharp-formatting-options#spacing-options
+csharp_space_after_cast = false
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_between_parentheses = false
+csharp_space_before_colon_in_inheritance_clause = true
+csharp_space_after_colon_in_inheritance_clause = true
+csharp_space_around_binary_operators = before_and_after
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+csharp_space_after_comma = true
+csharp_space_before_comma = false
+csharp_space_after_dot = false
+csharp_space_before_dot = false
+csharp_space_after_semicolon_in_for_statement = true
+csharp_space_before_semicolon_in_for_statement = false
+csharp_space_around_declaration_statements = false
+csharp_space_before_open_square_brackets = false
+csharp_space_between_empty_square_brackets = false
+csharp_space_between_square_brackets = false
+
+# Wrap sanely. Using defaults from:
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/csharp-formatting-options#spacing-options
+csharp_preserve_single_line_statements = true
+csharp_preserve_single_line_blocks = true
+
+## Unfortunately, for VSCode users, the following are necessary to prevent 
+## Roslyn Analyzers from autoformatting your code in extremely impractical 
+## and unergonomic ways. At least, as of the 2nd quarter 2023.
+
+## Allow for for unused method parameters.
+dotnet_diagnostic.IDE0060.severity = none
+dotnet_diagnostic.RCS1163.severity = none
+
+## Allow for unused methods.
+dotnet_diagnostic.IDE0051.severity = none
+dotnet_diagnostic.RCS1213.severity = none

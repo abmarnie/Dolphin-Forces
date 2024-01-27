@@ -1,0 +1,14 @@
+[gd_resource type="AnimationNodeBlendTree" load_steps=3 format=3 uid="uid://b5ib5ceft8sax"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_56oxf"]
+animation = &"SlowSwim"
+
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_vqhb6"]
+
+[resource]
+graph_offset = Vector2(-586.364, -49.0909)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_56oxf")
+nodes/Animation/position = Vector2(-260, 60)
+nodes/speed_scale/node = SubResource("AnimationNodeTimeScale_vqhb6")
+nodes/speed_scale/position = Vector2(-40, 80)
+node_connections = [&"output", 0, &"speed_scale", &"speed_scale", 0, &"Animation"]
