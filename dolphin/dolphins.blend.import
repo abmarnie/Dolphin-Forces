@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://cyayhhaqyin7a"
-path="res://.godot/imported/dolphins.blend-5fabaf6286ccb4b427f7eb9f94f6499b.scn"
+path="res://.godot/imported/dolphins.blend-47ab38e2772cdf758d5b203bfb4f3d05.scn"
 
 [deps]
 
-source_file="res://dolphins.blend"
-dest_files=["res://.godot/imported/dolphins.blend-5fabaf6286ccb4b427f7eb9f94f6499b.scn"]
+source_file="res://dolphin/dolphins.blend"
+dest_files=["res://.godot/imported/dolphins.blend-47ab38e2772cdf758d5b203bfb4f3d05.scn"]
 
 [params]
 

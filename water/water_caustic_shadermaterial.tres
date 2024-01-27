@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bpjqegmreibll"]
 
-[ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://water_caustic_visualshader.tres" id="1_2gqny"]
+[ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://water/water_caustic_visualshader.tres" id="1_2gqny"]
 
 [resource]
 render_priority = 0

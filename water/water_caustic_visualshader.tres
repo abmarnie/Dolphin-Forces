@@ -1,6 +1,6 @@
 [gd_resource type="VisualShader" load_steps=35 format=3 uid="uid://xya1p4bapeha"]
 
-[ext_resource type="Texture2D" uid="uid://bcmx8mvwyk2hd" path="res://water_caustic_texture.png" id="1_qr3ru"]
+[ext_resource type="Texture2D" uid="uid://bcmx8mvwyk2hd" path="res://images/water_caustic_texture.png" id="1_qr3ru"]
 
 [sub_resource type="VisualShaderNodeUVFunc" id="VisualShaderNodeUVFunc_g7pwf"]
 function = 1

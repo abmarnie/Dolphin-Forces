@@ -54,14 +54,15 @@ public partial class Dolphin : RigidBody3D {
     public override void _Ready() {
         Debug.Assert(_animTree is not null);
         _animTree.Set("parameters/speed_scale/scale", 1f);
-        _underwaterEnv = (Godot.Environment)GD.Load("res://underwater_environment.tres");
+        _underwaterEnv = (Godot.Environment)GD.Load("res://water/underwater_environment.tres");
         Debug.Assert(_underwaterEnv is not null);
         Input.MouseMode = Input.MouseModeEnum.Captured;
     }
 
 
     public override void _PhysicsProcess(double delta) {
-        _animTree.Set("parameters/speed_scale/scale", _speed / DEFAULT_SPEED);
+        const float animSpeedTuningScale = 1.5f;
+        _animTree.Set("parameters/speed_scale/scale", animSpeedTuningScale * _speed / DEFAULT_SPEED);
 
         if (IsUnderwater) {
             Rotation = new Vector3(_rotationFromMouse.X, _rotationFromMouse.Y, Rotation.Z);

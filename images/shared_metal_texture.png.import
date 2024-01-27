@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://l78ub2cmrea1"
-path.s3tc="res://.godot/imported/main_skybox.png-6a9ea3b747cbb74a32db4f48d1200654.s3tc.ctex"
+uid="uid://13uj3h5ql64q"
+path.s3tc="res://.godot/imported/shared_metal_texture.png-93e1328fc534eb7c9ff35af7d5ca1d38.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://main_skybox.png"
-dest_files=["res://.godot/imported/main_skybox.png-6a9ea3b747cbb74a32db4f48d1200654.s3tc.ctex"]
+source_file="res://images/shared_metal_texture.png"
+dest_files=["res://.godot/imported/shared_metal_texture.png-93e1328fc534eb7c9ff35af7d5ca1d38.s3tc.ctex"]
 
 [params]
 

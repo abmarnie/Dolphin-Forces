@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://mdjouoi2ra1e"
-path.s3tc="res://.godot/imported/underwater_skybox.png-4b2700a4ccfbefa9eb92b6f834ca48aa.s3tc.ctex"
+uid="uid://bcmx8mvwyk2hd"
+path.s3tc="res://.godot/imported/water_caustic_texture.png-3091861bbf42613fc5f8448e427873b8.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://underwater_skybox.png"
-dest_files=["res://.godot/imported/underwater_skybox.png-4b2700a4ccfbefa9eb92b6f834ca48aa.s3tc.ctex"]
+source_file="res://images/water_caustic_texture.png"
+dest_files=["res://.godot/imported/water_caustic_texture.png-3091861bbf42613fc5f8448e427873b8.s3tc.ctex"]
 
 [params]
 

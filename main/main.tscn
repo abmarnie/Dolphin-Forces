@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://cc6ij0vhq6iyh"]
 
-[ext_resource type="Script" path="res://Main.cs" id="1_11si0"]
-[ext_resource type="Environment" uid="uid://cefclkylmgwxx" path="res://main_environment.tres" id="2_3coom"]
-[ext_resource type="PackedScene" uid="uid://li41t3qh0gpx" path="res://dolphin.tscn" id="2_ofsg3"]
-[ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://water_caustic_visualshader.tres" id="5_aptly"]
+[ext_resource type="Script" path="res://main/Main.cs" id="1_11si0"]
+[ext_resource type="Environment" uid="uid://cefclkylmgwxx" path="res://main/main_environment.tres" id="2_3coom"]
+[ext_resource type="PackedScene" uid="uid://li41t3qh0gpx" path="res://dolphin/dolphin.tscn" id="2_ofsg3"]
+[ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://water/water_caustic_visualshader.tres" id="5_aptly"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y0os8"]
 transparency = 1
@@ -11,7 +11,7 @@ albedo_color = Color(0.360784, 0.521569, 1, 0.176471)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_g2oyq"]
 material = SubResource("StandardMaterial3D_y0os8")
-size = Vector2(1000, 1000)
+size = Vector2(3000, 3000)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ymolu"]
 render_priority = 0

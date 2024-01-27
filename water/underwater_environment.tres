@@ -1,6 +1,6 @@
 [gd_resource type="Environment" load_steps=4 format=3 uid="uid://cs6kgh1egp0xf"]
 
-[ext_resource type="Texture2D" uid="uid://mdjouoi2ra1e" path="res://underwater_skybox.png" id="1_24g55"]
+[ext_resource type="Texture2D" uid="uid://mdjouoi2ra1e" path="res://images/underwater_skypanorama.png" id="1_24g55"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_c44ah"]
 panorama = ExtResource("1_24g55")

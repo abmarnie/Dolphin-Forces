@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ycv5m56c2qo5"
-path.s3tc="res://.godot/imported/dome_sky.png-fc5da543c8b8fc47aa9a3fba93dee35e.s3tc.ctex"
+path.s3tc="res://.godot/imported/dome_sky.png-35b5ea6b10560446a93819b17bcf5738.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://dome_sky.png"
-dest_files=["res://.godot/imported/dome_sky.png-fc5da543c8b8fc47aa9a3fba93dee35e.s3tc.ctex"]
+source_file="res://images/dome_sky.png"
+dest_files=["res://.godot/imported/dome_sky.png-35b5ea6b10560446a93819b17bcf5738.s3tc.ctex"]
 
 [params]
 
