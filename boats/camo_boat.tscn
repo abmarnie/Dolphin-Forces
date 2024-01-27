@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://stofy3ce1kuw"]
+
+[ext_resource type="ArrayMesh" uid="uid://b6e8pcf0n1ly6" path="res://boats/boats_CamoBoatMesh.tres" id="1_2p2ce"]
+[ext_resource type="Script" path="res://boats/Boat.cs" id="1_rxo1l"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
+radius = 5.0
+height = 24.355
+
+[node name="CamoBoat" type="RigidBody3D"]
+gravity_scale = 0.0
+can_sleep = false
+script = ExtResource("1_rxo1l")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_2p2ce")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 5.08)
+shape = SubResource("CapsuleShape3D_7vlyt")

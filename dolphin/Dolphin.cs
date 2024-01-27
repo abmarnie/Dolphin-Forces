@@ -5,24 +5,26 @@ using Godot;
 namespace DolphinForces;
 
 // TODO: Adjust dolphin roll when turning for flourish.
-// TODO: Maintain angular velocity when launching out of water for flourish.
-// TODO: Speed boost.
+// TODO: Speed boost ability.
+// TODO: Torpedos.
+// TODO: Settings menu (mouse sensitivity slider).
+// TODO: Sounds menu.
 
 public partial class Dolphin : RigidBody3D {
 
+    public static bool IsCameraUnderwater => _camera.GlobalPosition.Y <= -0.3f;
     private static float ElapsedTimeS => Time.GetTicksMsec() / 1000f;
-    public static bool IsCameraUnderwater => Camera.GlobalPosition.Y <= -0.3f;
-    public static Camera3D Camera = null!;
+    private static Camera3D _camera = null!;
 
-    [Export] private AnimationTree _animTree = null!;
+    private AnimationTree _animTree = null!;
 
     private Godot.Environment _underwaterEnv = null!;
-    private const float DEFAULT_SPEED = 25f;
-    private const float MIN_SPEED = 5f;
-    private const float MAX_SPEED = 50f;
-    private float _speed = DEFAULT_SPEED;
     private float _mouseSens = 0.01f;
     private Vector3 _rotationFromMouse;
+
+    private const float DEFAULT_SPEED = 25f;
+    private float _speed = DEFAULT_SPEED;
+
     private bool IsUnderwater => GlobalPosition.Y <= 0;
 
     public override void _Input(InputEvent @event) {
@@ -41,24 +43,26 @@ public partial class Dolphin : RigidBody3D {
         }
 
         const float speedScrollDelta = 1f;
-        if (@event.IsActionReleased("scroll_up")) {
+        if (@event.IsActionReleased("scroll_up"))
             _speed += speedScrollDelta;
-        }
-
-        if (@event.IsActionReleased("scroll_down")) {
+        else if (@event.IsActionReleased("scroll_down"))
             _speed -= speedScrollDelta;
-        }
 
-        _speed = Mathf.Clamp(_speed, MIN_SPEED, MAX_SPEED);
+        const float minSpeed = 5f;
+        const float maxSpeed = 50f;
+        _speed = Mathf.Clamp(_speed, minSpeed, maxSpeed);
     }
 
     public override void _Ready() {
+        Input.MouseMode = Input.MouseModeEnum.Captured;
+        _camera = GetNode<Camera3D>("%Camera3D");
+
+        _animTree = GetNode<AnimationTree>("%AnimationTree");
         Debug.Assert(_animTree is not null);
         _animTree.Set("parameters/speed_scale/scale", 1f);
+
         _underwaterEnv = (Godot.Environment)GD.Load("res://water/underwater_environment.tres");
         Debug.Assert(_underwaterEnv is not null);
-        Input.MouseMode = Input.MouseModeEnum.Captured;
-        Camera = GetNode<Camera3D>("%Camera3D");
     }
 
 
@@ -69,14 +73,13 @@ public partial class Dolphin : RigidBody3D {
         if (IsUnderwater) {
             Rotation = new Vector3(_rotationFromMouse.X, _rotationFromMouse.Y, Rotation.Z);
         } else {
-            const float rotSpeed = 2f;
-            Rotation -= rotSpeed * (float)delta * Vector3.Right;
+            const float airborneRotSpeed = 2f;
+            Rotation -= airborneRotSpeed * (float)delta * Vector3.Right;
             _rotationFromMouse = Rotation;
             _animTree.Set("parameters/speed_scale/scale", 0f);
         }
 
-        var isCameraUnderwater = Camera.GlobalPosition.Y <= -0.3f;
-        Camera.Environment = isCameraUnderwater ? _underwaterEnv : null;
+        _camera.Environment = IsCameraUnderwater ? _underwaterEnv : null;
 
     }
 
@@ -88,12 +91,10 @@ public partial class Dolphin : RigidBody3D {
             GravityScale = 0.0f;
             _impulsedApplied = false;
         } else {
-            // state.AngularVelocity = -Basis.X;
             if (!_impulsedApplied)
                 ApplyImpulse(-2f * _speed * Basis.Z);
             GravityScale = 9.8f;
             _impulsedApplied = true;
-
         }
     }
 
