@@ -17,7 +17,9 @@ public partial class Dolphin : RigidBody3D {
     [Export] private AnimationTree _animTree = null!;
 
     private Godot.Environment _underwaterEnv = null!;
-    private const float DEFAULT_SPEED = 15f;
+    private const float DEFAULT_SPEED = 25f;
+    private const float MIN_SPEED = 5f;
+    private const float MAX_SPEED = 50f;
     private float _speed = DEFAULT_SPEED;
     private float _mouseSens = 0.01f;
     private Vector3 _rotationFromMouse;
@@ -47,9 +49,7 @@ public partial class Dolphin : RigidBody3D {
             _speed -= speedScrollDelta;
         }
 
-        const float minSpeed = 5f;
-        const float maxSpeed = 25f;
-        _speed = Mathf.Clamp(_speed, minSpeed, maxSpeed);
+        _speed = Mathf.Clamp(_speed, MIN_SPEED, MAX_SPEED);
     }
 
     public override void _Ready() {
@@ -63,15 +63,16 @@ public partial class Dolphin : RigidBody3D {
 
 
     public override void _PhysicsProcess(double delta) {
-        const float animSpeedTuningScale = 1.5f;
+        const float animSpeedTuningScale = 3f;
         _animTree.Set("parameters/speed_scale/scale", animSpeedTuningScale * _speed / DEFAULT_SPEED);
 
         if (IsUnderwater) {
             Rotation = new Vector3(_rotationFromMouse.X, _rotationFromMouse.Y, Rotation.Z);
         } else {
-            const float rotSpeed = 1f;
+            const float rotSpeed = 2f;
             Rotation -= rotSpeed * (float)delta * Vector3.Right;
             _rotationFromMouse = Rotation;
+            _animTree.Set("parameters/speed_scale/scale", 0f);
         }
 
         var isCameraUnderwater = Camera.GlobalPosition.Y <= -0.3f;
@@ -79,13 +80,20 @@ public partial class Dolphin : RigidBody3D {
 
     }
 
+    private bool _impulsedApplied;
+
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
         if (IsUnderwater) {
             state.LinearVelocity = -_speed * Basis.Z;
             GravityScale = 0.0f;
+            _impulsedApplied = false;
         } else {
             // state.AngularVelocity = -Basis.X;
-            GravityScale = 1.0f;
+            if (!_impulsedApplied)
+                ApplyImpulse(-2f * _speed * Basis.Z);
+            GravityScale = 9.8f;
+            _impulsedApplied = true;
+
         }
     }
 
