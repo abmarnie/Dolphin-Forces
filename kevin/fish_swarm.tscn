@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://chsrx0nmdky71"]
+
+[ext_resource type="Script" path="res://kevin/FishSwarms.gd" id="1_0u82r"]
+[ext_resource type="PackedScene" uid="uid://qs103asi64q7" path="res://kevin/fish.tscn" id="2_4d2l5"]
+
+[node name="FishSwarms" type="Node3D"]
+script = ExtResource("1_0u82r")
+bounds = Vector3(10, 10, 10)
+min_speed = 7.555
+max_speed = 16.95
+
+[node name="Fish2" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish3" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish4" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish5" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish6" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish7" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish8" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish9" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish10" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish11" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish12" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish13" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish14" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish15" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish16" parent="." instance=ExtResource("2_4d2l5")]
+
+[node name="Fish17" parent="." instance=ExtResource("2_4d2l5")]
