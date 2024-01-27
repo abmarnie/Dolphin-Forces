@@ -63,6 +63,17 @@ public partial class Dolphin : RigidBody3D {
 
         _underwaterEnv = (Godot.Environment)GD.Load("res://water/underwater_environment.tres");
         Debug.Assert(_underwaterEnv is not null);
+
+        Debug.Assert(ContactMonitor);
+        BodyEntered += KillBoat;
+
+        static void KillBoat(Node body) {
+            GD.Print("Body entered!");
+            if (body is Boat boat) {
+                GD.Print("killed boat!");
+                boat.IsDead = true;
+            }
+        }
     }
 
 

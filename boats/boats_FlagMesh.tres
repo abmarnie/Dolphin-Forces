@@ -1,6 +1,10 @@
-[gd_resource type="ArrayMesh" load_steps=3 format=3 uid="uid://biimikonkvanq"]
+[gd_resource type="ArrayMesh" load_steps=4 format=3 uid="uid://biimikonkvanq"]
+
+[ext_resource type="Texture2D" uid="uid://13uj3h5ql64q" path="res://images/shared_metal_texture.png" id="1_faf8y"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_11w84"]
+cull_mode = 2
+albedo_texture = ExtResource("1_faf8y")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_tq300"]
 _surfaces = [{

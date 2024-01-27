@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cc6ij0vhq6iyh"]
+[gd_scene load_steps=12 format=3 uid="uid://cc6ij0vhq6iyh"]
 
 [ext_resource type="Script" path="res://main/Main.cs" id="1_11si0"]
 [ext_resource type="Environment" uid="uid://cefclkylmgwxx" path="res://main/main_environment.tres" id="2_3coom"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dosonc0o3fxy5" path="res://terrain/terrain.tscn" id="5_flkfk"]
 [ext_resource type="PackedScene" uid="uid://boonqn8pmnf32" path="res://kevin/fish_swarm_guide.tscn" id="6_gbhga"]
 [ext_resource type="PackedScene" uid="uid://stofy3ce1kuw" path="res://boats/camo_boat.tscn" id="7_82of6"]
+[ext_resource type="PackedScene" uid="uid://dd35f5c64qkfl" path="res://boats/flag_boat.tscn" id="8_jtem8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y0os8"]
 transparency = 1
@@ -14,7 +15,7 @@ albedo_color = Color(0.360784, 0.521569, 1, 0.176471)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_g2oyq"]
 material = SubResource("StandardMaterial3D_y0os8")
-size = Vector2(3000, 3000)
+size = Vector2(5000, 5000)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ymolu"]
 render_priority = 0
@@ -44,11 +45,66 @@ axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
 
-[node name="UnderwaterTerrain" parent="." instance=ExtResource("5_flkfk")]
+[node name="Terrain" type="Node3D" parent="."]
+
+[node name="UnderwaterTerrain" parent="Terrain" instance=ExtResource("5_flkfk")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1000, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1500, 0)
 
-[node name="FishSwarmGuide" parent="." instance=ExtResource("6_gbhga")]
+[node name="UnderwaterTerrain2" parent="Terrain" instance=ExtResource("5_flkfk")]
+unique_name_in_owner = true
+transform = Transform3D(0.968148, 0, 0.25038, 0, 1, 0, -0.25038, 0, 0.968148, 2450, -1500, 0)
 
-[node name="CamoBoat" parent="." instance=ExtResource("7_82of6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0626, 0)
+[node name="UnderwaterTerrain3" parent="Terrain" instance=ExtResource("5_flkfk")]
+unique_name_in_owner = true
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, -1750, 2500)
+
+[node name="UnderwaterTerrain4" parent="Terrain" instance=ExtResource("5_flkfk")]
+unique_name_in_owner = true
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 1950, -1222, 2500)
+
+[node name="Boats" type="Node3D" parent="."]
+
+[node name="CamoBoats" type="Node3D" parent="Boats"]
+
+[node name="CamoBoat" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 157.889, 2.0626, 0)
+
+[node name="CamoBoat2" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 764.626, 2.0626, 0)
+
+[node name="CamoBoat3" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1150.11, 2.0626, 0)
+
+[node name="CamoBoat4" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 157.889, 2.0626, 543.274)
+
+[node name="CamoBoat5" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -463.912, 2.0626, -1006.72)
+
+[node name="CamoBoat6" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 448.892, 2.0626, -1108.75)
+
+[node name="CamoBoat7" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -307.538, 2.0626, 477.088)
+
+[node name="CamoBoat8" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 157.889, 2.0626, 318.498)
+
+[node name="CamoBoat9" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1370.15, 2.0626, 671.275)
+
+[node name="CamoBoat10" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 555.99, 2.0626, -871.29)
+
+[node name="CamoBoat11" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 362.807, 2.0626, 1006.41)
+
+[node name="FlagBoats" type="Node3D" parent="Boats"]
+
+[node name="FlagBoat" parent="Boats/FlagBoats" instance=ExtResource("8_jtem8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -55)
+
+[node name="FishDecorations" type="Node3D" parent="."]
+
+[node name="FishSwarmGuide" parent="FishDecorations" instance=ExtResource("6_gbhga")]

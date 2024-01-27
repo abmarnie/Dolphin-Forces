@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3 uid="uid://dd35f5c64qkfl"]
+
+[ext_resource type="Script" path="res://boats/Boat.cs" id="1_ex7w5"]
+[ext_resource type="ArrayMesh" uid="uid://b1wfe8u6rptbw" path="res://boats/boats_FlagBoatMesh.tres" id="2_a5xu1"]
+[ext_resource type="ArrayMesh" uid="uid://biimikonkvanq" path="res://boats/boats_FlagMesh.tres" id="3_fhksw"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
+radius = 5.0
+height = 24.355
+
+[node name="FlagBoat" type="RigidBody3D"]
+gravity_scale = 0.0
+can_sleep = false
+script = ExtResource("1_ex7w5")
+_boatSpeed = 10.0
+_changeTargetInterval = 1.5
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+mesh = ExtResource("2_a5xu1")
+
+[node name="Flag" type="MeshInstance3D" parent="MeshInstance3D"]
+transform = Transform3D(-4.37114e-08, -1, 0, 0.891007, -3.89471e-08, 0.453991, -0.453991, 1.98446e-08, 0.891007, 0, 5.155, -8.175)
+mesh = ExtResource("3_fhksw")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -4.62861)
+shape = SubResource("CapsuleShape3D_7vlyt")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 4.492, -5.653)
+light_color = Color(0, 0, 1, 1)
+light_energy = 10.0
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 4.492, -5.653)
+light_color = Color(0.639216, 0, 0.137255, 1)
+light_energy = 10.0

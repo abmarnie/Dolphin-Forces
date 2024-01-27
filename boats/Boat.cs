@@ -5,24 +5,44 @@ namespace DolphinForces;
 
 public partial class Boat : RigidBody3D {
 
-    private Vector3 _targetPosition;
-    private float _speed = 30.0f;
-    private float _changeTargetInterval = 5f;
-    private float _timer;
+    [Export] private float _boatSpeed = 30.0f;
+    [Export] private float _changeTargetInterval = 5f;
 
-    public override void _Ready() => _targetPosition = GetRandomTargetPosition();
+    private Vector3 _targetPosition;
+    private float _newtargetPositionTimer;
+
+    private bool IsUnderwater => GlobalPosition.Y <= 0;
+    public bool IsDead;
+
+
+    public override void _Ready() {
+        _targetPosition = GetRandomTargetPosition();
+        LookAt(_targetPosition);
+        ContactMonitor = true;
+    }
 
     public override void _PhysicsProcess(double delta) {
-        _timer += (float)delta;
-        if (_timer > _changeTargetInterval) {
+        if (IsDead) return;
+
+        _newtargetPositionTimer += (float)delta;
+        if (_newtargetPositionTimer > _changeTargetInterval) {
             _targetPosition = GetRandomTargetPosition();
-            _timer = 0;
+            LookAt(_targetPosition);
+            _newtargetPositionTimer = 0;
         }
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
-        var direction = (_targetPosition - GlobalPosition).Normalized();
-        state.LinearVelocity = new Vector3(direction.X, 0, direction.Z) * _speed;
+        if (IsDead) return;
+
+        if (GlobalPosition.DistanceTo(_targetPosition) > 1f) {
+            var direction = (_targetPosition - GlobalPosition).Normalized();
+            state.LinearVelocity = new Vector3(direction.X, 0, direction.Z) * _boatSpeed;
+        } else {
+            state.LinearVelocity = Vector3.Zero;
+        }
+
+        GravityScale = IsUnderwater ? 0.0f : 9.8f;
     }
 
     private Vector3 GetRandomTargetPosition() {
@@ -36,4 +56,13 @@ public partial class Boat : RigidBody3D {
 
         return GlobalPosition + (direction * distance);
     }
+
+    // public void LookAtInterpolate(Vector3 lookTarget, float weight, out float rotAmount) {
+    //     var originalForward = -Basis.Z;
+    //     var tempTransform = Transform.LookingAt(lookTarget, Vector3.Up);
+    //     Transform = Transform.InterpolateWith(tempTransform, weight);
+    //     var newForward = -Basis.Z;
+    //     rotAmount = (float)Mathf.Acos(originalForward.Normalized().Dot(newForward.Normalized()));
+    // }
+
 }
