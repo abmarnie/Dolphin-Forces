@@ -34,6 +34,9 @@ public partial class Boat : RigidBody3D {
                 Debug.Assert(mat is not null);
                 mat.Set("albedo_texture", _destroyed_ship_texture);
             }
+            AxisLockAngularX = false;
+            AxisLockAngularY = false;
+            AxisLockAngularZ = false;
         }
     }
 
@@ -50,6 +53,10 @@ public partial class Boat : RigidBody3D {
         AddChild(_timer);
         _ = _timer.Connect("timeout", new Callable(this, nameof(OnTimerTimeout)));
         SetRandomIntervalAndStartTimer();
+        AxisLockAngularX = true;
+        AxisLockAngularY = true;
+        AxisLockAngularZ = true;
+
     }
 
     private void SetRandomIntervalAndStartTimer() {
