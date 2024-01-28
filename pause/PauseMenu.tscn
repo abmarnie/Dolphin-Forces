@@ -1,0 +1,187 @@
+[gd_scene load_steps=7 format=3 uid="uid://d18rkvpjathhb"]
+
+[ext_resource type="Script" path="res://pause/Pause.gd" id="1_scddq"]
+[ext_resource type="Script" path="res://pause/buttonnoise.gd" id="2_hrluv"]
+[ext_resource type="PackedScene" path="res://pause/volume_slider.tscn" id="3_bwa5j"]
+[ext_resource type="AudioStream" uid="uid://bhg6hiivphplc" path="res://pause/QuickFry.ogg" id="3_nm7be"]
+[ext_resource type="PackedScene" path="res://pause/cheats_panel_container.tscn" id="5_hlonj"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_pd8me"]
+random_pitch = 1.2
+streams_count = 1
+stream_0/stream = ExtResource("3_nm7be")
+stream_0/weight = 1.0
+
+[node name="CanvasLayer" type="CanvasLayer"]
+process_mode = 3
+follow_viewport_enabled = true
+script = ExtResource("1_scddq")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.392157)
+
+[node name="MainVboxContainer" type="VBoxContainer" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -35.0
+offset_top = -50.5
+offset_right = 35.0
+offset_bottom = 149.5
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.585, 0.585)
+
+[node name="SettingsPanelContainer" type="PanelContainer" parent="ColorRect"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -59.0
+offset_top = -68.5
+offset_right = 59.0
+offset_bottom = 68.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect/SettingsPanelContainer"]
+layout_mode = 2
+
+[node name="MouseSensLabel" type="Label" parent="ColorRect/SettingsPanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Mouse Sensitivity: 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MouseSensHSlider" type="HSlider" parent="ColorRect/SettingsPanelContainer/VBoxContainer"]
+layout_mode = 2
+min_value = 0.01
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="MasterVolumeLabel" type="Label" parent="ColorRect/SettingsPanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Master Volume"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MasterVolumeHSlider" parent="ColorRect/SettingsPanelContainer/VBoxContainer" instance=ExtResource("3_bwa5j")]
+layout_mode = 2
+_bus_name = "Master"
+
+[node name="OstVolumeLabel" type="Label" parent="ColorRect/SettingsPanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Music Volume"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OstVolumeHSlider" parent="ColorRect/SettingsPanelContainer/VBoxContainer" instance=ExtResource("3_bwa5j")]
+layout_mode = 2
+_bus_name = "OST"
+
+[node name="SfxVolumeLabel" type="Label" parent="ColorRect/SettingsPanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "SFX Volume"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SfxVolumeHSlider" parent="ColorRect/SettingsPanelContainer/VBoxContainer" instance=ExtResource("3_bwa5j")]
+layout_mode = 2
+_bus_name = "SFX"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ColorRect/SettingsPanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Back" type="Button" parent="ColorRect/SettingsPanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Back"
+
+[node name="FullscreenCheckButton" type="CheckButton" parent="ColorRect/SettingsPanelContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+button_pressed = true
+text = "Fullscreen"
+
+[node name="Resume" type="Button" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -109.0
+offset_right = 100.0
+offset_bottom = -59.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Resume
+"
+script = ExtResource("2_hrluv")
+
+[node name="Settings" type="Button" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -9.0
+offset_right = 100.0
+offset_bottom = 41.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Settings
+"
+script = ExtResource("2_hrluv")
+
+[node name="Quit" type="Button" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 91.0
+offset_right = 100.0
+offset_bottom = 141.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "   Quit   "
+script = ExtResource("2_hrluv")
+
+[node name="Fry" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = SubResource("AudioStreamRandomizer_pd8me")
+volume_db = -14.946
+pitch_scale = 3.82
+
+[node name="CheatsPanelContainer" parent="." instance=ExtResource("5_hlonj")]
+unique_name_in_owner = true
+visible = false
+
+[connection signal="value_changed" from="ColorRect/SettingsPanelContainer/VBoxContainer/MouseSensHSlider" to="." method="_on_mouse_sens_h_slider_value_changed"]
+[connection signal="pressed" from="ColorRect/SettingsPanelContainer/VBoxContainer/HBoxContainer/Back" to="." method="_on_settings_back_pressed"]
+[connection signal="toggled" from="ColorRect/SettingsPanelContainer/VBoxContainer/HBoxContainer/FullscreenCheckButton" to="." method="_on_settings_fullscreen_check_button_toggled"]
+[connection signal="pressed" from="ColorRect/Resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="ColorRect/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="ColorRect/Quit" to="." method="_on_quit_pressed"]

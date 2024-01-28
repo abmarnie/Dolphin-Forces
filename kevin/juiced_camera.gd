@@ -9,7 +9,7 @@ var turn_force = .1
 var position_force = .3
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	self.set_environment(camera_3d.environment)
 	if get_parent().IsUnderwater:
 		turn_force = .3

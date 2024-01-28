@@ -13,7 +13,6 @@ public partial class Main : Node3D {
     public static int NumDeadRussian;
     public static int NumDeadYellow;
 
-
     private AudioStreamPlayer _audioStreamPlayer = null!;
     private AudioStream _metal_music = null!;
     private AudioStream _peaceful_music = null!;
@@ -23,8 +22,6 @@ public partial class Main : Node3D {
     private Node3D _terrain = null!;
     private Dolphin _player = null!;
 
-
-
     public override void _Ready() {
         _terrain = GetNode<Node3D>("%Terrain");
         _player = GetNode<Dolphin>("%Dolphin");
@@ -33,6 +30,7 @@ public partial class Main : Node3D {
         _peaceful_music = ResourceLoader.Load<AudioStream>("res://nathan/Game Jam Edit 1 Export 1.wav");
         _metal_music = ResourceLoader.Load<AudioStream>("res://nathan/game_jam_metal Edit 1 Export 2.wav");
         _audioStreamPlayer = GetNode<AudioStreamPlayer>("%AudioStreamPlayer");
+        _audioStreamPlayer.Stop();
         Debug.Assert(_audioStreamPlayer is not null);
         Debug.Assert(_peaceful_music is not null);
         Debug.Assert(_metal_music is not null);
@@ -47,16 +45,16 @@ public partial class Main : Node3D {
     private void SwitchToPeacefulMusic() {
         _metal_playback = _audioStreamPlayer.GetPlaybackPosition();
         _audioStreamPlayer.Stream = _peaceful_music;
-        _audioStreamPlayer.Seek(_peaceful_playback);
         _audioStreamPlayer.Play();
+        _audioStreamPlayer.Seek(_peaceful_playback);
     }
 
     private void SwitchToMetalMusic() {
         GD.Print("OnJump!");
         _peaceful_playback = _audioStreamPlayer.GetPlaybackPosition();
         _audioStreamPlayer.Stream = _metal_music;
-        _audioStreamPlayer.Seek(_metal_playback);
         _audioStreamPlayer.Play();
+        // _audioStreamPlayer.Seek(_metal_playback);
     }
 
     public override void _Process(double delta) => _terrain.Visible = Dolphin.IsCameraUnderwater;

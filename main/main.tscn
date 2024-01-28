@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cc6ij0vhq6iyh"]
+[gd_scene load_steps=15 format=3 uid="uid://cc6ij0vhq6iyh"]
 
 [ext_resource type="Script" path="res://main/Main.cs" id="1_11si0"]
 [ext_resource type="Environment" uid="uid://cefclkylmgwxx" path="res://main/main_environment.tres" id="2_3coom"]
@@ -11,7 +11,6 @@
 [ext_resource type="PackedScene" uid="uid://c3p3ma6lp7k1h" path="res://boats/russian_boat.tscn" id="8_scbwa"]
 [ext_resource type="PackedScene" uid="uid://bth55vlfy2a5l" path="res://boats/yellow_striped_boat.tscn" id="9_aahfs"]
 [ext_resource type="PackedScene" uid="uid://cedh0ufnngimr" path="res://nathan/audio_stream_player.tscn" id="9_w7vuu"]
-[ext_resource type="AudioStream" uid="uid://jb0sfvh1cacw" path="res://nathan/game_jam_metal Edit 1 Export 2.wav" id="12_v5gu8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y0os8"]
 transparency = 1
@@ -47,7 +46,7 @@ surface_material_override/0 = SubResource("ShaderMaterial_ymolu")
 
 [node name="Dolphin" parent="." instance=ExtResource("2_ofsg3")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 400, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 0)
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
@@ -455,4 +454,4 @@ _changeTargetInterval = 4.0
 
 [node name="AudioStreamPlayer" parent="." instance=ExtResource("9_w7vuu")]
 unique_name_in_owner = true
-stream = ExtResource("12_v5gu8")
+autoplay = false

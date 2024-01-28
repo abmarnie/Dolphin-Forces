@@ -1,0 +1,65 @@
+[gd_scene load_steps=2 format=3 uid="uid://75m3q3ttess"]
+
+[ext_resource type="Script" path="res://pause/cheats.gd" id="1_5jck2"]
+
+[node name="CheatsPanelContainer" type="PanelContainer"]
+script = ExtResource("1_5jck2")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="LoadableScenesLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Loadable Scenes:"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TestButton" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Test.tscn"
+
+[node name="Docks" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Docks.tscn"
+
+[node name="CookSpeedLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Cook Speed: 100%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CookSpeedHSlider" type="HSlider" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.01
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[node name="MoveSpeedLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Move Speed: 100%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoveSpeedHSlider" type="HSlider" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 0.01
+max_value = 5.0
+step = 0.01
+value = 1.0
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/TestButton" to="." method="_on_test_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Docks" to="." method="_on_docks_pressed"]
+[connection signal="value_changed" from="MarginContainer/VBoxContainer/CookSpeedHSlider" to="." method="_on_cook_speed_h_slider_value_changed"]
+[connection signal="value_changed" from="MarginContainer/VBoxContainer/MoveSpeedHSlider" to="." method="_on_move_speed_h_slider_value_changed"]

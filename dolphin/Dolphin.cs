@@ -4,10 +4,7 @@ using Godot;
 
 namespace DolphinForces;
 
-// TODO: Adjust dolphin roll when turning for flourish.
 // TODO: Speed boost ability.
-// TODO: Settings menu (mouse sensitivity slider).
-// TODO: Sounds menu.
 
 public partial class Dolphin : RigidBody3D {
 
@@ -22,7 +19,7 @@ public partial class Dolphin : RigidBody3D {
     private AnimationTree _animTree = null!;
 
     private Godot.Environment _underwaterEnv = null!;
-    private float _mouseSens = 0.01f;
+    private float _mouseSens = 0.001f;
     private Vector3 _rotationFromMouse;
 
     private const float DEFAULT_SPEED = 25f;
@@ -42,28 +39,46 @@ public partial class Dolphin : RigidBody3D {
     public static Boat NearestObjective = null!;
     private static Sprite3D _objectiveArrow = null!;
 
-    private const float _cutsceneTimeLength = 10f;
-    public static bool CutscenePlaying => _cutsceneTimer < _cutsceneTimeLength;
+    private const float _cutsceneTimeLength = 7f;
+    public static bool CutscenePlaying => _cutsceneEndTimer < _cutsceneEndTimeLength;
+
+    // private const float _cutsceneTimeLength = 10f;
+    // public static bool CutscenePlaying => _cutsceneTimer < _cutsceneTimeLength;
+
     private static float _cutsceneTimer = 0f;
 
     private static ColorRect _introColorRect = null!;
+    private static Label _introLabel = null!;
+    private static Label _continueLabel = null!;
+
+    private static bool _playerRespondedToCutsceneFinish = false;
 
 
     public override void _Input(InputEvent @event) {
+        if (_cutsceneTimer > _cutsceneTimeLength) {
+            if (@event.IsActionReleased("attack")) {
+                _playerRespondedToCutsceneFinish = true;
+            }
+        }
+
+        if (CutscenePlaying)
+            return;
+
         if (@event is InputEventMouseMotion mouseMotion && IsUnderwater) {
             _rotationFromMouse.Y -= mouseMotion.Relative.X * _mouseSens;
             _rotationFromMouse.X -= mouseMotion.Relative.Y * _mouseSens;
             var lookAngleBounds = Mathf.DegToRad(75.0f);
             _rotationFromMouse.X = Mathf.Clamp(_rotationFromMouse.X, -lookAngleBounds, lookAngleBounds);
+            GD.Print(_rotationFromMouse.X);
         }
 
-        if (@event.IsActionReleased("ui_cancel")) {
-            Input.MouseMode = Input.MouseMode switch {
-                Input.MouseModeEnum.Visible => Input.MouseModeEnum.Captured,
-                Input.MouseModeEnum.Captured => Input.MouseModeEnum.Visible,
-                _ => throw new NotImplementedException(),
-            };
-        }
+        // if (@event.IsActionReleased("ui_cancel")) {
+        //     Input.MouseMode = Input.MouseMode switch {
+        //         Input.MouseModeEnum.Visible => Input.MouseModeEnum.Captured,
+        //         Input.MouseModeEnum.Captured => Input.MouseModeEnum.Visible,
+        //         _ => throw new NotImplementedException(),
+        //     };
+        // }
 
         var isTorpedoOffCooldown = Main.ElapsedTimeS > _lastLargeTorpedoFireTime + LARGE_TORPEDO_COOLDOWN;
         if (@event.IsActionReleased("attack") && isTorpedoOffCooldown) { // TODO: Cooldown bar async fill.
@@ -86,6 +101,7 @@ public partial class Dolphin : RigidBody3D {
         const float minSpeed = 5f;
         const float maxSpeed = 50f;
         _speed = Mathf.Clamp(_speed, minSpeed, maxSpeed);
+
     }
 
     public override void _Ready() {
@@ -114,7 +130,6 @@ public partial class Dolphin : RigidBody3D {
         Debug.Assert(_largeTorpedoSpawnLocation is not null);
 
         _audioStreamPlayer = GetNode<AudioStreamPlayer3D>("%AudioStreamPlayer3D");
-        _audioStreamPlayer.Play();
         // _audioStreamPlayer.Finished += LoadSplashSound;
 
         _objectiveArrow = this.GetDescendant<Sprite3D>()!;
@@ -126,27 +141,59 @@ public partial class Dolphin : RigidBody3D {
 
         _introColorRect = this.GetDescendant<ColorRect>()!;
         Debug.Assert(_introColorRect is not null);
+
+        _introLabel = _introColorRect.GetChild<Label>(0);
+        Debug.Assert(_introLabel is not null);
+        _introLabel.Modulate = new Color(1, 1, 1, 0);
+
+        _continueLabel = _introColorRect.GetChild<Label>(1);
+        Debug.Assert(_continueLabel is not null);
+        _continueLabel.Visible = false;
+
     }
 
-    // private void LoadSplashSound() {
-    //     if (_isSplashSoundLoaded) {
-    //         _audioStreamPlayer.Finished -= LoadSplashSound;
-    //         return;
-    //     }
-    //     _audioStreamPlayer.Stream = _splash_sfx;
-    //     _isSplashSoundLoaded = true;
-    // }
+    private bool _firstPhysicsTime = true;
+
+    private float _introlabelAlpha = 0;
+    private static float _cutsceneEndTimer = 0;
+    private float _introlColorRectAlpha = 1;
+    private const float _cutsceneEndTimeLength = 10f;
+
+    private float _continueLabelAlpha = 0;
 
     public override void _PhysicsProcess(double delta) {
-        _cutsceneTimer += (float)delta;
 
-        if (_cutsceneTimer < _cutsceneTimeLength) {
+        _cutsceneTimer += (float)delta;
+        const float alphaDelta = 0.0025f;
+        // _cutsceneTimer < _cutsceneTimeLength ||
+        if (!_playerRespondedToCutsceneFinish) {
             _introColorRect.Visible = true;
+            _introlabelAlpha += alphaDelta;
+            _introlabelAlpha = Mathf.Clamp(_introlabelAlpha, 0f, 1f);
+            _introLabel.Modulate = new Color(1, 1, 1, _introlabelAlpha);
+            if (_cutsceneTimer > _cutsceneTimeLength) {
+                _continueLabelAlpha += 2f * alphaDelta;
+                _continueLabel.Visible = true;
+                _continueLabelAlpha = Mathf.Clamp(_continueLabelAlpha, 0f, 1f);
+                _continueLabel.Modulate = new Color(1, 1, 1, _continueLabelAlpha);
+            }
             return;
+        } else if (_playerRespondedToCutsceneFinish && _cutsceneEndTimer < _cutsceneEndTimeLength) {
+            if (_firstPhysicsTime)
+                _audioStreamPlayer.Play();
+            _cutsceneEndTimer += (float)delta;
+            _introlabelAlpha -= alphaDelta / 1.5f;
+            _introlColorRectAlpha -= alphaDelta / 1.5f;
+            _continueLabelAlpha -= alphaDelta / 1.5f;
+            _introColorRect.Modulate = new Color(1, 1, 1, _introlColorRectAlpha);
+            _introLabel.Modulate = new Color(1, 1, 1, _introlabelAlpha);
+            // _continueLabel.Modulate = new Color(1, 1, 1, _continueLabelAlpha);
         } else {
+            _firstPhysicsTime = false;
             _introColorRect.Visible = false;
         }
 
+        Input.MouseMode = Input.MouseModeEnum.Captured;
 
         const float defaultFov = 75;
         const float fovScalingFactor = 0.25f; // Adjust this value as needed
@@ -171,53 +218,21 @@ public partial class Dolphin : RigidBody3D {
 
         _camera.Environment = IsCameraUnderwater ? _underwaterEnv : null;
 
-        // if (NearestObjective is not null) {
-        //     var current = GlobalPosition with { Y = 0 };
-        //     var target = NearestObjective.GlobalPosition with { Y = 0 };
-        //     var dir = (current - target).Normalized();
-        //     var forward = -Basis.Z with { Y = 0 };
-        //     var angle2 = forward.SignedAngleTo(dir, Vector3.Forward);
-        //     _objectiveArrow.Rotation = _objectiveArrow.Rotation with { Y = angle2 - Mathf.Pi / 2 };
-        // }
 
-        // var isObjectiveInRange = GlobalPosition.DistanceTo(_objective.GlobalPosition) < 20f;
-        // if (isObjectiveInRange)
-        //     _objectiveArrow.Visible = false;
-        // var nearestBoat = 
-
-        // if (_objective is not null) {
-        //     // var dir = (GlobalPosition - _objective.GlobalPosition).Normalized();
-        //     var current = GlobalPosition with { Y = 0 };
-        //     var target = _objective.GlobalPosition with { Y = 0 };
-        //     var dir = (current - target).Normalized();
-        //     var forward = -Basis.Z with { Y = 0 };
-        //     var angle2 = forward.AngleTo(dir);
-
-        //     _objectiveArrow.Rotation = _objectiveArrow.Rotation with { Y = angle2 };
-
-        // GD.Print($"current: {current}");
-        // GD.Print($"target: {target}");
-        // GD.Print($"dir: {dir}");
-        // GD.Print($"forward: {forward}");
-        // GD.Print($"angle2: {angle2}");
-        // GD.Print("-----------------");
-
-        // var angle = Mathf.RadToDeg(Mathf.Atan2(GlobalPosition.Z - _objective.GlobalPosition.Z,
-        //     GlobalPosition.X - _objective.GlobalPosition.X));
-
-        // _objectiveArrow.RotationDegrees = RotationDegrees with {
-        //     X = 0,
-        //     Y = angle + RotationDegrees.Y,
-        //     Z = 0
-        // };
-
-        // }
     }
 
     private bool _impulsedApplied;
     private bool _firstTime = true;
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
+        if (CutscenePlaying) {
+            return;
+        }
+
+        if (_firstTime) {
+            OnJump?.Invoke();
+        }
+
 
         if (IsUnderwater) {
             if (_impulsedApplied) {
@@ -237,7 +252,10 @@ public partial class Dolphin : RigidBody3D {
                     OnJump?.Invoke();
                 ApplyImpulse(-2f * _speed * Basis.Z);
             }
-            GravityScale = 9.8f;
+            if (_firstTime)
+                GravityScale = 1f;
+            else
+                GravityScale = 9.8f;
             _impulsedApplied = true;
         }
         _firstTime = false;

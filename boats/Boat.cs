@@ -112,6 +112,8 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _PhysicsProcess(double delta) {
+        if (Dolphin.CutscenePlaying) return;
+
         if (IsDead) {
             return;
         }
@@ -134,6 +136,8 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
+        if (Dolphin.CutscenePlaying) return;
+
         GravityScale = IsUnderwater ? 0.0f : 9.8f;
 
         if (IsDead) {
