@@ -14,6 +14,11 @@ public partial class Boat : RigidBody3D {
 
     private bool IsUnderwater => GlobalPosition.Y <= 0;
 
+    private AudioStreamPlayer3D _audioStreamPlayer = null!;
+    private Random _random = new();
+
+    private Resource _destroyed_ship_texture = ResourceLoader.Load("res://nathan/skidmark.png");
+
     private bool _justDied;
     private bool _isDead;
     public bool IsDead {
@@ -23,22 +28,64 @@ public partial class Boat : RigidBody3D {
             Debug.Assert(!_isDead);
             _justDied = true;
             _isDead = value;
+            var meshInstances = this.Descendants<MeshInstance3D>()!;
+            foreach (var mi in meshInstances) {
+                var mat = mi.GetActiveMaterial(0);
+                Debug.Assert(mat is not null);
+                mat.Set("albedo_texture", _destroyed_ship_texture);
+            }
         }
     }
+
+    private Timer _timer = null!;
 
     public override void _Ready() {
         _targetPosition = GetRandomTargetPosition();
         LookAt(_targetPosition);
         ContactMonitor = true;
+
+        // Timer crap is for sfx.
+        _audioStreamPlayer = this.GetDescendant<AudioStreamPlayer3D>()!;
+        _timer = new Timer();
+        AddChild(_timer);
+        _ = _timer.Connect("timeout", new Callable(this, nameof(OnTimerTimeout)));
+        SetRandomIntervalAndStartTimer();
+    }
+
+    private void SetRandomIntervalAndStartTimer() {
+        const float timerMin = 5f;
+        const float timerMax = 10f;
+        _timer.WaitTime = ((float)_random.NextDouble() * (timerMax - timerMin)) + timerMin;
+        _timer.Start();
+    }
+
+    private void OnTimerTimeout() {
+        if (_audioStreamPlayer is null) return;
+        if (IsDead) return;
+
+        if (!_audioStreamPlayer.Playing) {
+            _audioStreamPlayer.Play();
+            SetRandomIntervalAndStartTimer();
+        }
     }
 
     public override void _PhysicsProcess(double delta) {
         if (IsDead) {
+            _audioStreamPlayer?.Stop();
             return;
         }
 
         _newtargetPositionTimer += (float)delta;
         if (_newtargetPositionTimer > _changeTargetInterval) {
+            SetNextTarget();
+        }
+
+        var isNearTarget = GlobalPosition.DistanceTo(_targetPosition) < 5f;
+        if (isNearTarget) {
+            SetNextTarget();
+        }
+
+        void SetNextTarget() {
             _targetPosition = GetRandomTargetPosition();
             LookAt(_targetPosition);
             _newtargetPositionTimer = 0;

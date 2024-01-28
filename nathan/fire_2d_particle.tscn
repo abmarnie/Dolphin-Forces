@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://jg08ypipisy6"]
+
+[ext_resource type="Texture2D" uid="uid://dno0cg1lo3fpp" path="res://nathan/white_smugde.png" id="1_syvwb"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_xmrvs"]
+blend_mode = 1
+
+[sub_resource type="Gradient" id="Gradient_h2rv3"]
+offsets = PackedFloat32Array(0.0327869, 0.147541, 0.868852, 1)
+colors = PackedColorArray(0.921569, 0.827451, 0, 0, 0.921569, 0.827451, 0, 1, 1, 0.262745, 0, 1, 1, 0.262745, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_e5ykp"]
+gradient = SubResource("Gradient_h2rv3")
+width = 100
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dmkpn"]
+particle_flag_disable_z = true
+direction = Vector3(0, -1, 0)
+spread = 20.0
+initial_velocity_min = 250.0
+initial_velocity_max = 250.0
+angular_velocity_min = 1.0
+angular_velocity_max = 226.52
+gravity = Vector3(0, 0, 0)
+color_ramp = SubResource("GradientTexture1D_e5ykp")
+
+[node name="Explosion2dParticle" type="GPUParticles2D"]
+material = SubResource("CanvasItemMaterial_xmrvs")
+position = Vector2(7, -10)
+amount = 15
+process_material = SubResource("ParticleProcessMaterial_dmkpn")
+texture = ExtResource("1_syvwb")
+explosiveness = 0.05

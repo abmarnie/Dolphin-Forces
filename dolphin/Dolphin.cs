@@ -15,6 +15,10 @@ public partial class Dolphin : RigidBody3D {
     public static bool IsCameraUnderwater => _camera.GlobalPosition.Y <= -0.3f;
     private static Camera3D _camera = null!;
 
+    public event Action? OnJump;
+    public event Action? OnWaterEntry;
+    public bool IsUnderwater => GlobalPosition.Y <= 0;
+
     private AnimationTree _animTree = null!;
 
     private Godot.Environment _underwaterEnv = null!;
@@ -24,18 +28,24 @@ public partial class Dolphin : RigidBody3D {
     private const float DEFAULT_SPEED = 25f;
     private float _speed = DEFAULT_SPEED;
 
-    private const float LARGE_TORPEDO_COOLDOWN = 3f;
+    private const float LARGE_TORPEDO_COOLDOWN = 0.1f;
     private PackedScene _largeTorpedoPackedScene = GD.Load<PackedScene>("res://torpedos/large_torpedo.tscn");
     private Node3D _largeTorpedoSpawnLocation = null!;
     private float _lastLargeTorpedoFireTime;
 
-    private bool IsUnderwater => GlobalPosition.Y <= 0;
+
+    private AudioStream _robot_initial_load_sfx = null!;
+    private AudioStream _splash_sfx = null!;
+    private bool _isSplashSoundLoaded;
+
+    private AudioStreamPlayer3D _audioStreamPlayer = null!;
 
     public override void _Input(InputEvent @event) {
         if (@event is InputEventMouseMotion mouseMotion && IsUnderwater) {
             _rotationFromMouse.Y -= mouseMotion.Relative.X * _mouseSens;
             _rotationFromMouse.X -= mouseMotion.Relative.Y * _mouseSens;
-            _rotationFromMouse.X = Mathf.Clamp(_rotationFromMouse.X, -Mathf.Pi / 2, Mathf.Pi / 2);
+            var lookAngleBounds = Mathf.DegToRad(75.0f);
+            _rotationFromMouse.X = Mathf.Clamp(_rotationFromMouse.X, -lookAngleBounds, lookAngleBounds);
         }
 
         if (@event.IsActionReleased("ui_cancel")) {
@@ -93,10 +103,27 @@ public partial class Dolphin : RigidBody3D {
         _lastLargeTorpedoFireTime = -LARGE_TORPEDO_COOLDOWN;
         _largeTorpedoSpawnLocation = GetNode<Node3D>("%LargeTorpedoSpawnLocation");
         Debug.Assert(_largeTorpedoSpawnLocation is not null);
+
+        _audioStreamPlayer = GetNode<AudioStreamPlayer3D>("%AudioStreamPlayer3D");
+        _audioStreamPlayer.Play();
+        _audioStreamPlayer.Finished += LoadSplashSound;
     }
 
 
+    private void LoadSplashSound() {
+        if (_isSplashSoundLoaded) {
+            _audioStreamPlayer.Finished -= LoadSplashSound;
+            return;
+        }
+        _splash_sfx = ResourceLoader.Load<AudioStream>("res://nathan/splash.mp3");
+        _audioStreamPlayer.Stream = _splash_sfx;
+    }
+
     public override void _PhysicsProcess(double delta) {
+        const float defaultFov = 75;
+        const float fovScalingFactor = 0.25f; // Adjust this value as needed
+        _camera.Fov = defaultFov + (defaultFov * (_speed - DEFAULT_SPEED) / DEFAULT_SPEED * fovScalingFactor);
+
         const float animSpeedTuningScale = 3f;
         _animTree.Set("parameters/speed_scale/scale", animSpeedTuningScale * _speed / DEFAULT_SPEED);
 
@@ -105,6 +132,11 @@ public partial class Dolphin : RigidBody3D {
         } else {
             const float airborneRotSpeed = 2f;
             Rotation -= airborneRotSpeed * (float)delta * Vector3.Right;
+
+            var radians75 = Mathf.DegToRad(75.0f);
+            Rotation = Rotation with { X = Mathf.Clamp(Rotation.X, -radians75, radians75) };
+            // Rotation = new Vector3(Mathf.Clamp(Rotation.X, -radians75, radians75), Rotation.Y, Rotation.Y);
+
             _rotationFromMouse = Rotation;
             _animTree.Set("parameters/speed_scale/scale", 0f);
         }
@@ -116,16 +148,25 @@ public partial class Dolphin : RigidBody3D {
     private bool _impulsedApplied;
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
+
         if (IsUnderwater) {
+            if (_impulsedApplied) {
+                _audioStreamPlayer.Play();
+                OnWaterEntry?.Invoke();
+            }
             state.LinearVelocity = -_speed * Basis.Z;
             GravityScale = 0.0f;
             _impulsedApplied = false;
         } else {
-            if (!_impulsedApplied)
+            if (!_impulsedApplied) {
+                _audioStreamPlayer.Play();
+                OnJump?.Invoke();
                 ApplyImpulse(-2f * _speed * Basis.Z);
+            }
             GravityScale = 9.8f;
             _impulsedApplied = true;
         }
+
     }
 
 }

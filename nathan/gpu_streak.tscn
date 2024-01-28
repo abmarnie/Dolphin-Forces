@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://0clph2x8qna"]
+
+[ext_resource type="Texture2D" uid="uid://2hopn385wimj" path="res://nathan/bubble_2.png" id="1_on2lk"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2wso6"]
+gravity = Vector3(0, 0, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qa33n"]
+transparency = 1
+cull_mode = 2
+albedo_texture = ExtResource("1_on2lk")
+
+[sub_resource type="QuadMesh" id="QuadMesh_fajff"]
+material = SubResource("StandardMaterial3D_qa33n")
+size = Vector2(0.05, 1)
+orientation = 1
+
+[node name="GpuStreak" type="GPUParticles3D"]
+amount = 7
+lifetime = 0.96
+process_material = SubResource("ParticleProcessMaterial_2wso6")
+draw_pass_1 = SubResource("QuadMesh_fajff")

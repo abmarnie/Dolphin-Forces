@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cedh0ufnngimr"]
+
+[ext_resource type="AudioStream" uid="uid://dioum0gp840cc" path="res://nathan/Game Jam Edit 1 Export 1.wav" id="1_25pel"]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer"]
+stream = ExtResource("1_25pel")
+volume_db = -5.0
+autoplay = true

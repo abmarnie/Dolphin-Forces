@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://bth55vlfy2a5l"]
+
+[ext_resource type="Script" path="res://boats/Boat.cs" id="1_tisu7"]
+[ext_resource type="ArrayMesh" uid="uid://bkpysn8jrejls" path="res://boats/boats_YellowStripedBoatMesh.tres" id="2_er8su"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
+radius = 5.0
+height = 24.355
+
+[node name="YellowStripedBoat" type="RigidBody3D"]
+gravity_scale = 0.0
+can_sleep = false
+script = ExtResource("1_tisu7")
+_boatSpeed = 100.0
+_changeTargetInterval = 3.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+mesh = ExtResource("2_er8su")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -4.62861)
+shape = SubResource("CapsuleShape3D_7vlyt")

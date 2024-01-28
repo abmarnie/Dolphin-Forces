@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://ctt3g74juqgbn"]
-
-[ext_resource type="ArrayMesh" uid="uid://b6e8pcf0n1ly6" path="res://boats/boats_CamoBoatMesh.tres" id="1_2p2ce"]
-
-[node name="CamoBoat" type="Node3D"]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = ExtResource("1_2p2ce")

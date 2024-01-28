@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://debx6cdvrib6h"]
+[gd_scene load_steps=8 format=3 uid="uid://debx6cdvrib6h"]
 
 [ext_resource type="Script" path="res://torpedos/LargeTorpedo.cs" id="1_igl7d"]
 [ext_resource type="Texture2D" uid="uid://bajkpxxfw2wmu" path="res://textures/BoatTextures (1).png" id="1_lxxe1"]
+[ext_resource type="AudioStream" uid="uid://cq53bp4nfumve" path="res://nathan/torpedo-woosh_D_minor.wav" id="3_065r0"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sqfm0"]
 resource_name = "Material"
@@ -64,3 +65,7 @@ skeleton = NodePath("")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1.91069e-15, 4.37114e-08, -1, 1, -4.37114e-08, 0, -4.37114e-08, -1, -4.37114e-08, 0, 0, -1.41)
 shape = SubResource("CapsuleShape3D_c2eq7")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("3_065r0")
