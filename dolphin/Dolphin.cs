@@ -33,7 +33,6 @@ public partial class Dolphin : RigidBody3D {
     private Node3D _largeTorpedoSpawnLocation = null!;
     private float _lastLargeTorpedoFireTime;
 
-
     private AudioStream _splash_sfx = ResourceLoader.Load<AudioStream>("res://nathan/splash.mp3");
 
     private bool _isSplashSoundLoaded;
@@ -42,6 +41,12 @@ public partial class Dolphin : RigidBody3D {
 
     public static Boat NearestObjective = null!;
     private static Sprite3D _objectiveArrow = null!;
+
+    private const float _cutsceneTimeLength = 10f;
+    public static bool CutscenePlaying => _cutsceneTimer < _cutsceneTimeLength;
+    private static float _cutsceneTimer = 0f;
+
+    private static ColorRect _introColorRect = null!;
 
 
     public override void _Input(InputEvent @event) {
@@ -118,6 +123,9 @@ public partial class Dolphin : RigidBody3D {
 
         MoneyLabel = this.GetDescendant<Label>()!;
         Debug.Assert(MoneyLabel is not null);
+
+        _introColorRect = this.GetDescendant<ColorRect>()!;
+        Debug.Assert(_introColorRect is not null);
     }
 
     // private void LoadSplashSound() {
@@ -130,6 +138,16 @@ public partial class Dolphin : RigidBody3D {
     // }
 
     public override void _PhysicsProcess(double delta) {
+        _cutsceneTimer += (float)delta;
+
+        if (_cutsceneTimer < _cutsceneTimeLength) {
+            _introColorRect.Visible = true;
+            return;
+        } else {
+            _introColorRect.Visible = false;
+        }
+
+
         const float defaultFov = 75;
         const float fovScalingFactor = 0.25f; // Adjust this value as needed
         _camera.Fov = defaultFov + (defaultFov * (_speed - DEFAULT_SPEED) / DEFAULT_SPEED * fovScalingFactor);
