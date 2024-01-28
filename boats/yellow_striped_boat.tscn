@@ -36,3 +36,4 @@ emitting = false
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("5_kkmsq")
+bus = &"SFX"

@@ -46,7 +46,7 @@ surface_material_override/0 = SubResource("ShaderMaterial_ymolu")
 
 [node name="Dolphin" parent="." instance=ExtResource("2_ofsg3")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 100, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 400, 0)
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
@@ -198,6 +198,8 @@ unique_name_in_owner = true
 script = ExtResource("6_kti70")
 
 [node name="FlagBoat" parent="Boats/FlagBoats" instance=ExtResource("8_jtem8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -37.5158)
+_boatSpeed = 0.0
 
 [node name="FlagBoat2" parent="Boats/FlagBoats" instance=ExtResource("8_jtem8")]
 transform = Transform3D(-0.909236, 0, 0.416281, 0, 1, 0, -0.416281, 0, -0.909236, 0, 0, 50)
@@ -455,3 +457,4 @@ _changeTargetInterval = 4.0
 [node name="AudioStreamPlayer" parent="." instance=ExtResource("9_w7vuu")]
 unique_name_in_owner = true
 autoplay = false
+bus = &"OST"

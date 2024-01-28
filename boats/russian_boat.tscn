@@ -28,6 +28,7 @@ shape = SubResource("CapsuleShape3D_7vlyt")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("3_k7uab")
+bus = &"SFX"
 
 [node name="Explosion3dParticle" parent="." instance=ExtResource("4_0b2oa")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.3487)

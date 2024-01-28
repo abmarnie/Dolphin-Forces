@@ -4,6 +4,11 @@ extends CanvasLayer
 @onready var color_rect: ColorRect = $ColorRect
 @onready var settings_panel: PanelContainer = $ColorRect/SettingsPanelContainer
 @onready var main_container: VBoxContainer = $ColorRect/MainVboxContainer
+
+@onready var resume_btn: Button = $ColorRect/Resume
+@onready var settings_btn: Button = $ColorRect/Settings
+@onready var quit_btn: Button = $ColorRect/Quit
+
 @onready var fullscreen_toggle: CheckButton = $ColorRect/SettingsPanelContainer/VBoxContainer/HBoxContainer/FullscreenCheckButton
 @onready var mouse_sens_label: Label = $ColorRect/SettingsPanelContainer/VBoxContainer/MouseSensLabel
 @onready var mouse_sens_h_slider: HSlider = $ColorRect/SettingsPanelContainer/VBoxContainer/MouseSensHSlider
@@ -20,6 +25,7 @@ func _ready():
 	visible = false
 	settings_panel.visible = false
 	cheats_panel_container.connect("new_scene_loaded", pause)
+
 
 func _input(event: InputEvent):
 	if event.is_action_released("pause"):
@@ -46,6 +52,9 @@ func _process(_delta: float):
 			% int(mouse_sens_h_slider.value * 100)
 			
 	main_container.visible = !settings_panel.visible
+	resume_btn.visible = !settings_panel.visible
+	settings_btn.visible = !settings_panel.visible
+	quit_btn.visible = !settings_panel.visible
 
 func _on_quit_pressed():
 	get_tree().quit()
@@ -67,11 +76,13 @@ func _on_settings_fullscreen_check_button_toggled(toggled_on: bool):
 
 func _on_mouse_sens_h_slider_value_changed(value: float):
 	LookInput.mouse_sens = value
+	player._mouseSens = value
 	
 func pause():
 	visible = !get_tree().paused
 	get_tree().paused = !get_tree().paused
 	paused = !paused
+	
 	if paused:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	else:

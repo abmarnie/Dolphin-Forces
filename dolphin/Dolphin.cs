@@ -19,7 +19,7 @@ public partial class Dolphin : RigidBody3D {
     private AnimationTree _animTree = null!;
 
     private Godot.Environment _underwaterEnv = null!;
-    private float _mouseSens = 0.001f;
+    public float _mouseSens = 1;
     private Vector3 _rotationFromMouse;
 
     private const float DEFAULT_SPEED = 25f;
@@ -57,7 +57,10 @@ public partial class Dolphin : RigidBody3D {
     public override void _Input(InputEvent @event) {
         if (_cutsceneTimer > _cutsceneTimeLength) {
             if (@event.IsActionReleased("attack")) {
+                if (!_playerRespondedToCutsceneFinish)
+                    _audioStreamPlayer.Play();
                 _playerRespondedToCutsceneFinish = true;
+
             }
         }
 
@@ -65,8 +68,8 @@ public partial class Dolphin : RigidBody3D {
             return;
 
         if (@event is InputEventMouseMotion mouseMotion && IsUnderwater) {
-            _rotationFromMouse.Y -= mouseMotion.Relative.X * _mouseSens;
-            _rotationFromMouse.X -= mouseMotion.Relative.Y * _mouseSens;
+            _rotationFromMouse.Y -= mouseMotion.Relative.X * _mouseSens * 0.005f;
+            _rotationFromMouse.X -= mouseMotion.Relative.Y * _mouseSens * 0.005f;
             var lookAngleBounds = Mathf.DegToRad(75.0f);
             _rotationFromMouse.X = Mathf.Clamp(_rotationFromMouse.X, -lookAngleBounds, lookAngleBounds);
             GD.Print(_rotationFromMouse.X);
@@ -179,15 +182,13 @@ public partial class Dolphin : RigidBody3D {
             }
             return;
         } else if (_playerRespondedToCutsceneFinish && _cutsceneEndTimer < _cutsceneEndTimeLength) {
-            if (_firstPhysicsTime)
-                _audioStreamPlayer.Play();
             _cutsceneEndTimer += (float)delta;
             _introlabelAlpha -= alphaDelta / 1.5f;
             _introlColorRectAlpha -= alphaDelta / 1.5f;
             _continueLabelAlpha -= alphaDelta / 1.5f;
             _introColorRect.Modulate = new Color(1, 1, 1, _introlColorRectAlpha);
             _introLabel.Modulate = new Color(1, 1, 1, _introlabelAlpha);
-            // _continueLabel.Modulate = new Color(1, 1, 1, _continueLabelAlpha);
+            _continueLabel.Modulate = new Color(1, 1, 1, 1);
         } else {
             _firstPhysicsTime = false;
             _introColorRect.Visible = false;
