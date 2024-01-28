@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://li41t3qh0gpx"]
+[gd_scene load_steps=23 format=3 uid="uid://li41t3qh0gpx"]
 
 [ext_resource type="Script" path="res://dolphin/Dolphin.cs" id="1_8jkiy"]
 [ext_resource type="Texture2D" uid="uid://bk8rj8tcs54w7" path="res://images/shared_people_texture.png" id="2_4a05c"]
@@ -6,6 +6,7 @@
 [ext_resource type="AnimationNodeBlendTree" uid="uid://b5ib5ceft8sax" path="res://dolphin/fish_swim_animation.tres" id="3_f6iox"]
 [ext_resource type="Texture2D" uid="uid://qqhcat7mxm0k" path="res://images/pngtree-arrow-shape-red-simple-direction-png-image_5215909.png" id="5_765m7"]
 [ext_resource type="AudioStream" uid="uid://bu8iiunvcp8dy" path="res://nathan/mixkit-futuristic-robot-movement-1412.wav" id="5_i1idw"]
+[ext_resource type="Script" path="res://kevin/juiced_camera.gd" id="7_nd2yl"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0od2h"]
 radius = 1.3
@@ -217,31 +218,32 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 
 shape = SubResource("CapsuleShape3D_0od2h")
 
 [node name="Dolphins" type="Node3D" parent="."]
-transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 0, 0)
+unique_name_in_owner = true
 
 [node name="Armature" type="Node3D" parent="Dolphins"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 
 [node name="Skeleton3D" type="Skeleton3D" parent="Dolphins/Armature"]
 bones/0/name = "Root"
 bones/0/parent = -1
 bones/0/rest = Transform3D(1, 0, 2.38419e-07, 0, 1, 0, -2.38419e-07, 0, 1, 0, -0.515753, 0)
 bones/0/enabled = true
-bones/0/position = Vector3(2.71047e-07, -0.447648, -6.46226e-14)
-bones/0/rotation = Quaternion(0.0453392, 1.19087e-07, -8.5395e-09, 0.998972)
+bones/0/position = Vector3(2.71047e-07, -0.475033, -6.46226e-14)
+bones/0/rotation = Quaternion(0.0557049, 1.19024e-07, -9.77449e-09, 0.998447)
 bones/0/scale = Vector3(1, 1, 1)
 bones/1/name = "Body"
 bones/1/parent = 0
 bones/1/rest = Transform3D(1, -2.38349e-07, -6.45915e-07, -6.51492e-07, -0.0241905, -0.999707, 2.22654e-07, 0.999707, -0.0241905, -2.95825e-08, 0.629179, 0.124078)
 bones/1/enabled = true
 bones/1/position = Vector3(-2.95825e-08, 0.629179, 0.124078)
-bones/1/rotation = Quaternion(0.733828, 0.000940914, -0.00147533, 0.679333)
+bones/1/rotation = Quaternion(0.728337, 0.00248601, -0.00333247, 0.685207)
 bones/1/scale = Vector3(1, 1, 1)
 bones/2/name = "Head"
 bones/2/parent = 1
 bones/2/rest = Transform3D(1, 3.02714e-09, -6.358e-08, -3.32245e-09, 0.999989, -0.00464511, 6.35652e-08, 0.00464511, 0.999989, -1.77636e-15, 0.967108, 3.72529e-09)
 bones/2/enabled = true
 bones/2/position = Vector3(-1.77636e-15, 0.967108, 3.72529e-09)
-bones/2/rotation = Quaternion(0.0383138, 0.00146165, -0.000133067, 0.999265)
+bones/2/rotation = Quaternion(0.00852498, 0.00152704, -9.61718e-05, 0.999963)
 bones/2/scale = Vector3(1, 1, 1)
 bones/3/name = "topjaw"
 bones/3/parent = 2
@@ -289,29 +291,29 @@ bones/9/name = "Bone.004"
 bones/9/parent = 0
 bones/9/rest = Transform3D(1, 2.38415e-07, -1.35058e-09, 7.10543e-15, 0.00566465, 0.999984, 2.38419e-07, -0.999984, 0.00566465, 2.42158e-08, 0.629179, -0.101568)
 bones/9/enabled = true
-bones/9/position = Vector3(2.42157e-08, 0.62821, -0.101568)
-bones/9/rotation = Quaternion(-0.635161, 8.7781e-06, -8.54638e-06, 0.77238)
+bones/9/position = Vector3(2.28331e-08, 0.628738, -0.101568)
+bones/9/rotation = Quaternion(-0.633307, -9.22185e-08, -7.5454e-08, 0.7739)
 bones/9/scale = Vector3(1, 1, 1)
 bones/10/name = "Thigh"
 bones/10/parent = 9
 bones/10/rest = Transform3D(1, -6.2244e-17, 3.35833e-14, -3.30265e-16, 0.999932, 0.0116875, -3.35817e-14, -0.0116875, 0.999932, 4.63221e-23, 0.956004, -2.79397e-09)
 bones/10/enabled = true
 bones/10/position = Vector3(4.63221e-23, 0.956004, -2.79397e-09)
-bones/10/rotation = Quaternion(-0.0635082, -1.04336e-12, -1.08709e-13, 0.997981)
+bones/10/rotation = Quaternion(-0.042972, 1.78212e-14, 1.5004e-15, 0.999076)
 bones/10/scale = Vector3(1, 1, 1)
 bones/11/name = "leg"
 bones/11/parent = 10
 bones/11/rest = Transform3D(1, 1.27315e-15, -3.27851e-19, -1.27181e-15, 0.998957, 0.0456479, 5.84443e-17, -0.0456479, 0.998957, -2.28509e-23, 0.899142, -9.31323e-09)
 bones/11/enabled = true
 bones/11/position = Vector3(-2.28509e-23, 0.899142, -9.31323e-09)
-bones/11/rotation = Quaternion(-0.136619, -4.29478e-13, -9.36038e-14, 0.990624)
+bones/11/rotation = Quaternion(-0.0906667, 3.95942e-15, 2.40858e-15, 0.995881)
 bones/11/scale = Vector3(1, 1, 1)
 bones/12/name = "foot"
 bones/12/parent = 11
 bones/12/rest = Transform3D(1, -1.34181e-15, -2.26925e-19, 1.34024e-15, 0.998842, -0.0481181, 6.47919e-17, 0.0481181, 0.998842, 4.02837e-22, 0.949682, -1.49012e-08)
 bones/12/enabled = true
 bones/12/position = Vector3(4.02837e-22, 0.949682, -1.49012e-08)
-bones/12/rotation = Quaternion(-0.19121, -1.55391e-13, -1.97204e-14, 0.981549)
+bones/12/rotation = Quaternion(-0.152799, 3.72104e-15, 4.69956e-15, 0.988257)
 bones/12/scale = Vector3(1, 1, 1)
 
 [node name="CyborgDolphin" type="MeshInstance3D" parent="Dolphins/Armature/Skeleton3D"]
@@ -391,3 +393,10 @@ spot_angle = 15.0
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 unique_name_in_owner = true
 stream = ExtResource("5_i1idw")
+
+[node name="Desired_look_position" type="Marker3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+top_level = true
+current = true
+script = ExtResource("7_nd2yl")
