@@ -1,16 +1,17 @@
-[gd_scene load_steps=15 format=3 uid="uid://cc6ij0vhq6iyh"]
+[gd_scene load_steps=16 format=3 uid="uid://cc6ij0vhq6iyh"]
 
 [ext_resource type="Script" path="res://main/Main.cs" id="1_11si0"]
 [ext_resource type="Environment" uid="uid://cefclkylmgwxx" path="res://main/main_environment.tres" id="2_3coom"]
 [ext_resource type="PackedScene" uid="uid://li41t3qh0gpx" path="res://dolphin/dolphin.tscn" id="2_ofsg3"]
 [ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://water/water_caustic_visualshader.tres" id="5_aptly"]
 [ext_resource type="PackedScene" uid="uid://dosonc0o3fxy5" path="res://terrain/terrain.tscn" id="5_flkfk"]
-[ext_resource type="PackedScene" uid="uid://boonqn8pmnf32" path="res://kevin/fish_swarm_guide.tscn" id="6_gbhga"]
+[ext_resource type="Script" path="res://main/ObjectiveManager.cs" id="6_kti70"]
 [ext_resource type="PackedScene" uid="uid://stofy3ce1kuw" path="res://boats/camo_boat.tscn" id="7_82of6"]
 [ext_resource type="PackedScene" uid="uid://dd35f5c64qkfl" path="res://boats/flag_boat.tscn" id="8_jtem8"]
 [ext_resource type="PackedScene" uid="uid://c3p3ma6lp7k1h" path="res://boats/russian_boat.tscn" id="8_scbwa"]
 [ext_resource type="PackedScene" uid="uid://bth55vlfy2a5l" path="res://boats/yellow_striped_boat.tscn" id="9_aahfs"]
 [ext_resource type="PackedScene" uid="uid://cedh0ufnngimr" path="res://nathan/audio_stream_player.tscn" id="9_w7vuu"]
+[ext_resource type="AudioStream" uid="uid://jb0sfvh1cacw" path="res://nathan/game_jam_metal Edit 1 Export 2.wav" id="12_v5gu8"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y0os8"]
 transparency = 1
@@ -40,20 +41,20 @@ shadow_enabled = true
 environment = ExtResource("2_3coom")
 
 [node name="WaterSurface" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1000, 0, 1000)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 399.906, 0, 479.907)
 mesh = SubResource("PlaneMesh_g2oyq")
 surface_material_override/0 = SubResource("ShaderMaterial_ymolu")
 
 [node name="Dolphin" parent="." instance=ExtResource("2_ofsg3")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -144.469, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 400, 0)
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
 
 [node name="Terrain" type="Node3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 350, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -600.094, 350, -520.093)
 
 [node name="UnderwaterTerrain" parent="Terrain" instance=ExtResource("5_flkfk")]
 unique_name_in_owner = true
@@ -74,7 +75,8 @@ transform = Transform3D(-0.987136, -0.0277631, -0.157452, 0, 0.984808, -0.173648
 [node name="Boats" type="Node3D" parent="."]
 
 [node name="CamoBoats" type="Node3D" parent="Boats"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1250, 0, 1250)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, 100)
+script = ExtResource("6_kti70")
 
 [node name="CamoBoat" parent="Boats/CamoBoats" instance=ExtResource("7_82of6")]
 transform = Transform3D(0.114937, 0, -0.993373, 0, 1, 0, 0.993373, 0, 0.114937, 200, 0, 0)
@@ -96,7 +98,105 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200, 0, 500)
 _boatSpeed = 35.0
 _changeTargetInterval = 44.0
 
+[node name="CamoBoats5" type="Node3D" parent="Boats"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 997.717, 0, -440.068)
+script = ExtResource("6_kti70")
+
+[node name="CamoBoat" parent="Boats/CamoBoats5" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.114937, 0, -0.993373, 0, 1, 0, 0.993373, 0, 0.114937, 200, 0, 0)
+_boatSpeed = 15.0
+_changeTargetInterval = 25.0
+
+[node name="CamoBoat2" parent="Boats/CamoBoats5" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.766044, 0, -0.642788, 0, 1, 0, 0.642788, 0, 0.766044, 32, 0, 150)
+_boatSpeed = 27.0
+_changeTargetInterval = 33.0
+
+[node name="CamoBoat3" parent="Boats/CamoBoats5" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.267238, 0, -0.96363, 0, 1, 0, 0.96363, 0, 0.267238, -200, 0, -150)
+_boatSpeed = 33.0
+_changeTargetInterval = 23.0
+
+[node name="CamoBoat4" parent="Boats/CamoBoats5" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200, 0, 500)
+_boatSpeed = 35.0
+_changeTargetInterval = 44.0
+
+[node name="CamoBoats4" type="Node3D" parent="Boats"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 508.724, 0, 616.576)
+script = ExtResource("6_kti70")
+
+[node name="CamoBoat" parent="Boats/CamoBoats4" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.114937, 0, -0.993373, 0, 1, 0, 0.993373, 0, 0.114937, 200, 0, 0)
+_boatSpeed = 15.0
+_changeTargetInterval = 25.0
+
+[node name="CamoBoat2" parent="Boats/CamoBoats4" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.766044, 0, -0.642788, 0, 1, 0, 0.642788, 0, 0.766044, 32, 0, 150)
+_boatSpeed = 27.0
+_changeTargetInterval = 33.0
+
+[node name="CamoBoat3" parent="Boats/CamoBoats4" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.267238, 0, -0.96363, 0, 1, 0, 0.96363, 0, 0.267238, -200, 0, -150)
+_boatSpeed = 33.0
+_changeTargetInterval = 23.0
+
+[node name="CamoBoat4" parent="Boats/CamoBoats4" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200, 0, 500)
+_boatSpeed = 35.0
+_changeTargetInterval = 44.0
+
+[node name="CamoBoats3" type="Node3D" parent="Boats"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 603.014, 0, -318.781)
+script = ExtResource("6_kti70")
+
+[node name="CamoBoat" parent="Boats/CamoBoats3" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.114937, 0, -0.993373, 0, 1, 0, 0.993373, 0, 0.114937, 200, 0, 0)
+_boatSpeed = 15.0
+_changeTargetInterval = 25.0
+
+[node name="CamoBoat2" parent="Boats/CamoBoats3" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.766044, 0, -0.642788, 0, 1, 0, 0.642788, 0, 0.766044, 32, 0, 150)
+_boatSpeed = 27.0
+_changeTargetInterval = 33.0
+
+[node name="CamoBoat3" parent="Boats/CamoBoats3" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.267238, 0, -0.96363, 0, 1, 0, 0.96363, 0, 0.267238, -200, 0, -150)
+_boatSpeed = 33.0
+_changeTargetInterval = 23.0
+
+[node name="CamoBoat4" parent="Boats/CamoBoats3" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200, 0, 500)
+_boatSpeed = 35.0
+_changeTargetInterval = 44.0
+
+[node name="CamoBoats2" type="Node3D" parent="Boats"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -472.804, 0, -296.184)
+script = ExtResource("6_kti70")
+
+[node name="CamoBoat" parent="Boats/CamoBoats2" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.114937, 0, -0.993373, 0, 1, 0, 0.993373, 0, 0.114937, 200, 0, 0)
+_boatSpeed = 15.0
+_changeTargetInterval = 25.0
+
+[node name="CamoBoat2" parent="Boats/CamoBoats2" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.766044, 0, -0.642788, 0, 1, 0, 0.642788, 0, 0.766044, 32, 0, 150)
+_boatSpeed = 27.0
+_changeTargetInterval = 33.0
+
+[node name="CamoBoat3" parent="Boats/CamoBoats2" instance=ExtResource("7_82of6")]
+transform = Transform3D(0.267238, 0, -0.96363, 0, 1, 0, 0.96363, 0, 0.267238, -200, 0, -150)
+_boatSpeed = 33.0
+_changeTargetInterval = 23.0
+
+[node name="CamoBoat4" parent="Boats/CamoBoats2" instance=ExtResource("7_82of6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200, 0, 500)
+_boatSpeed = 35.0
+_changeTargetInterval = 44.0
+
 [node name="FlagBoats" type="Node3D" parent="Boats"]
+unique_name_in_owner = true
+script = ExtResource("6_kti70")
 
 [node name="FlagBoat" parent="Boats/FlagBoats" instance=ExtResource("8_jtem8")]
 
@@ -110,8 +210,128 @@ _boatSpeed = 2.0
 [node name="FlagBoat4" parent="Boats/FlagBoats" instance=ExtResource("8_jtem8")]
 transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
 
+[node name="FlagBoats7" type="Node3D" parent="Boats"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 486.41, 0, 0)
+script = ExtResource("6_kti70")
+
+[node name="FlagBoat" parent="Boats/FlagBoats7" instance=ExtResource("8_jtem8")]
+
+[node name="FlagBoat2" parent="Boats/FlagBoats7" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.909236, 0, 0.416281, 0, 1, 0, -0.416281, 0, -0.909236, 0, 0, 50)
+
+[node name="FlagBoat3" parent="Boats/FlagBoats7" instance=ExtResource("8_jtem8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
+_boatSpeed = 2.0
+
+[node name="FlagBoat4" parent="Boats/FlagBoats7" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
+
+[node name="FlagBoats8" type="Node3D" parent="Boats"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 745.671, 0, 400.528)
+script = ExtResource("6_kti70")
+
+[node name="FlagBoat" parent="Boats/FlagBoats8" instance=ExtResource("8_jtem8")]
+
+[node name="FlagBoat2" parent="Boats/FlagBoats8" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.909236, 0, 0.416281, 0, 1, 0, -0.416281, 0, -0.909236, 0, 0, 50)
+
+[node name="FlagBoat3" parent="Boats/FlagBoats8" instance=ExtResource("8_jtem8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
+_boatSpeed = 2.0
+
+[node name="FlagBoat4" parent="Boats/FlagBoats8" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
+
+[node name="FlagBoats6" type="Node3D" parent="Boats"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1153.12, 0, 0)
+script = ExtResource("6_kti70")
+
+[node name="FlagBoat" parent="Boats/FlagBoats6" instance=ExtResource("8_jtem8")]
+
+[node name="FlagBoat2" parent="Boats/FlagBoats6" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.909236, 0, 0.416281, 0, 1, 0, -0.416281, 0, -0.909236, 0, 0, 50)
+
+[node name="FlagBoat3" parent="Boats/FlagBoats6" instance=ExtResource("8_jtem8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
+_boatSpeed = 2.0
+
+[node name="FlagBoat4" parent="Boats/FlagBoats6" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
+
+[node name="FlagBoats5" type="Node3D" parent="Boats"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -375.187)
+script = ExtResource("6_kti70")
+
+[node name="FlagBoat" parent="Boats/FlagBoats5" instance=ExtResource("8_jtem8")]
+
+[node name="FlagBoat2" parent="Boats/FlagBoats5" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.909236, 0, 0.416281, 0, 1, 0, -0.416281, 0, -0.909236, 0, 0, 50)
+
+[node name="FlagBoat3" parent="Boats/FlagBoats5" instance=ExtResource("8_jtem8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
+_boatSpeed = 2.0
+
+[node name="FlagBoat4" parent="Boats/FlagBoats5" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
+
+[node name="FlagBoats4" type="Node3D" parent="Boats"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 749.255, 0, 140.144)
+script = ExtResource("6_kti70")
+
+[node name="FlagBoat" parent="Boats/FlagBoats4" instance=ExtResource("8_jtem8")]
+
+[node name="FlagBoat2" parent="Boats/FlagBoats4" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.909236, 0, 0.416281, 0, 1, 0, -0.416281, 0, -0.909236, 0, 0, 50)
+
+[node name="FlagBoat3" parent="Boats/FlagBoats4" instance=ExtResource("8_jtem8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
+_boatSpeed = 2.0
+
+[node name="FlagBoat4" parent="Boats/FlagBoats4" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
+
+[node name="FlagBoats3" type="Node3D" parent="Boats"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 530.463, 0, -418.434)
+script = ExtResource("6_kti70")
+
+[node name="FlagBoat" parent="Boats/FlagBoats3" instance=ExtResource("8_jtem8")]
+
+[node name="FlagBoat2" parent="Boats/FlagBoats3" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.909236, 0, 0.416281, 0, 1, 0, -0.416281, 0, -0.909236, 0, 0, 50)
+
+[node name="FlagBoat3" parent="Boats/FlagBoats3" instance=ExtResource("8_jtem8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
+_boatSpeed = 2.0
+
+[node name="FlagBoat4" parent="Boats/FlagBoats3" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
+
+[node name="FlagBoats2" type="Node3D" parent="Boats"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 484.874, 0, 273.95)
+script = ExtResource("6_kti70")
+
+[node name="FlagBoat" parent="Boats/FlagBoats2" instance=ExtResource("8_jtem8")]
+
+[node name="FlagBoat2" parent="Boats/FlagBoats2" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.909236, 0, 0.416281, 0, 1, 0, -0.416281, 0, -0.909236, 0, 0, 50)
+
+[node name="FlagBoat3" parent="Boats/FlagBoats2" instance=ExtResource("8_jtem8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
+_boatSpeed = 2.0
+
+[node name="FlagBoat4" parent="Boats/FlagBoats2" instance=ExtResource("8_jtem8")]
+transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
+
 [node name="RussianBoats" type="Node3D" parent="Boats"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1250, 0, 568.028)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 0, 200)
+script = ExtResource("6_kti70")
 
 [node name="RussianBoat" parent="Boats/RussianBoats" instance=ExtResource("8_scbwa")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, -300)
@@ -132,8 +352,78 @@ _changeTargetInterval = 5.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100)
 _changeTargetInterval = 9.0
 
+[node name="RussianBoats4" type="Node3D" parent="Boats"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 85.7379, 0, -167.796)
+script = ExtResource("6_kti70")
+
+[node name="RussianBoat" parent="Boats/RussianBoats4" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, -300)
+_boatSpeed = 44.0
+_changeTargetInterval = 10.0
+
+[node name="RussianBoat2" parent="Boats/RussianBoats4" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200, 0, 0)
+_boatSpeed = 33.0
+_changeTargetInterval = 12.0
+
+[node name="RussianBoat3" parent="Boats/RussianBoats4" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -151.05)
+_boatSpeed = 37.0
+_changeTargetInterval = 5.0
+
+[node name="RussianBoat4" parent="Boats/RussianBoats4" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100)
+_changeTargetInterval = 9.0
+
+[node name="RussianBoats2" type="Node3D" parent="Boats"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 200, 0, 874.108)
+script = ExtResource("6_kti70")
+
+[node name="RussianBoat" parent="Boats/RussianBoats2" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, -300)
+_boatSpeed = 44.0
+_changeTargetInterval = 10.0
+
+[node name="RussianBoat2" parent="Boats/RussianBoats2" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200, 0, 0)
+_boatSpeed = 33.0
+_changeTargetInterval = 12.0
+
+[node name="RussianBoat3" parent="Boats/RussianBoats2" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -151.05)
+_boatSpeed = 37.0
+_changeTargetInterval = 5.0
+
+[node name="RussianBoat4" parent="Boats/RussianBoats2" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100)
+_changeTargetInterval = 9.0
+
+[node name="RussianBoats3" type="Node3D" parent="Boats"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 967.042, 0, 647.504)
+script = ExtResource("6_kti70")
+
+[node name="RussianBoat" parent="Boats/RussianBoats3" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 100, 0, -300)
+_boatSpeed = 44.0
+_changeTargetInterval = 10.0
+
+[node name="RussianBoat2" parent="Boats/RussianBoats3" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200, 0, 0)
+_boatSpeed = 33.0
+_changeTargetInterval = 12.0
+
+[node name="RussianBoat3" parent="Boats/RussianBoats3" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -151.05)
+_boatSpeed = 37.0
+_changeTargetInterval = 5.0
+
+[node name="RussianBoat4" parent="Boats/RussianBoats3" instance=ExtResource("8_scbwa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 100)
+_changeTargetInterval = 9.0
+
 [node name="YellowStripedBoats" type="Node3D" parent="Boats"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -379.7, 0, 1028)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -374.125, 0, 397.925)
+script = ExtResource("6_kti70")
 
 [node name="YellowStripedBoat" parent="Boats/YellowStripedBoats" instance=ExtResource("9_aahfs")]
 
@@ -147,18 +437,22 @@ _changeTargetInterval = 9.0
 _boatSpeed = 60.0
 _changeTargetInterval = 4.0
 
-[node name="FishDecorations" type="Node3D" parent="."]
+[node name="YellowStripedBoats2" type="Node3D" parent="Boats"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 868.143, 0, -110.494)
+script = ExtResource("6_kti70")
 
-[node name="FishSwarmGuide" parent="FishDecorations" instance=ExtResource("6_gbhga")]
+[node name="YellowStripedBoat" parent="Boats/YellowStripedBoats2" instance=ExtResource("9_aahfs")]
 
-[node name="FishSwarmGuide2" parent="FishDecorations" instance=ExtResource("6_gbhga")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.69358, -871.227, 0)
+[node name="YellowStripedBoat2" parent="Boats/YellowStripedBoats2" instance=ExtResource("9_aahfs")]
+_boatSpeed = 90.0
+_changeTargetInterval = 9.0
 
-[node name="FishSwarmGuide3" parent="FishDecorations" instance=ExtResource("6_gbhga")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2142.71, -871.227, 0)
+[node name="YellowStripedBoat3" parent="Boats/YellowStripedBoats2" instance=ExtResource("9_aahfs")]
 
-[node name="FishSwarmGuide4" parent="FishDecorations" instance=ExtResource("6_gbhga")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2142.71, -871.227, 2352.39)
+[node name="YellowStripedBoat4" parent="Boats/YellowStripedBoats2" instance=ExtResource("9_aahfs")]
+_boatSpeed = 60.0
+_changeTargetInterval = 4.0
 
 [node name="AudioStreamPlayer" parent="." instance=ExtResource("9_w7vuu")]
 unique_name_in_owner = true
+stream = ExtResource("12_v5gu8")

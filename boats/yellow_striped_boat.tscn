@@ -1,7 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://bth55vlfy2a5l"]
+[gd_scene load_steps=7 format=3 uid="uid://bth55vlfy2a5l"]
 
 [ext_resource type="Script" path="res://boats/Boat.cs" id="1_tisu7"]
 [ext_resource type="ArrayMesh" uid="uid://bkpysn8jrejls" path="res://boats/boats_YellowStripedBoatMesh.tres" id="2_er8su"]
+[ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://nathan/smoke_3d_particle.tscn" id="3_bt36k"]
+[ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_3d_particle.tscn" id="4_70nr6"]
+[ext_resource type="AudioStream" uid="uid://cwoiis6lucnp3" path="res://nathan/boat-horn-6204.mp3" id="5_kkmsq"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
 radius = 5.0
@@ -12,6 +15,7 @@ gravity_scale = 0.0
 can_sleep = false
 script = ExtResource("1_tisu7")
 _boatSpeed = 75.0
+Type = 3
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
@@ -20,3 +24,15 @@ mesh = ExtResource("2_er8su")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -4.62861)
 shape = SubResource("CapsuleShape3D_7vlyt")
+
+[node name="Explosion3dParticle" parent="." instance=ExtResource("3_bt36k")]
+emitting = false
+
+[node name="Explosion3dParticle2" parent="." instance=ExtResource("3_bt36k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.73061)
+emitting = false
+
+[node name="Explosion3dParticle3" parent="." instance=ExtResource("4_70nr6")]
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("5_kkmsq")

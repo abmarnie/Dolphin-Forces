@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://c3p3ma6lp7k1h"]
+[gd_scene load_steps=7 format=3 uid="uid://c3p3ma6lp7k1h"]
 
 [ext_resource type="Script" path="res://boats/Boat.cs" id="1_72smp"]
 [ext_resource type="ArrayMesh" uid="uid://mov8h77bubdl" path="res://boats/boats_RussianBoatMesh.tres" id="2_3dw23"]
 [ext_resource type="AudioStream" uid="uid://cwoiis6lucnp3" path="res://nathan/boat-horn-6204.mp3" id="3_k7uab"]
+[ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://nathan/smoke_3d_particle.tscn" id="4_0b2oa"]
+[ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_3d_particle.tscn" id="5_5akee"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
 radius = 5.0
@@ -14,6 +16,7 @@ can_sleep = false
 script = ExtResource("1_72smp")
 _boatSpeed = 50.0
 _changeTargetInterval = 20.0
+Type = 2
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
@@ -23,15 +26,14 @@ mesh = ExtResource("2_3dw23")
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -4.62861)
 shape = SubResource("CapsuleShape3D_7vlyt")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 4.492, -5.653)
-light_color = Color(0, 0, 1, 1)
-light_energy = 100.0
-
-[node name="OmniLight3D2" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 4.492, -5.653)
-light_color = Color(0.639216, 0, 0.137255, 1)
-light_energy = 100.0
-
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("3_k7uab")
+
+[node name="Explosion3dParticle" parent="." instance=ExtResource("4_0b2oa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.3487)
+emitting = false
+
+[node name="Explosion3dParticle2" parent="." instance=ExtResource("4_0b2oa")]
+emitting = false
+
+[node name="Explosion3dParticle3" parent="." instance=ExtResource("5_5akee")]

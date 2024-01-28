@@ -9,6 +9,15 @@ public partial class Boat : RigidBody3D {
     [Export] private float _boatSpeed = 30.0f;
     [Export] private float _changeTargetInterval = 5f;
 
+    public enum BoatType {
+        Flag,
+        Camo,
+        Russian,
+        Yellow
+    }
+
+    [Export] public BoatType Type;
+
     private Vector3 _targetPosition;
     private float _newtargetPositionTimer;
 
@@ -18,6 +27,8 @@ public partial class Boat : RigidBody3D {
     private Random _random = new();
 
     private Resource _destroyed_ship_texture = ResourceLoader.Load("res://nathan/skidmark.png");
+    private AudioStream _ship_explosion = ResourceLoader.Load<AudioStream>("res://nathan/explosion_F_minor.wav")!;
+
 
     private bool _justDied;
     private bool _isDead;
@@ -37,6 +48,24 @@ public partial class Boat : RigidBody3D {
             AxisLockAngularX = false;
             AxisLockAngularY = false;
             AxisLockAngularZ = false;
+            var smokeParticles = this.Descendants<GpuParticles3D>()!;
+            foreach (var sp in smokeParticles) {
+                sp.Emitting = true;
+            }
+
+            _audioStreamPlayer.Stop();
+            _audioStreamPlayer.Stream = _ship_explosion;
+            Debug.Assert(_ship_explosion is not null);
+            _audioStreamPlayer.Play();
+
+            if (Type is BoatType.Flag)
+                Main.NumDeadFlag++;
+            else if (Type is BoatType.Camo)
+                Main.NumDeadCamo++;
+            else if (Type is BoatType.Russian)
+                Main.NumDeadRussian++;
+            else if (Type is BoatType.Yellow)
+                Main.NumDeadYellow++;
         }
     }
 
@@ -49,13 +78,19 @@ public partial class Boat : RigidBody3D {
 
         // Timer crap is for sfx.
         _audioStreamPlayer = this.GetDescendant<AudioStreamPlayer3D>()!;
-        _timer = new Timer();
-        AddChild(_timer);
-        _ = _timer.Connect("timeout", new Callable(this, nameof(OnTimerTimeout)));
-        SetRandomIntervalAndStartTimer();
+        // _timer = new Timer();
+        // AddChild(_timer);
+        // _ = _timer.Connect("timeout", new Callable(this, nameof(OnTimerTimeout)));
+        // SetRandomIntervalAndStartTimer();
+
         AxisLockAngularX = true;
         AxisLockAngularY = true;
         AxisLockAngularZ = true;
+
+        var smokeParticles = this.Descendants<GpuParticles3D>()!;
+        foreach (var sp in smokeParticles) {
+            sp.Emitting = false;
+        }
 
     }
 
@@ -78,7 +113,6 @@ public partial class Boat : RigidBody3D {
 
     public override void _PhysicsProcess(double delta) {
         if (IsDead) {
-            _audioStreamPlayer?.Stop();
             return;
         }
 
@@ -105,6 +139,17 @@ public partial class Boat : RigidBody3D {
         if (IsDead) {
             return;
         }
+
+        const float waterSurfaceY = 0.0f;
+        const float underwaterThreshold = -0.5f;
+        const float upwardForceMagnitude = 10.0f;
+
+        // Apply upward force if below water surface
+        if (GlobalPosition.Y < waterSurfaceY + underwaterThreshold) {
+            var upwardForce = new Vector3(0, upwardForceMagnitude, 0);
+            state.ApplyCentralImpulse(upwardForce);
+        }
+
 
         if (GlobalPosition.DistanceTo(_targetPosition) > 1f) {
             var direction = (_targetPosition - GlobalPosition).Normalized();

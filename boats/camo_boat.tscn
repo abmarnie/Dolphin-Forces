@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://stofy3ce1kuw"]
+[gd_scene load_steps=7 format=3 uid="uid://stofy3ce1kuw"]
 
 [ext_resource type="ArrayMesh" uid="uid://b6e8pcf0n1ly6" path="res://boats/boats_CamoBoatMesh.tres" id="1_2p2ce"]
 [ext_resource type="Script" path="res://boats/Boat.cs" id="1_rxo1l"]
 [ext_resource type="AudioStream" uid="uid://qxjis40fltco" path="res://nathan/ship-horn-very-close-14642.mp3" id="3_n6a6s"]
+[ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://nathan/smoke_3d_particle.tscn" id="4_ta8xn"]
+[ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_3d_particle.tscn" id="5_mrfok"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
 radius = 5.0
@@ -13,6 +15,7 @@ gravity_scale = 0.0
 can_sleep = false
 script = ExtResource("1_rxo1l")
 _changeTargetInterval = 20.0
+Type = 1
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
@@ -22,15 +25,14 @@ mesh = ExtResource("1_2p2ce")
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -4.62861)
 shape = SubResource("CapsuleShape3D_7vlyt")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 4.492, -5.653)
-light_color = Color(0, 0, 1, 1)
-light_energy = 100.0
-
-[node name="OmniLight3D2" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 4.492, -5.653)
-light_color = Color(0.639216, 0, 0.137255, 1)
-light_energy = 100.0
-
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("3_n6a6s")
+
+[node name="Explosion3dParticle" parent="." instance=ExtResource("4_ta8xn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11)
+emitting = false
+
+[node name="Explosion3dParticle2" parent="." instance=ExtResource("4_ta8xn")]
+emitting = false
+
+[node name="Explosion3dParticle3" parent="." instance=ExtResource("5_mrfok")]

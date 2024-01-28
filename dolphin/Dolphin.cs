@@ -6,13 +6,13 @@ namespace DolphinForces;
 
 // TODO: Adjust dolphin roll when turning for flourish.
 // TODO: Speed boost ability.
-// TODO: Torpedos.
 // TODO: Settings menu (mouse sensitivity slider).
 // TODO: Sounds menu.
 
 public partial class Dolphin : RigidBody3D {
 
     public static bool IsCameraUnderwater => _camera.GlobalPosition.Y <= -0.3f;
+    public static Label MoneyLabel;
     private static Camera3D _camera = null!;
 
     public event Action? OnJump;
@@ -34,11 +34,15 @@ public partial class Dolphin : RigidBody3D {
     private float _lastLargeTorpedoFireTime;
 
 
-    private AudioStream _robot_initial_load_sfx = null!;
-    private AudioStream _splash_sfx = null!;
+    private AudioStream _splash_sfx = ResourceLoader.Load<AudioStream>("res://nathan/splash.mp3");
+
     private bool _isSplashSoundLoaded;
 
     private AudioStreamPlayer3D _audioStreamPlayer = null!;
+
+    public static Boat NearestObjective = null!;
+    private static Sprite3D _objectiveArrow = null!;
+
 
     public override void _Input(InputEvent @event) {
         if (@event is InputEventMouseMotion mouseMotion && IsUnderwater) {
@@ -106,18 +110,24 @@ public partial class Dolphin : RigidBody3D {
 
         _audioStreamPlayer = GetNode<AudioStreamPlayer3D>("%AudioStreamPlayer3D");
         _audioStreamPlayer.Play();
-        _audioStreamPlayer.Finished += LoadSplashSound;
+        // _audioStreamPlayer.Finished += LoadSplashSound;
+
+        _objectiveArrow = this.GetDescendant<Sprite3D>()!;
+        Debug.Assert(_objectiveArrow is not null);
+        _objectiveArrow.Visible = false;
+
+        MoneyLabel = this.GetDescendant<Label>()!;
+        Debug.Assert(MoneyLabel is not null);
     }
 
-
-    private void LoadSplashSound() {
-        if (_isSplashSoundLoaded) {
-            _audioStreamPlayer.Finished -= LoadSplashSound;
-            return;
-        }
-        _splash_sfx = ResourceLoader.Load<AudioStream>("res://nathan/splash.mp3");
-        _audioStreamPlayer.Stream = _splash_sfx;
-    }
+    // private void LoadSplashSound() {
+    //     if (_isSplashSoundLoaded) {
+    //         _audioStreamPlayer.Finished -= LoadSplashSound;
+    //         return;
+    //     }
+    //     _audioStreamPlayer.Stream = _splash_sfx;
+    //     _isSplashSoundLoaded = true;
+    // }
 
     public override void _PhysicsProcess(double delta) {
         const float defaultFov = 75;
@@ -143,29 +153,76 @@ public partial class Dolphin : RigidBody3D {
 
         _camera.Environment = IsCameraUnderwater ? _underwaterEnv : null;
 
+        // if (NearestObjective is not null) {
+        //     var current = GlobalPosition with { Y = 0 };
+        //     var target = NearestObjective.GlobalPosition with { Y = 0 };
+        //     var dir = (current - target).Normalized();
+        //     var forward = -Basis.Z with { Y = 0 };
+        //     var angle2 = forward.SignedAngleTo(dir, Vector3.Forward);
+        //     _objectiveArrow.Rotation = _objectiveArrow.Rotation with { Y = angle2 - Mathf.Pi / 2 };
+        // }
+
+        // var isObjectiveInRange = GlobalPosition.DistanceTo(_objective.GlobalPosition) < 20f;
+        // if (isObjectiveInRange)
+        //     _objectiveArrow.Visible = false;
+        // var nearestBoat = 
+
+        // if (_objective is not null) {
+        //     // var dir = (GlobalPosition - _objective.GlobalPosition).Normalized();
+        //     var current = GlobalPosition with { Y = 0 };
+        //     var target = _objective.GlobalPosition with { Y = 0 };
+        //     var dir = (current - target).Normalized();
+        //     var forward = -Basis.Z with { Y = 0 };
+        //     var angle2 = forward.AngleTo(dir);
+
+        //     _objectiveArrow.Rotation = _objectiveArrow.Rotation with { Y = angle2 };
+
+        // GD.Print($"current: {current}");
+        // GD.Print($"target: {target}");
+        // GD.Print($"dir: {dir}");
+        // GD.Print($"forward: {forward}");
+        // GD.Print($"angle2: {angle2}");
+        // GD.Print("-----------------");
+
+        // var angle = Mathf.RadToDeg(Mathf.Atan2(GlobalPosition.Z - _objective.GlobalPosition.Z,
+        //     GlobalPosition.X - _objective.GlobalPosition.X));
+
+        // _objectiveArrow.RotationDegrees = RotationDegrees with {
+        //     X = 0,
+        //     Y = angle + RotationDegrees.Y,
+        //     Z = 0
+        // };
+
+        // }
     }
 
     private bool _impulsedApplied;
+    private bool _firstTime = true;
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
 
         if (IsUnderwater) {
             if (_impulsedApplied) {
+                _audioStreamPlayer.Stream = _splash_sfx;
                 _audioStreamPlayer.Play();
                 OnWaterEntry?.Invoke();
             }
+            // if (_firstTime)
+            //     _audioStreamPlayer.Play();
             state.LinearVelocity = -_speed * Basis.Z;
             GravityScale = 0.0f;
             _impulsedApplied = false;
         } else {
             if (!_impulsedApplied) {
                 _audioStreamPlayer.Play();
-                OnJump?.Invoke();
+                if (!_firstTime)
+                    OnJump?.Invoke();
                 ApplyImpulse(-2f * _speed * Basis.Z);
             }
             GravityScale = 9.8f;
             _impulsedApplied = true;
         }
+        _firstTime = false;
 
     }
 
