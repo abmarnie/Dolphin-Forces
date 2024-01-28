@@ -19,6 +19,10 @@ config/icon="res://images/dolphin_forces_desktop_icon.png"
 
 LookInput="*res://look_input.gd"
 
+[display]
+
+window/size/mode=3
+
 [dotnet]
 
 project/assembly_name="dolphin_forces"

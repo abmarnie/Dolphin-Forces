@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Godot;
@@ -41,12 +42,15 @@ public partial class Main : Node3D {
         Debug.Assert(_peaceful_music is not null);
         Debug.Assert(_metal_music is not null);
 
+        _player.OnInfUpgrade += UpdateText;
+
         // Dolphin.SetObjective(GetNode<ObjectiveManager>("%FlagBoats"));
         // _boats = this.Descendants<Boat>();
         // Debug.Assert(_boats is not null);
         // Debug.Assert(_boats.Count > 0);
 
     }
+
 
     private void SwitchToPeacefulMusic() {
         _metal_playback = _audioStreamPlayer.GetPlaybackPosition();
@@ -69,16 +73,18 @@ public partial class Main : Node3D {
 
     public override void _PhysicsProcess(double delta) {
         Dolphin.MoneyLabel.Text = $"Money Earned: ${Money:N0}";
-        if (Main.Money > Dolphin.SecondUpgradeCost) {
-            Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text + "\n" + $"${Dolphin.SecondUpgradeCost} transfer queued. Max speed and fire rate increased.";
+        if (Dolphin.numInfUpgrades >= 1) {
+            UpdateText();
+        } else if (Main.Money >= Dolphin.SecondUpgradeCost) {
+            Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text + "\n" + $"${Dolphin.SecondUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
 
-        } else if (Main.Money > Dolphin.FirstUpgradeCost) {
+        } else if (Main.Money >= Dolphin.FirstUpgradeCost) {
             Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text + "\n" + $"${Dolphin.FirstUpgradeCost} transfer queued. Torpedo fire rate increased.";
         }
 
-
-
-
     }
 
+    private void UpdateText() {
+        Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text + "\n" + $"${Dolphin.InfiniteScalingUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
+    }
 }

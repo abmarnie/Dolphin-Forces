@@ -33,7 +33,7 @@ public partial class Boat : RigidBody3D {
     private Vector3 _spawnPoint;
 
     private float _deadTimer = 0f;
-    private float _respawnTime = 10f;
+    private static float _respawnTime = 10f;
 
     private bool _justDied;
     private bool _isDead;
@@ -73,6 +73,11 @@ public partial class Boat : RigidBody3D {
                     Main.NumDeadRussian++;
                 else if (Type is BoatType.Yellow)
                     Main.NumDeadYellow++;
+
+                if ((Main.NumDeadYellow + Main.NumDeadRussian + Main.NumDeadCamo + Main.NumDeadFlag) % 30 == 0)
+                    _respawnTime *= 0.9f;
+
+                Dolphin.MoneyLabel.Text = $"Money Earned: ${Main.Money:N0}";
             } else {
                 GlobalPosition = _spawnPoint;
 

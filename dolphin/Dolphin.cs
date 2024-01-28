@@ -10,6 +10,7 @@ public partial class Dolphin : RigidBody3D {
     public static Label MoneyLabel;
     private static Camera3D _camera = null!;
 
+    public event Action? OnInfUpgrade;
     public event Action? OnJump;
     public event Action? OnWaterEntry;
     public bool IsUnderwater => GlobalPosition.Y <= 0;
@@ -55,6 +56,8 @@ public partial class Dolphin : RigidBody3D {
     private static bool _playerRespondedToCutsceneFinish = false;
     private bool _boostQueued;
 
+    private static bool _isAttackHeld = false;
+
 
     public override void _Input(InputEvent @event) {
         if (_cutsceneTimer > _cutsceneTimeLength) {
@@ -89,23 +92,13 @@ public partial class Dolphin : RigidBody3D {
         //     };
         // }
 
-        var isTorpedoOffCooldown = Main.ElapsedTimeS > _lastLargeTorpedoFireTime + _largeTorpedoCooldown;
-        if (@event.IsActionPressed("attack") && isTorpedoOffCooldown) { // TODO: Cooldown bar async fill.
-            fireCount++;
-            var torpedo = _largeTorpedoPackedScene.Instantiate<LargeTorpedo>();
-            GetTree().CurrentScene.AddChild(torpedo);
-            torpedo.AddCollisionExceptionWith(this);
-            if (fireCount % 2 == 0) {
-                torpedo.GlobalPosition = _largeTorpedoSpawnLocation1.GlobalPosition;
-                torpedo.GlobalRotation = _largeTorpedoSpawnLocation1.GlobalRotation;
-            } else {
-                torpedo.GlobalPosition = _largeTorpedoSpawnLocation2.GlobalPosition;
-                torpedo.GlobalRotation = _largeTorpedoSpawnLocation2.GlobalRotation;
-            }
-            var torpedoForce = 40f + _speed;
-            torpedo.ApplyImpulse(-torpedoForce * torpedo.Basis.Z);
-            _lastLargeTorpedoFireTime = Main.ElapsedTimeS;
+        if (@event.IsActionPressed("attack")) { // TODO: Cooldown bar async fill.
+            _isAttackHeld = true;
         }
+
+        if (@event.IsActionReleased("attack"))
+            _isAttackHeld = false;
+
 
         const float speedScrollDelta = 1f;
         if (@event.IsActionReleased("scroll_up"))
@@ -187,8 +180,11 @@ public partial class Dolphin : RigidBody3D {
     private bool _firstUpgradeObtained = false;
     private bool _secondUpgradeObtained = false;
 
-    public static float FirstUpgradeCost = 7500f;
-    public static float SecondUpgradeCost = 25000f;
+    public static float FirstUpgradeCost = 10000f;
+    public static float SecondUpgradeCost = 20000f;
+    public static int numInfUpgrades = 0;
+    public static float InfiniteScalingUpgradeCost = 10000f;
+
 
     public override void _PhysicsProcess(double delta) {
 
@@ -222,8 +218,26 @@ public partial class Dolphin : RigidBody3D {
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
+        var isTorpedoOffCooldown = Main.ElapsedTimeS > _lastLargeTorpedoFireTime + _largeTorpedoCooldown;
+        if (isTorpedoOffCooldown && _isAttackHeld) {
+            fireCount++;
+            var torpedo = _largeTorpedoPackedScene.Instantiate<LargeTorpedo>();
+            GetTree().CurrentScene.AddChild(torpedo);
+            torpedo.AddCollisionExceptionWith(this);
+            if (fireCount % 2 == 0) {
+                torpedo.GlobalPosition = _largeTorpedoSpawnLocation1.GlobalPosition;
+                torpedo.GlobalRotation = _largeTorpedoSpawnLocation1.GlobalRotation;
+            } else {
+                torpedo.GlobalPosition = _largeTorpedoSpawnLocation2.GlobalPosition;
+                torpedo.GlobalRotation = _largeTorpedoSpawnLocation2.GlobalRotation;
+            }
+            var torpedoForce = 40f + _speed;
+            torpedo.ApplyImpulse(-torpedoForce * torpedo.Basis.Z);
+            _lastLargeTorpedoFireTime = Main.ElapsedTimeS;
+        }
 
-        if (Main.Money > FirstUpgradeCost && !_firstUpgradeObtained) {
+
+        if (Main.Money >= FirstUpgradeCost && !_firstUpgradeObtained) {
             // MoneyLabel.Text = MoneyLabel.Text + "\n" + "$2000 earned. Comrade unlocked.";
             _audioStreamPlayer.Stream = _robot_sfx;
             _audioStreamPlayer.Play();
@@ -240,7 +254,7 @@ public partial class Dolphin : RigidBody3D {
 
             _largeTorpedoCooldown /= 2f;
 
-        } else if (Main.Money > SecondUpgradeCost && !_secondUpgradeObtained) {
+        } else if (Main.Money >= SecondUpgradeCost && !_secondUpgradeObtained) {
             _audioStreamPlayer.Stream = _robot_sfx;
             _audioStreamPlayer.Play();
 
@@ -248,9 +262,22 @@ public partial class Dolphin : RigidBody3D {
             brother.Visible = true;
             brother.Position = brother.Position with { Y = 3.25f };
             _secondUpgradeObtained = true;
-            maxSpeed = 100f;
-            _largeTorpedoCooldown /= 2f;
+            maxSpeed = 80;
+            _largeTorpedoCooldown /= 1.5f;
+        } else if (Main.Money >= (numInfUpgrades + 1) * InfiniteScalingUpgradeCost + SecondUpgradeCost
+            && _secondUpgradeObtained) {
+
+            numInfUpgrades++;
+
+            _audioStreamPlayer.Stream = _robot_sfx;
+            _audioStreamPlayer.Play();
+
+            maxSpeed *= 1.1f;
+            _largeTorpedoCooldown /= 1.1f;
+
+            OnInfUpgrade?.Invoke();
         }
+
 
 
         const float defaultFov = 75;
