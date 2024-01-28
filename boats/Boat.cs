@@ -26,52 +26,99 @@ public partial class Boat : RigidBody3D {
     private AudioStreamPlayer3D _audioStreamPlayer = null!;
     private Random _random = new();
 
+    private Resource _ship_texture = ResourceLoader.Load("res://images/shared_metal_texture.png");
     private Resource _destroyed_ship_texture = ResourceLoader.Load("res://nathan/skidmark.png");
     private AudioStream _ship_explosion = ResourceLoader.Load<AudioStream>("res://nathan/explosion_F_minor.wav")!;
 
+    private Vector3 _spawnPoint;
+
+    private float _deadTimer = 0f;
+    private float _respawnTime = 10f;
 
     private bool _justDied;
     private bool _isDead;
     public bool IsDead {
         get => _isDead;
         set {
-            Debug.Assert(value);
-            Debug.Assert(!_isDead);
+            // Debug.Assert(value);
+            // Debug.Assert(!_isDead);
             _justDied = true;
             _isDead = value;
-            var meshInstances = this.Descendants<MeshInstance3D>()!;
-            foreach (var mi in meshInstances) {
-                var mat = mi.GetActiveMaterial(0);
-                Debug.Assert(mat is not null);
-                mat.Set("albedo_texture", _destroyed_ship_texture);
-            }
-            AxisLockAngularX = false;
-            AxisLockAngularY = false;
-            AxisLockAngularZ = false;
-            var smokeParticles = this.Descendants<GpuParticles3D>()!;
-            foreach (var sp in smokeParticles) {
-                sp.Emitting = true;
-            }
 
-            _audioStreamPlayer.Stop();
-            _audioStreamPlayer.Stream = _ship_explosion;
-            Debug.Assert(_ship_explosion is not null);
-            _audioStreamPlayer.Play();
+            if (_isDead) {
+                var meshInstances = this.Descendants<MeshInstance3D>()!;
+                foreach (var mi in meshInstances) {
+                    var mat = mi.GetActiveMaterial(0);
+                    Debug.Assert(mat is not null);
+                    mat.Set("albedo_texture", _destroyed_ship_texture);
+                }
+                AxisLockAngularX = false;
+                AxisLockAngularY = false;
+                AxisLockAngularZ = false;
+                var smokeParticles = this.Descendants<GpuParticles3D>()!;
+                foreach (var sp in smokeParticles) {
+                    sp.Emitting = true;
+                }
 
-            if (Type is BoatType.Flag)
-                Main.NumDeadFlag++;
-            else if (Type is BoatType.Camo)
-                Main.NumDeadCamo++;
-            else if (Type is BoatType.Russian)
-                Main.NumDeadRussian++;
-            else if (Type is BoatType.Yellow)
-                Main.NumDeadYellow++;
+                _audioStreamPlayer.Stop();
+                _audioStreamPlayer.Stream = _ship_explosion;
+                Debug.Assert(_ship_explosion is not null);
+                _audioStreamPlayer.Play();
+
+                if (Type is BoatType.Flag)
+                    Main.NumDeadFlag++;
+                else if (Type is BoatType.Camo)
+                    Main.NumDeadCamo++;
+                else if (Type is BoatType.Russian)
+                    Main.NumDeadRussian++;
+                else if (Type is BoatType.Yellow)
+                    Main.NumDeadYellow++;
+            } else {
+                GlobalPosition = _spawnPoint;
+
+                var meshInstances = this.Descendants<MeshInstance3D>()!;
+                foreach (var mi in meshInstances) {
+                    var mat = mi.GetActiveMaterial(0);
+                    Debug.Assert(mat is not null);
+                    mat.Set("albedo_texture", _ship_texture);
+                }
+
+                DoReadyStuff();
+
+            }
         }
     }
 
     private Timer _timer = null!;
 
     public override void _Ready() {
+        _spawnPoint = GlobalPosition;
+        DoReadyStuff();
+
+        // _targetPosition = GetRandomTargetPosition();
+        // LookAt(_targetPosition);
+        // ContactMonitor = true;
+
+        // // Timer crap is for sfx.
+        // _audioStreamPlayer = this.GetDescendant<AudioStreamPlayer3D>()!;
+        // // _timer = new Timer();
+        // // AddChild(_timer);
+        // // _ = _timer.Connect("timeout", new Callable(this, nameof(OnTimerTimeout)));
+        // // SetRandomIntervalAndStartTimer();
+
+        // AxisLockAngularX = true;
+        // AxisLockAngularY = true;
+        // AxisLockAngularZ = true;
+
+        // var smokeParticles = this.Descendants<GpuParticles3D>()!;
+        // foreach (var sp in smokeParticles) {
+        //     sp.Emitting = false;
+        // }
+
+
+    }
+
+    private void DoReadyStuff() {
         _targetPosition = GetRandomTargetPosition();
         LookAt(_targetPosition);
         ContactMonitor = true;
@@ -91,7 +138,6 @@ public partial class Boat : RigidBody3D {
         foreach (var sp in smokeParticles) {
             sp.Emitting = false;
         }
-
     }
 
     private void SetRandomIntervalAndStartTimer() {
@@ -115,8 +161,13 @@ public partial class Boat : RigidBody3D {
         if (Dolphin.CutscenePlaying) return;
 
         if (IsDead) {
+            _deadTimer += (float)delta;
+            if (_deadTimer > _respawnTime) {
+                IsDead = false;
+            }
             return;
         }
+        _deadTimer = 0;
 
         _newtargetPositionTimer += (float)delta;
         if (_newtargetPositionTimer > _changeTargetInterval) {

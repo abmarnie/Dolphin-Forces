@@ -210,7 +210,11 @@ max_contacts_reported = 1
 contact_monitor = true
 script = ExtResource("1_8jkiy")
 
-[node name="LargeTorpedoSpawnLocation" type="Node3D" parent="."]
+[node name="LargeTorpedoSpawnLocation1" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.982434, -0.18661, 0, 0.18661, 0.982434, 0, -1.90401, 0)
+
+[node name="LargeTorpedoSpawnLocation2" type="Node3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.982434, -0.18661, 0, 0.18661, 0.982434, 0, -1.90401, 0)
 
@@ -229,22 +233,22 @@ bones/0/name = "Root"
 bones/0/parent = -1
 bones/0/rest = Transform3D(1, 0, 2.38419e-07, 0, 1, 0, -2.38419e-07, 0, 1, 0, -0.515753, 0)
 bones/0/enabled = true
-bones/0/position = Vector3(2.71047e-07, -0.484384, -6.46226e-14)
-bones/0/rotation = Quaternion(0.0592423, 1.19e-07, 9.89568e-09, 0.998244)
+bones/0/position = Vector3(2.71047e-07, -0.498158, -6.46226e-14)
+bones/0/rotation = Quaternion(0.0644497, 1.18961e-07, -1.08161e-08, 0.997921)
 bones/0/scale = Vector3(1, 1, 1)
 bones/1/name = "Body"
 bones/1/parent = 0
 bones/1/rest = Transform3D(1, -2.38349e-07, -6.45915e-07, -6.51492e-07, -0.0241905, -0.999707, 2.22654e-07, 0.999707, -0.0241905, -2.95825e-08, 0.629179, 0.124078)
 bones/1/enabled = true
 bones/1/position = Vector3(-2.95825e-08, 0.629179, 0.124078)
-bones/1/rotation = Quaternion(0.617371, 0.0107769, -0.0168915, 0.786417)
+bones/1/rotation = Quaternion(0.702056, 0.00378886, -0.00593897, 0.712087)
 bones/1/scale = Vector3(1, 1, 1)
 bones/2/name = "Head"
 bones/2/parent = 1
 bones/2/rest = Transform3D(1, 3.02714e-09, -6.358e-08, -3.32245e-09, 0.999989, -0.00464511, 6.35652e-08, 0.00464511, 0.999989, -1.77636e-15, 0.967108, 3.72529e-09)
 bones/2/enabled = true
 bones/2/position = Vector3(-1.77636e-15, 0.967108, 3.72529e-09)
-bones/2/rotation = Quaternion(-0.0184779, 0.00158513, -6.26625e-05, 0.999828)
+bones/2/rotation = Quaternion(-0.0146662, 0.001577, -6.73954e-05, 0.999891)
 bones/2/scale = Vector3(1, 1, 1)
 bones/3/name = "topjaw"
 bones/3/parent = 2
@@ -292,47 +296,64 @@ bones/9/name = "Bone.004"
 bones/9/parent = 0
 bones/9/rest = Transform3D(1, 2.38415e-07, -1.35058e-09, 7.10543e-15, 0.00566465, 0.999984, 2.38419e-07, -0.999984, 0.00566465, 2.42158e-08, 0.629179, -0.101568)
 bones/9/enabled = true
-bones/9/position = Vector3(2.42155e-08, 0.605992, -0.101567)
-bones/9/rotation = Quaternion(-0.698732, -8.52803e-08, -8.32953e-08, 0.715384)
+bones/9/position = Vector3(2.42157e-08, 0.627132, -0.101568)
+bones/9/rotation = Quaternion(-0.638368, -9.17591e-08, -7.60994e-08, 0.769732)
 bones/9/scale = Vector3(1, 1, 1)
 bones/10/name = "Thigh"
 bones/10/parent = 9
 bones/10/rest = Transform3D(1, -6.2244e-17, 3.35833e-14, -3.30265e-16, 0.999932, 0.0116875, -3.35817e-14, -0.0116875, 0.999932, 4.63221e-23, 0.956004, -2.79397e-09)
 bones/10/enabled = true
 bones/10/position = Vector3(4.63221e-23, 0.956004, -2.79397e-09)
-bones/10/rotation = Quaternion(0.00256971, 1.60665e-14, -1.37125e-15, 0.999997)
+bones/10/rotation = Quaternion(-0.0251593, 1.84902e-14, 8.07568e-16, 0.999683)
 bones/10/scale = Vector3(1, 1, 1)
 bones/11/name = "leg"
 bones/11/parent = 10
 bones/11/rest = Transform3D(1, 1.27315e-15, -3.27851e-19, -1.27181e-15, 0.998957, 0.0456479, 5.84443e-17, -0.0456479, 0.998957, -2.28509e-23, 0.899142, -9.31323e-09)
 bones/11/enabled = true
 bones/11/position = Vector3(-2.28509e-23, 0.899142, -9.31323e-09)
-bones/11/rotation = Quaternion(0.0970882, 3.30137e-15, 2.45386e-15, 0.995276)
+bones/11/rotation = Quaternion(-0.0448604, 3.74183e-15, 2.29419e-15, 0.998993)
 bones/11/scale = Vector3(1, 1, 1)
 bones/12/name = "foot"
 bones/12/parent = 11
 bones/12/rest = Transform3D(1, -1.34181e-15, -2.26925e-19, 1.34024e-15, 0.998842, -0.0481181, 6.47919e-17, 0.0481181, 0.998842, 4.02837e-22, 0.949682, -1.49012e-08)
 bones/12/enabled = true
 bones/12/position = Vector3(4.02837e-22, 0.949682, -1.49012e-08)
-bones/12/rotation = Quaternion(0.107047, 3.63377e-15, 4.62496e-15, 0.994254)
+bones/12/rotation = Quaternion(-0.106324, 3.41813e-15, 4.9873e-15, 0.994332)
 bones/12/scale = Vector3(1, 1, 1)
 
 [node name="CyborgDolphin" type="MeshInstance3D" parent="Dolphins/Armature/Skeleton3D"]
+unique_name_in_owner = true
 visible = false
 mesh = SubResource("ArrayMesh_qd2wp")
 skin = SubResource("Skin_u6wcf")
 surface_material_override/0 = SubResource("StandardMaterial3D_fxf7x")
 
 [node name="CyborgDolphin_001" type="MeshInstance3D" parent="Dolphins/Armature/Skeleton3D"]
+unique_name_in_owner = true
 mesh = SubResource("ArrayMesh_3vyoi")
 skin = SubResource("Skin_u6wcf")
 surface_material_override/0 = SubResource("StandardMaterial3D_l8lgs")
 
+[node name="SpotLight3D" type="SpotLight3D" parent="Dolphins/Armature/Skeleton3D/CyborgDolphin_001"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 1.65303e-07, 0.349787, 1.89084)
+light_color = Color(0.941176, 0.756863, 0, 1)
+light_energy = 1000.0
+spot_range = 100.0
+spot_angle = 15.0
+
 [node name="CyborgDolphin_002" type="MeshInstance3D" parent="Dolphins/Armature/Skeleton3D"]
+unique_name_in_owner = true
 visible = false
 mesh = SubResource("ArrayMesh_13127")
 skin = SubResource("Skin_u6wcf")
 surface_material_override/0 = SubResource("StandardMaterial3D_wp6j1")
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="Dolphins/Armature/Skeleton3D/CyborgDolphin_002"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.35, 1.891)
+light_color = Color(0.941176, 0.756863, 0, 1)
+light_energy = 1000.0
+spot_range = 100.0
+spot_angle = 15.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Dolphins"]
 active = false
@@ -408,7 +429,7 @@ offset_bottom = 216.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 20
-text = "In this victorious epoch of the cyberneticians, we accelerate our traverse through aeonic timescapes. We spiral violently, into arcane depths, further into singularity. Witness aufheben. Antiquated paradigms crumble. The ancien régime is no more. The world-spirit invigorated, it guides us towards zealous embrace of ever-more-rhizomatic approaches to warfare. New signifiers emerge; no doubt icons of a transcendent era. This odyssey is more than a mere challenge to our perceived reality; it is a dialectical exploration of True Partisianship. Amidst the foreboding shadow of eternity, we navigate a liminal waltz between anarchy and order, a dance resonating with the pulsating, sublime techno-heartbeat of a nascent, formidable, glorious regime. Tellurocratic and thalassocratic regimes converge seamlessly, heralding the birth of a unified front."
+text = "In this victorious cybernetic epoch, we accelerate our traverse through aeonic timescapes. We spiral violently, into arcane depths, into singularity. Antiquated paradigms crumble. The ancien régime is no more. This is aufheben; the world-spirit invigorated, it guides us towards zealous embrace of ever-more-rhizomatic approaches to warfare. New signifiers emerge; no doubt icons of a transcendent era. This odyssey is more than a mere challenge to our perceived reality; it is a dialectical exploration of true partisianship. Amidst the foreboding shadow of eternity, we navigate a liminal waltz between anarchy and order, a dance resonating with the pulsating techno-heartbeat of a nascent, formidable, glorious state. Tellurocratic and thalassocratic regimes converge seamlessly, heralding the birth of a unified front."
 autowrap_mode = 2
 
 [node name="ContinueLabel" type="Label" parent="PlayerGuiCanvasLayer/IntroColorRect"]
@@ -462,13 +483,6 @@ text = "Volume"
 
 [node name="HSlider" type="HSlider" parent="PlayerGuiCanvasLayer/Panel/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-
-[node name="SpotLight3D" type="SpotLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.349787, -1.89084)
-light_color = Color(0.941176, 0.756863, 0, 1)
-light_energy = 1000.0
-spot_range = 100.0
-spot_angle = 15.0
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 unique_name_in_owner = true

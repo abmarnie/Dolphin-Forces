@@ -4,8 +4,6 @@ using Godot;
 
 namespace DolphinForces;
 
-// TODO: Speed boost ability.
-
 public partial class Dolphin : RigidBody3D {
 
     public static bool IsCameraUnderwater => _camera.GlobalPosition.Y <= -0.3f;
@@ -25,12 +23,15 @@ public partial class Dolphin : RigidBody3D {
     private const float DEFAULT_SPEED = 25f;
     private float _speed = DEFAULT_SPEED;
 
-    private const float LARGE_TORPEDO_COOLDOWN = 0.1f;
+    private float _largeTorpedoCooldown = 0.5f;
     private PackedScene _largeTorpedoPackedScene = GD.Load<PackedScene>("res://torpedos/large_torpedo.tscn");
-    private Node3D _largeTorpedoSpawnLocation = null!;
+    private Node3D _largeTorpedoSpawnLocation1 = null!;
+    private Node3D _largeTorpedoSpawnLocation2 = null!;
     private float _lastLargeTorpedoFireTime;
 
     private AudioStream _splash_sfx = ResourceLoader.Load<AudioStream>("res://nathan/splash.mp3");
+    private AudioStream _robot_sfx = ResourceLoader.Load<AudioStream>("res://nathan/mixkit-futuristic-robot-movement-1412.wav");
+
 
     private bool _isSplashSoundLoaded;
 
@@ -52,6 +53,7 @@ public partial class Dolphin : RigidBody3D {
     private static Label _continueLabel = null!;
 
     private static bool _playerRespondedToCutsceneFinish = false;
+    private bool _boostQueued;
 
 
     public override void _Input(InputEvent @event) {
@@ -60,7 +62,6 @@ public partial class Dolphin : RigidBody3D {
                 if (!_playerRespondedToCutsceneFinish)
                     _audioStreamPlayer.Play();
                 _playerRespondedToCutsceneFinish = true;
-
             }
         }
 
@@ -72,7 +73,12 @@ public partial class Dolphin : RigidBody3D {
             _rotationFromMouse.X -= mouseMotion.Relative.Y * _mouseSens * 0.005f;
             var lookAngleBounds = Mathf.DegToRad(75.0f);
             _rotationFromMouse.X = Mathf.Clamp(_rotationFromMouse.X, -lookAngleBounds, lookAngleBounds);
-            GD.Print(_rotationFromMouse.X);
+        }
+
+        if (IsUnderwater && _secondUpgradeObtained) {
+            // if (@event.IsActionPressed("boost")) {
+            //     _boostQueued = true;
+            // }
         }
 
         // if (@event.IsActionReleased("ui_cancel")) {
@@ -83,13 +89,19 @@ public partial class Dolphin : RigidBody3D {
         //     };
         // }
 
-        var isTorpedoOffCooldown = Main.ElapsedTimeS > _lastLargeTorpedoFireTime + LARGE_TORPEDO_COOLDOWN;
-        if (@event.IsActionReleased("attack") && isTorpedoOffCooldown) { // TODO: Cooldown bar async fill.
+        var isTorpedoOffCooldown = Main.ElapsedTimeS > _lastLargeTorpedoFireTime + _largeTorpedoCooldown;
+        if (@event.IsActionPressed("attack") && isTorpedoOffCooldown) { // TODO: Cooldown bar async fill.
+            fireCount++;
             var torpedo = _largeTorpedoPackedScene.Instantiate<LargeTorpedo>();
             GetTree().CurrentScene.AddChild(torpedo);
             torpedo.AddCollisionExceptionWith(this);
-            torpedo.GlobalPosition = _largeTorpedoSpawnLocation.GlobalPosition;
-            torpedo.GlobalRotation = _largeTorpedoSpawnLocation.GlobalRotation;
+            if (fireCount % 2 == 0) {
+                torpedo.GlobalPosition = _largeTorpedoSpawnLocation1.GlobalPosition;
+                torpedo.GlobalRotation = _largeTorpedoSpawnLocation1.GlobalRotation;
+            } else {
+                torpedo.GlobalPosition = _largeTorpedoSpawnLocation2.GlobalPosition;
+                torpedo.GlobalRotation = _largeTorpedoSpawnLocation2.GlobalRotation;
+            }
             var torpedoForce = 40f + _speed;
             torpedo.ApplyImpulse(-torpedoForce * torpedo.Basis.Z);
             _lastLargeTorpedoFireTime = Main.ElapsedTimeS;
@@ -102,10 +114,14 @@ public partial class Dolphin : RigidBody3D {
             _speed -= speedScrollDelta;
 
         const float minSpeed = 5f;
-        const float maxSpeed = 50f;
         _speed = Mathf.Clamp(_speed, minSpeed, maxSpeed);
 
     }
+
+    private float maxSpeed = 50f;
+
+
+    private int fireCount = 0;
 
     public override void _Ready() {
         Input.MouseMode = Input.MouseModeEnum.Captured;
@@ -128,9 +144,13 @@ public partial class Dolphin : RigidBody3D {
             }
         }
 
-        _lastLargeTorpedoFireTime = -LARGE_TORPEDO_COOLDOWN;
-        _largeTorpedoSpawnLocation = GetNode<Node3D>("%LargeTorpedoSpawnLocation");
-        Debug.Assert(_largeTorpedoSpawnLocation is not null);
+        _lastLargeTorpedoFireTime = -_largeTorpedoCooldown;
+        _largeTorpedoSpawnLocation1 = GetNode<Node3D>("%LargeTorpedoSpawnLocation1");
+        Debug.Assert(_largeTorpedoSpawnLocation1 is not null);
+
+        _largeTorpedoSpawnLocation2 = GetNode<Node3D>("%LargeTorpedoSpawnLocation2");
+        Debug.Assert(_largeTorpedoSpawnLocation2 is not null);
+
 
         _audioStreamPlayer = GetNode<AudioStreamPlayer3D>("%AudioStreamPlayer3D");
         // _audioStreamPlayer.Finished += LoadSplashSound;
@@ -164,6 +184,12 @@ public partial class Dolphin : RigidBody3D {
 
     private float _continueLabelAlpha = 0;
 
+    private bool _firstUpgradeObtained = false;
+    private bool _secondUpgradeObtained = false;
+
+    public static float FirstUpgradeCost = 7500f;
+    public static float SecondUpgradeCost = 25000f;
+
     public override void _PhysicsProcess(double delta) {
 
         _cutsceneTimer += (float)delta;
@@ -195,6 +221,37 @@ public partial class Dolphin : RigidBody3D {
         }
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
+
+
+        if (Main.Money > FirstUpgradeCost && !_firstUpgradeObtained) {
+            // MoneyLabel.Text = MoneyLabel.Text + "\n" + "$2000 earned. Comrade unlocked.";
+            _audioStreamPlayer.Stream = _robot_sfx;
+            _audioStreamPlayer.Play();
+
+            var mainDolphin = GetNode<MeshInstance3D>("%CyborgDolphin_001");
+            mainDolphin.Position = mainDolphin.Position with { X = -3.25f };
+            _largeTorpedoSpawnLocation1.Position = _largeTorpedoSpawnLocation1.Position with { X = -3.25f };
+
+            var brother = GetNode<MeshInstance3D>("%CyborgDolphin_002");
+            brother.Visible = true;
+            brother.Position = brother.Position with { X = 3.25f };
+            _largeTorpedoSpawnLocation2.Position = _largeTorpedoSpawnLocation2.Position with { X = 3.25f };
+            _firstUpgradeObtained = true;
+
+            _largeTorpedoCooldown /= 2f;
+
+        } else if (Main.Money > SecondUpgradeCost && !_secondUpgradeObtained) {
+            _audioStreamPlayer.Stream = _robot_sfx;
+            _audioStreamPlayer.Play();
+
+            var brother = GetNode<MeshInstance3D>("%CyborgDolphin");
+            brother.Visible = true;
+            brother.Position = brother.Position with { Y = 3.25f };
+            _secondUpgradeObtained = true;
+            maxSpeed = 100f;
+            _largeTorpedoCooldown /= 2f;
+        }
+
 
         const float defaultFov = 75;
         const float fovScalingFactor = 0.25f; // Adjust this value as needed
@@ -243,6 +300,10 @@ public partial class Dolphin : RigidBody3D {
             }
             // if (_firstTime)
             //     _audioStreamPlayer.Play();
+            // if (_boostQueued) {
+            //     // _boostQueued = false;
+            //     // ApplyImpulse(-100f * Basis.Z);
+            // } else
             state.LinearVelocity = -_speed * Basis.Z;
             GravityScale = 0.0f;
             _impulsedApplied = false;
