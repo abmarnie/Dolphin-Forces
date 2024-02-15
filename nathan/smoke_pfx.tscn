@@ -22,7 +22,7 @@ color = Color(0.337255, 0.337255, 0.337255, 1)
 [sub_resource type="QuadMesh" id="QuadMesh_pl6xc"]
 size = Vector2(5, 5)
 
-[node name="Explosion3dParticle" type="GPUParticles3D"]
+[node name="SmokePfx" type="GPUParticles3D"]
 material_override = SubResource("StandardMaterial3D_8lbn4")
 amount = 34
 lifetime = 2.62

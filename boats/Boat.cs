@@ -6,238 +6,164 @@ namespace DolphinForces;
 
 public partial class Boat : RigidBody3D {
 
-    [Export] private float _boatSpeed = 30.0f;
-    [Export] private float _changeTargetInterval = 5f;
+    private enum BoatType { Flag, Camo, Russian, Yellow }
 
-    public enum BoatType {
-        Flag,
-        Camo,
-        Russian,
-        Yellow
+    // Design parameters.
+    [ExportGroup("Design Params")]
+    [Export] private float _speed;
+    [Export] private float _targetAcquisCooldown;
+    [Export] private BoatType _type;
+
+    // Audio.
+    [ExportGroup("Node Refs")]
+    [Export] private AudioStreamPlayer3D _sfxPlayer = null!;
+
+    // Dynamic art.
+    [Export] private GpuParticles3D[] _smokePfxs = null!;
+    private Resource _aliveTexture = ResourceLoader.Load("res://images/shared_metal_texture.png");
+    private Resource _deathTexture = ResourceLoader.Load("res://nathan/destroyed_boat_texture.png");
+
+    // Spawning.
+    public bool IsAlive { get; private set; }
+    private Vector3 _spawn;
+    private static float _respawnCooldown = 10f; // For game progression.
+    private float _deathTime;
+
+    // Target acquisition.
+    private static readonly Random _rng = new();
+    private float _targetAcquisTime;
+    private Vector3 _target;
+
+    // Godot notifications.
+    public override void _Ready() {
+        _spawn = GlobalPosition;
+        Debug.Assert(!CanSleep);
+        Spawn();
     }
 
-    [Export] public BoatType Type;
+    public override void _PhysicsProcess(double delta) {
+        if (Dolphin.CutscenePlaying) {
+            return;
+        }
 
-    private Vector3 _targetPosition;
-    private float _newtargetPositionTimer;
-
-    private bool IsUnderwater => GlobalPosition.Y <= 0;
-
-    private AudioStreamPlayer3D _audioStreamPlayer = null!;
-    private Random _random = new();
-
-    private Resource _ship_texture = ResourceLoader.Load("res://images/shared_metal_texture.png");
-    private Resource _destroyed_ship_texture = ResourceLoader.Load("res://nathan/skidmark.png");
-    private AudioStream _ship_explosion = ResourceLoader.Load<AudioStream>("res://nathan/explosion_F_minor.wav")!;
-
-    private Vector3 _spawnPoint;
-
-    private float _deadTimer = 0f;
-    private static float _respawnTime = 10f;
-
-    private bool _justDied;
-    private bool _isDead;
-    public bool IsDead {
-        get => _isDead;
-        set {
-            // Debug.Assert(value);
-            // Debug.Assert(!_isDead);
-            _justDied = true;
-            _isDead = value;
-
-            if (_isDead) {
-                var meshInstances = this.Descendants<MeshInstance3D>()!;
-                foreach (var mi in meshInstances) {
-                    var mat = mi.GetActiveMaterial(0);
-                    Debug.Assert(mat is not null);
-                    mat.Set("albedo_texture", _destroyed_ship_texture);
-                }
-                AxisLockAngularX = false;
-                AxisLockAngularY = false;
-                AxisLockAngularZ = false;
-                var smokeParticles = this.Descendants<GpuParticles3D>()!;
-                foreach (var sp in smokeParticles) {
-                    sp.Emitting = true;
-                }
-
-                _audioStreamPlayer.Stop();
-                _audioStreamPlayer.Stream = _ship_explosion;
-                Debug.Assert(_ship_explosion is not null);
-                _audioStreamPlayer.Play();
-
-                if (Type is BoatType.Flag)
-                    Main.NumDeadFlag++;
-                else if (Type is BoatType.Camo)
-                    Main.NumDeadCamo++;
-                else if (Type is BoatType.Russian)
-                    Main.NumDeadRussian++;
-                else if (Type is BoatType.Yellow)
-                    Main.NumDeadYellow++;
-
-                if ((Main.NumDeadYellow + Main.NumDeadRussian + Main.NumDeadCamo + Main.NumDeadFlag) % 30 == 0)
-                    _respawnTime *= 0.9f;
-
-                Dolphin.MoneyLabel.Text = $"Money Earned: ${Main.Money:N0}";
-            } else {
-                GlobalPosition = _spawnPoint;
-
-                var meshInstances = this.Descendants<MeshInstance3D>()!;
-                foreach (var mi in meshInstances) {
-                    var mat = mi.GetActiveMaterial(0);
-                    Debug.Assert(mat is not null);
-                    mat.Set("albedo_texture", _ship_texture);
-                }
-
-                DoReadyStuff();
-
+        if (!IsAlive) {
+            var isRespawnOffCooldown = ElapsedTimeS() >= _deathTime + _respawnCooldown;
+            if (isRespawnOffCooldown) {
+                Spawn();
             }
+            return;
+        }
+
+        var targetAcquisOffCooldown = _targetAcquisTime >= ElapsedTimeS() + _targetAcquisCooldown;
+        var isNearTarget = GlobalPosition.DistanceTo(_target) < 5f;
+        if (targetAcquisOffCooldown || isNearTarget) {
+            SetRandomTarget();
         }
     }
 
-    private Timer _timer = null!;
+    public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
+        if (Dolphin.CutscenePlaying) {
+            return;
+        }
 
-    public override void _Ready() {
-        _spawnPoint = GlobalPosition;
-        DoReadyStuff();
+        // HACK: Cancel gravity if submerged to simulate buoyancy.
+        var isSubmerged = GlobalPosition.Y <= 0;
+        GravityScale = isSubmerged ? 0.0f : 9.8f;
 
-        // _targetPosition = GetRandomTargetPosition();
-        // LookAt(_targetPosition);
-        // ContactMonitor = true;
+        if (!IsAlive) {
+            return;
+        }
 
-        // // Timer crap is for sfx.
-        // _audioStreamPlayer = this.GetDescendant<AudioStreamPlayer3D>()!;
-        // // _timer = new Timer();
-        // // AddChild(_timer);
-        // // _ = _timer.Connect("timeout", new Callable(this, nameof(OnTimerTimeout)));
-        // // SetRandomIntervalAndStartTimer();
+        // TODO: Boats can push one another, leading to boats jetting
+        // around underwater. Below is a low-effort hack to try to fix this,
+        // which doesn't seem to work. Boats being rigidbodies is needed to 
+        // allow the player to ragdoll them around. 
 
-        // AxisLockAngularX = true;
-        // AxisLockAngularY = true;
-        // AxisLockAngularZ = true;
+        var isReallySubmerged = GlobalPosition.Y < -0.5f;
+        if (isReallySubmerged) {
+            var upwardForceToPreventJank = new Vector3(0, 10.0f, 0);
+            state.ApplyCentralImpulse(upwardForceToPreventJank);
+        }
 
-        // var smokeParticles = this.Descendants<GpuParticles3D>()!;
-        // foreach (var sp in smokeParticles) {
-        //     sp.Emitting = false;
-        // }
-
-
+        var isNearTarget = GlobalPosition.DistanceTo(_target) <= 1f;
+        var targetDir = GlobalPosition.DirectionTo(_target);
+        state.LinearVelocity = isNearTarget ? Vector3.Zero :
+            new Vector3(targetDir.X, 0, targetDir.Z) * _speed;
     }
 
-    private void DoReadyStuff() {
-        _targetPosition = GetRandomTargetPosition();
-        LookAt(_targetPosition);
-        ContactMonitor = true;
+    public void Kill() {
 
-        // Timer crap is for sfx.
-        _audioStreamPlayer = this.GetDescendant<AudioStreamPlayer3D>()!;
-        // _timer = new Timer();
-        // AddChild(_timer);
-        // _ = _timer.Connect("timeout", new Callable(this, nameof(OnTimerTimeout)));
-        // SetRandomIntervalAndStartTimer();
+        Debug.Assert(
+            condition: IsAlive,
+            message: $"Already dead boat was just killed."
+        );
+
+        IsAlive = false;
+        _deathTime = ElapsedTimeS();
+
+        _sfxPlayer.Stop(); // TODO: Try deleting this.
+        _sfxPlayer.Play();
+
+        // Make the boat look destroyed. Some boats are composed of 
+        // more than one mesh. All boat meshes share the same texture.
+        var meshes = this.Descendants<MeshInstance3D>();
+        meshes.ForEach(
+            mesh => mesh.GetActiveMaterial(0)?
+                .Set("albedo_texture", _deathTexture)
+        );
+        Array.ForEach(_smokePfxs, pfx => pfx.Emitting = true);
+
+        // So that the player can watch destroyed boats spin around for fun.
+        AxisLockAngularX = false;
+        AxisLockAngularY = false;
+        AxisLockAngularZ = false;
+
+        // Give the player more targets to destroy as they progress.
+        // TODO: Clean this (single numDead, money incremeneted by emitting signal).
+        switch (_type) {
+            case BoatType.Flag: Main.NumDeadFlag++; break;
+            case BoatType.Camo: Main.NumDeadCamo++; break;
+            case BoatType.Russian: Main.NumDeadRussian++; break;
+            case BoatType.Yellow: Main.NumDeadYellow++; break;
+            default: throw new InvalidOperationException("Unhandled boat type case.");
+        }
+        var numDeadBoats = Main.NumDeadYellow + Main.NumDeadRussian
+            + Main.NumDeadCamo + Main.NumDeadFlag;
+        if (numDeadBoats % 30 == 0) {
+            _respawnCooldown *= 0.9f;
+        }
+
+        Dolphin.MoneyLabel.Text = $"Money Earned: ${Main.Money:N0}"; // TODO: Event.
+    }
+
+    private static float ElapsedTimeS() => Time.GetTicksMsec() / 1000f;
+
+    private void SetRandomTarget() {
+        _targetAcquisTime = ElapsedTimeS();
+        const float minDistance = 50.0f;
+        const float maxDistance = 100.0f;
+        var distance = ((float)_rng.NextDouble() * (maxDistance - minDistance)) + minDistance;
+        var angle = (float)_rng.NextDouble() * Mathf.Pi * 2;
+        var direction = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)).Normalized();
+        _target = GlobalPosition + (direction * distance);
+        LookAt(_target);
+    }
+
+    private void Spawn() {
+        IsAlive = true;
+        GlobalPosition = _spawn;
+        SetRandomTarget();
 
         AxisLockAngularX = true;
         AxisLockAngularY = true;
         AxisLockAngularZ = true;
 
-        var smokeParticles = this.Descendants<GpuParticles3D>()!;
-        foreach (var sp in smokeParticles) {
-            sp.Emitting = false;
-        }
+        var meshes = this.Descendants<MeshInstance3D>();
+        meshes.ForEach(
+            mesh => mesh.GetActiveMaterial(0)?
+                .Set("albedo_texture", _aliveTexture)
+        );
+        Array.ForEach(_smokePfxs, pfx => pfx.Emitting = false);
     }
-
-    private void SetRandomIntervalAndStartTimer() {
-        const float timerMin = 5f;
-        const float timerMax = 10f;
-        _timer.WaitTime = ((float)_random.NextDouble() * (timerMax - timerMin)) + timerMin;
-        _timer.Start();
-    }
-
-    private void OnTimerTimeout() {
-        if (_audioStreamPlayer is null) return;
-        if (IsDead) return;
-
-        if (!_audioStreamPlayer.Playing) {
-            _audioStreamPlayer.Play();
-            SetRandomIntervalAndStartTimer();
-        }
-    }
-
-    public override void _PhysicsProcess(double delta) {
-        if (Dolphin.CutscenePlaying) return;
-
-        if (IsDead) {
-            _deadTimer += (float)delta;
-            if (_deadTimer > _respawnTime) {
-                IsDead = false;
-            }
-            return;
-        }
-        _deadTimer = 0;
-
-        _newtargetPositionTimer += (float)delta;
-        if (_newtargetPositionTimer > _changeTargetInterval) {
-            SetNextTarget();
-        }
-
-        var isNearTarget = GlobalPosition.DistanceTo(_targetPosition) < 5f;
-        if (isNearTarget) {
-            SetNextTarget();
-        }
-
-        void SetNextTarget() {
-            _targetPosition = GetRandomTargetPosition();
-            LookAt(_targetPosition);
-            _newtargetPositionTimer = 0;
-        }
-    }
-
-    public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
-        if (Dolphin.CutscenePlaying) return;
-
-        GravityScale = IsUnderwater ? 0.0f : 9.8f;
-
-        if (IsDead) {
-            return;
-        }
-
-        const float waterSurfaceY = 0.0f;
-        const float underwaterThreshold = -0.5f;
-        const float upwardForceMagnitude = 10.0f;
-
-        // Apply upward force if below water surface
-        if (GlobalPosition.Y < waterSurfaceY + underwaterThreshold) {
-            var upwardForce = new Vector3(0, upwardForceMagnitude, 0);
-            state.ApplyCentralImpulse(upwardForce);
-        }
-
-
-        if (GlobalPosition.DistanceTo(_targetPosition) > 1f) {
-            var direction = (_targetPosition - GlobalPosition).Normalized();
-            state.LinearVelocity = new Vector3(direction.X, 0, direction.Z) * _boatSpeed;
-        } else {
-            state.LinearVelocity = Vector3.Zero;
-        }
-
-    }
-
-    private Vector3 GetRandomTargetPosition() {
-        var rng = new Random();
-        const float minDistance = 50.0f;
-        const float maxDistance = 100.0f;
-        var distance = ((float)rng.NextDouble() * (maxDistance - minDistance)) + minDistance;
-
-        var angle = (float)rng.NextDouble() * Mathf.Pi * 2; // Random angle in radians
-        var direction = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)).Normalized();
-
-        return GlobalPosition + (direction * distance);
-    }
-
-    // public void LookAtInterpolate(Vector3 lookTarget, float weight, out float rotAmount) {
-    //     var originalForward = -Basis.Z;
-    //     var tempTransform = Transform.LookingAt(lookTarget, Vector3.Up);
-    //     Transform = Transform.InterpolateWith(tempTransform, weight);
-    //     var newForward = -Basis.Z;
-    //     rotAmount = (float)Mathf.Acos(originalForward.Normalized().Dot(newForward.Normalized()));
-    // }
 
 }

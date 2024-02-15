@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Godot;
 
@@ -25,7 +23,7 @@ public partial class Main : Node3D {
     private Dolphin _player = null!;
 
     public override void _Ready() {
-        _terrain = GetNode<Node3D>("%Terrain");
+        _terrain = GetNode<Node3D>("%UnderwaterTerrains");
         _player = GetNode<Dolphin>("%Dolphin");
         _player.OnJump += SwitchToMetalMusic;
         _player.OnWaterEntry += SwitchToPeacefulMusic;
@@ -60,7 +58,6 @@ public partial class Main : Node3D {
     }
 
     private void SwitchToMetalMusic() {
-        GD.Print("OnJump!");
         _peaceful_playback = _audioStreamPlayer.GetPlaybackPosition();
         _audioStreamPlayer.Stream = _metal_music;
         _audioStreamPlayer.Play();

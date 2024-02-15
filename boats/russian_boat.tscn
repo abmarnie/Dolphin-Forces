@@ -2,21 +2,23 @@
 
 [ext_resource type="Script" path="res://boats/Boat.cs" id="1_72smp"]
 [ext_resource type="ArrayMesh" uid="uid://mov8h77bubdl" path="res://boats/boats_RussianBoatMesh.tres" id="2_3dw23"]
-[ext_resource type="AudioStream" uid="uid://cwoiis6lucnp3" path="res://nathan/boat-horn-6204.mp3" id="3_k7uab"]
-[ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://nathan/smoke_3d_particle.tscn" id="4_0b2oa"]
+[ext_resource type="AudioStream" uid="uid://bfxiptv37ikt5" path="res://nathan/explosion_F_minor.wav" id="3_6qd8p"]
+[ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://nathan/smoke_pfx.tscn" id="4_0b2oa"]
 [ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_3d_particle.tscn" id="5_5akee"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
 radius = 5.0
 height = 24.355
 
-[node name="RussianBoat" type="RigidBody3D"]
+[node name="RussianBoat" type="RigidBody3D" node_paths=PackedStringArray("_sfxPlayer", "_smokePfxs")]
 gravity_scale = 0.0
 can_sleep = false
 script = ExtResource("1_72smp")
-_boatSpeed = 50.0
-_changeTargetInterval = 20.0
-Type = 2
+_speed = 45.0
+_targetAcquisCooldown = 15.0
+_type = 2
+_sfxPlayer = NodePath("AudioStreamPlayer3D")
+_smokePfxs = [NodePath("SmokePfx"), NodePath("SmokePfx2"), NodePath("SmokePfx3")]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
@@ -27,14 +29,14 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 
 shape = SubResource("CapsuleShape3D_7vlyt")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
-stream = ExtResource("3_k7uab")
+stream = ExtResource("3_6qd8p")
 bus = &"SFX"
 
-[node name="Explosion3dParticle" parent="." instance=ExtResource("4_0b2oa")]
+[node name="SmokePfx" parent="." instance=ExtResource("4_0b2oa")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10.3487)
 emitting = false
 
-[node name="Explosion3dParticle2" parent="." instance=ExtResource("4_0b2oa")]
+[node name="SmokePfx2" parent="." instance=ExtResource("4_0b2oa")]
 emitting = false
 
-[node name="Explosion3dParticle3" parent="." instance=ExtResource("5_5akee")]
+[node name="SmokePfx3" parent="." instance=ExtResource("5_5akee")]

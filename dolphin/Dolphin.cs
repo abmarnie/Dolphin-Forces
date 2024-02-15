@@ -132,8 +132,8 @@ public partial class Dolphin : RigidBody3D {
         BodyEntered += KillBoat;
 
         static void KillBoat(Node body) {
-            if (body is Boat boat && !boat.IsDead) {
-                boat.IsDead = true;
+            if (body is Boat boat && boat.IsAlive) {
+                boat.Kill();
             }
         }
 
