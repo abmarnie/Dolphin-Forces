@@ -4,7 +4,7 @@ using Godot;
 
 namespace DolphinForces;
 
-public partial class Dolphin : RigidBody3D {
+public partial class Player : RigidBody3D {
 
     public static bool IsCameraUnderwater => _camera.GlobalPosition.Y <= -0.3f;
     public static Label MoneyLabel;

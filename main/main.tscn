@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://main/Main.cs" id="1_11si0"]
 [ext_resource type="Environment" uid="uid://cefclkylmgwxx" path="res://main/main_environment.tres" id="2_3coom"]
-[ext_resource type="PackedScene" uid="uid://li41t3qh0gpx" path="res://dolphin/dolphin.tscn" id="2_ofsg3"]
+[ext_resource type="PackedScene" uid="uid://li41t3qh0gpx" path="res://dolphin/player.tscn" id="2_ofsg3"]
 [ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://water/water_caustic_visualshader.tres" id="5_aptly"]
 [ext_resource type="PackedScene" uid="uid://dosonc0o3fxy5" path="res://terrain/underwater_terrain.tscn" id="5_flkfk"]
 [ext_resource type="PackedScene" uid="uid://stofy3ce1kuw" path="res://boats/camo_boat.tscn" id="7_82of6"]
@@ -35,7 +35,7 @@ script = ExtResource("1_11si0")
 _music = NodePath("Music")
 _introFoghorn = NodePath("IntroFoghorn")
 _underwaterTerrains = NodePath("UnderwaterTerrains")
-_player = NodePath("Dolphin")
+_player = NodePath("Player")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
@@ -49,7 +49,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 399.906, 0, 479.907)
 mesh = SubResource("PlaneMesh_g2oyq")
 surface_material_override/0 = SubResource("ShaderMaterial_ymolu")
 
-[node name="Dolphin" parent="." instance=ExtResource("2_ofsg3")]
+[node name="Player" parent="." instance=ExtResource("2_ofsg3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 400, 0)
 axis_lock_angular_x = true
 axis_lock_angular_y = true

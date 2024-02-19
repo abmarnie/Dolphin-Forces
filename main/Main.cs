@@ -7,7 +7,7 @@ public partial class Main : Node3D {
     public static float ElapsedTimeS() => Time.GetTicksMsec() / 1000f;
     public static float Money { get; private set; }
 
-    [Export] private Dolphin _player = null!;
+    [Export] private Player _player = null!;
     [Export] private Node3D _underwaterTerrains = null!;
     [Export] private AudioStreamPlayer _music = null!;
     [Export] private AudioStreamPlayer _introFoghorn = null!;
@@ -42,22 +42,22 @@ public partial class Main : Node3D {
         static void IncrementMoney(float amount) => Money += amount;
     }
 
-    public override void _Process(double delta) => _underwaterTerrains.Visible = Dolphin.IsCameraUnderwater;
+    public override void _Process(double delta) => _underwaterTerrains.Visible = Player.IsCameraUnderwater;
 
     public override void _PhysicsProcess(double delta) {
-        Dolphin.MoneyLabel.Text = $"Money Earned: ${Money:N0}";
-        if (Dolphin.numInfUpgrades >= 1) {
+        Player.MoneyLabel.Text = $"Money Earned: ${Money:N0}";
+        if (Player.numInfUpgrades >= 1) {
             UpdatePlayerMoneyLabel();
-        } else if (Money >= Dolphin.SecondUpgradeCost) {
-            Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text + "\n" + $"${Dolphin.SecondUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
+        } else if (Money >= Player.SecondUpgradeCost) {
+            Player.MoneyLabel.Text = Player.MoneyLabel.Text + "\n" + $"${Player.SecondUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
 
-        } else if (Money >= Dolphin.FirstUpgradeCost) {
-            Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text + "\n" + $"${Dolphin.FirstUpgradeCost} transfer queued. Torpedo fire rate increased.";
+        } else if (Money >= Player.FirstUpgradeCost) {
+            Player.MoneyLabel.Text = Player.MoneyLabel.Text + "\n" + $"${Player.FirstUpgradeCost} transfer queued. Torpedo fire rate increased.";
         }
 
     }
 
     // TODO: Put this in Dolphin/Player.cs.
-    private void UpdatePlayerMoneyLabel() => Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text
-        + "\n" + $"${Dolphin.InfiniteScalingUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
+    private void UpdatePlayerMoneyLabel() => Player.MoneyLabel.Text = Player.MoneyLabel.Text
+        + "\n" + $"${Player.InfiniteScalingUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
 }

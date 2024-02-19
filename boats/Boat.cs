@@ -45,7 +45,7 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (Dolphin.CutscenePlaying) {
+        if (Player.CutscenePlaying) {
             return;
         }
 
@@ -65,7 +65,7 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
-        if (Dolphin.CutscenePlaying) {
+        if (Player.CutscenePlaying) {
             return;
         }
 
@@ -128,7 +128,7 @@ public partial class Boat : RigidBody3D {
 
         // Money is "score". Used for infinite progression.
         OnKill?.Invoke(_moneyIncrementOnKill);
-        Dolphin.MoneyLabel.Text = $"Money Earned: ${Main.Money:N0}"; // TODO: Event.
+        Player.MoneyLabel.Text = $"Money Earned: ${Main.Money:N0}"; // TODO: Event.
 
     }
 
