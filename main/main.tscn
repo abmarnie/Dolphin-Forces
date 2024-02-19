@@ -30,14 +30,18 @@ shader_parameter/Scale2 = 19.68
 shader_parameter/CausticOpacity = 0.2
 shader_parameter/ColorParameter = Color(1, 0.709804, 1, 1)
 
-[node name="Main" type="Node3D"]
+[node name="Main" type="Node3D" node_paths=PackedStringArray("_music", "_introFoghorn", "_underwaterTerrains", "_player")]
 script = ExtResource("1_11si0")
+_music = NodePath("Music")
+_introFoghorn = NodePath("IntroFoghorn")
+_underwaterTerrains = NodePath("UnderwaterTerrains")
+_player = NodePath("Dolphin")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
 shadow_enabled = true
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="Ambiance" type="WorldEnvironment" parent="."]
 environment = ExtResource("2_3coom")
 
 [node name="WaterSurface" type="MeshInstance3D" parent="."]
@@ -46,14 +50,12 @@ mesh = SubResource("PlaneMesh_g2oyq")
 surface_material_override/0 = SubResource("ShaderMaterial_ymolu")
 
 [node name="Dolphin" parent="." instance=ExtResource("2_ofsg3")]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 400, 0)
 axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
 
 [node name="UnderwaterTerrains" type="Node3D" parent="."]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -600.094, 350, -520.093)
 
 [node name="UnderwaterTerrain" parent="UnderwaterTerrains" instance=ExtResource("5_flkfk")]
@@ -195,7 +197,6 @@ transform = Transform3D(0.267238, 0, -0.96363, 0, 1, 0, 0.96363, 0, 0.267238, -2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -200, 0, 500)
 
 [node name="FlagBoats" type="Node3D" parent="Boats"]
-unique_name_in_owner = true
 
 [node name="FlagBoat" parent="Boats/FlagBoats" instance=ExtResource("8_jtem8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -37.5158)
@@ -210,7 +211,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
 transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
 
 [node name="FlagBoats10" type="Node3D" parent="Boats"]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 406.615, 0, -277.45)
 
 [node name="FlagBoat" parent="Boats/FlagBoats10" instance=ExtResource("8_jtem8")]
@@ -226,7 +226,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
 transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
 
 [node name="FlagBoats11" type="Node3D" parent="Boats"]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 406.615, 0, 1007.29)
 
 [node name="FlagBoat" parent="Boats/FlagBoats11" instance=ExtResource("8_jtem8")]
@@ -242,7 +241,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
 transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
 
 [node name="FlagBoats9" type="Node3D" parent="Boats"]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 209.038, 0, -252.546)
 
 [node name="FlagBoat" parent="Boats/FlagBoats9" instance=ExtResource("8_jtem8")]
@@ -258,7 +256,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
 transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
 
 [node name="FlagBoats7" type="Node3D" parent="Boats"]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 486.41, 0, 0)
 
 [node name="FlagBoat" parent="Boats/FlagBoats7" instance=ExtResource("8_jtem8")]
@@ -273,7 +270,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
 transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
 
 [node name="FlagBoats8" type="Node3D" parent="Boats"]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 745.671, 0, 400.528)
 
 [node name="FlagBoat" parent="Boats/FlagBoats8" instance=ExtResource("8_jtem8")]
@@ -288,7 +284,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
 transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
 
 [node name="FlagBoats6" type="Node3D" parent="Boats"]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1153.12, 0, 0)
 
 [node name="FlagBoat" parent="Boats/FlagBoats6" instance=ExtResource("8_jtem8")]
@@ -303,7 +298,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
 transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
 
 [node name="FlagBoats5" type="Node3D" parent="Boats"]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -375.187)
 
 [node name="FlagBoat" parent="Boats/FlagBoats5" instance=ExtResource("8_jtem8")]
@@ -318,7 +312,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
 transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
 
 [node name="FlagBoats4" type="Node3D" parent="Boats"]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 749.255, 0, 140.144)
 
 [node name="FlagBoat" parent="Boats/FlagBoats4" instance=ExtResource("8_jtem8")]
@@ -333,7 +326,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
 transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
 
 [node name="FlagBoats3" type="Node3D" parent="Boats"]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 530.463, 0, -418.434)
 
 [node name="FlagBoat" parent="Boats/FlagBoats3" instance=ExtResource("8_jtem8")]
@@ -348,7 +340,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.385, 0, 30)
 transform = Transform3D(-0.782608, 0, -0.622515, 0, 1, 0, 0.622515, 0, -0.782608, -50, 0, -20)
 
 [node name="FlagBoats2" type="Node3D" parent="Boats"]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 484.874, 0, 273.95)
 
 [node name="FlagBoat" parent="Boats/FlagBoats2" instance=ExtResource("8_jtem8")]
@@ -470,13 +461,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 868.143, 0, -110.494)
 
 [node name="YellowStripedBoat4" parent="Boats/YellowStripedBoats2" instance=ExtResource("9_aahfs")]
 
-[node name="AudioStreamPlayer" parent="." instance=ExtResource("9_w7vuu")]
-unique_name_in_owner = true
+[node name="Music" parent="." instance=ExtResource("9_w7vuu")]
 autoplay = false
 bus = &"OST"
 
-[node name="FogHornPlayer" type="AudioStreamPlayer" parent="."]
-unique_name_in_owner = true
+[node name="IntroFoghorn" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("12_cpqkn")
 volume_db = -0.955
 bus = &"SFX"

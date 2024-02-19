@@ -1,69 +1,53 @@
-using System.Diagnostics;
 using Godot;
 
 namespace DolphinForces;
 
 public partial class Main : Node3D {
 
-    public static float ElapsedTimeS => Time.GetTicksMsec() / 1000f;
+    public static float ElapsedTimeS() => Time.GetTicksMsec() / 1000f;
     public static float Money { get; private set; }
 
-    private AudioStreamPlayer _audioStreamPlayer = null!;
-    private AudioStreamPlayer _fogHornPlayer = null!;
-    private AudioStream _metal_music = null!;
-    private AudioStream _peaceful_music = null!;
-    private float _metal_playback;
-    private float _peaceful_playback;
+    [Export] private Dolphin _player = null!;
+    [Export] private Node3D _underwaterTerrains = null!;
+    [Export] private AudioStreamPlayer _music = null!;
+    [Export] private AudioStreamPlayer _introFoghorn = null!;
 
-    private Node3D _terrain = null!;
-    private Dolphin _player = null!;
+    private AudioStream _musicMetal = ResourceLoader.Load<AudioStream>(
+        "res://nathan/game_jam_metal Edit 1 Export 2.wav");
+    private AudioStream _musicPeaceful = ResourceLoader.Load<AudioStream>(
+        "res://nathan/Game Jam Edit 1 Export 1.wav");
+    private float _musicPeacefulPlaybackPos;
 
     public override void _Ready() {
-        _terrain = GetNode<Node3D>("%UnderwaterTerrains");
-        _player = GetNode<Dolphin>("%Dolphin");
         _player.OnJump += SwitchToMetalMusic;
         _player.OnWaterEntry += SwitchToPeacefulMusic;
-        _peaceful_music = ResourceLoader.Load<AudioStream>("res://nathan/Game Jam Edit 1 Export 1.wav");
-        _metal_music = ResourceLoader.Load<AudioStream>("res://nathan/game_jam_metal Edit 1 Export 2.wav");
-        _audioStreamPlayer = GetNode<AudioStreamPlayer>("%AudioStreamPlayer");
-        _audioStreamPlayer.Stop();
+        _player.OnInfUpgrade += UpdatePlayerMoneyLabel;
+        Boat.OnKill += IncrementMoney;
 
-        _fogHornPlayer = GetNode<AudioStreamPlayer>("%FogHornPlayer");
-        Debug.Assert(_fogHornPlayer is not null);
-        _fogHornPlayer.Play();
+        _music.Stop();
+        _introFoghorn.Play();
 
-        Debug.Assert(_audioStreamPlayer is not null);
-        Debug.Assert(_peaceful_music is not null);
-        Debug.Assert(_metal_music is not null);
+        void SwitchToPeacefulMusic() {
+            _music.Stream = _musicPeaceful;
+            _music.Play();
+            _music.Seek(_musicPeacefulPlaybackPos);
+        }
 
-        _player.OnInfUpgrade += UpdateText;
-        // Dolphin.MoneyLabel.Text = $"Money Earned: ${Main.Money:N0}"; // TODO: Event.
-        Boat.Killed += IncrementMoney;
+        void SwitchToMetalMusic() {
+            _musicPeacefulPlaybackPos = _music.GetPlaybackPosition();
+            _music.Stream = _musicMetal;
+            _music.Play();
+        }
 
-
+        static void IncrementMoney(float amount) => Money += amount;
     }
 
-    private void IncrementMoney(float amount) => Money += amount;
-
-    private void SwitchToPeacefulMusic() {
-        _metal_playback = _audioStreamPlayer.GetPlaybackPosition();
-        _audioStreamPlayer.Stream = _peaceful_music;
-        _audioStreamPlayer.Play();
-        _audioStreamPlayer.Seek(_peaceful_playback);
-    }
-
-    private void SwitchToMetalMusic() {
-        _peaceful_playback = _audioStreamPlayer.GetPlaybackPosition();
-        _audioStreamPlayer.Stream = _metal_music;
-        _audioStreamPlayer.Play();
-    }
-
-    public override void _Process(double delta) => _terrain.Visible = Dolphin.IsCameraUnderwater;
+    public override void _Process(double delta) => _underwaterTerrains.Visible = Dolphin.IsCameraUnderwater;
 
     public override void _PhysicsProcess(double delta) {
         Dolphin.MoneyLabel.Text = $"Money Earned: ${Money:N0}";
         if (Dolphin.numInfUpgrades >= 1) {
-            UpdateText();
+            UpdatePlayerMoneyLabel();
         } else if (Money >= Dolphin.SecondUpgradeCost) {
             Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text + "\n" + $"${Dolphin.SecondUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
 
@@ -73,7 +57,7 @@ public partial class Main : Node3D {
 
     }
 
-    private void UpdateText() {
-        Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text + "\n" + $"${Dolphin.InfiniteScalingUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
-    }
+    // TODO: Put this in Dolphin/Player.cs.
+    private void UpdatePlayerMoneyLabel() => Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text
+        + "\n" + $"${Dolphin.InfiniteScalingUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
 }

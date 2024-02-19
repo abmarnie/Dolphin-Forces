@@ -4,9 +4,12 @@ using Godot;
 
 namespace DolphinForces;
 
+/// <summary> Controls boat enemies. </summary>
 public partial class Boat : RigidBody3D {
 
-    public static event Action<float>? Killed;
+    /// <summary> Occurs when an enemy is killed. Argument is money value
+    /// of killed enemy. </summary>
+    public static event Action<float>? OnKill;
 
     // Design parameters.
     [ExportGroup("Design Params")]
@@ -35,7 +38,6 @@ public partial class Boat : RigidBody3D {
     private float _targetAcquisTime;
     private Vector3 _target;
 
-    // Godot notifications.
     public override void _Ready() {
         _spawn = GlobalPosition;
         Debug.Assert(!CanSleep);
@@ -48,14 +50,14 @@ public partial class Boat : RigidBody3D {
         }
 
         if (!IsAlive) {
-            var isRespawnOffCooldown = ElapsedTimeS() >= _deathTime + _respawnCooldown;
+            var isRespawnOffCooldown = Main.ElapsedTimeS() >= _deathTime + _respawnCooldown;
             if (isRespawnOffCooldown) {
                 Spawn();
             }
             return;
         }
 
-        var targetAcquisOffCooldown = _targetAcquisTime >= ElapsedTimeS() + _targetAcquisCooldown;
+        var targetAcquisOffCooldown = _targetAcquisTime >= Main.ElapsedTimeS() + _targetAcquisCooldown;
         var isNearTarget = GlobalPosition.DistanceTo(_target) < 5f;
         if (targetAcquisOffCooldown || isNearTarget) {
             SetRandomTarget();
@@ -85,6 +87,7 @@ public partial class Boat : RigidBody3D {
             state.ApplyCentralImpulse(upwardForceToPreventJank);
         }
 
+        // Move towards the target direction.
         var isNearTarget = GlobalPosition.DistanceTo(_target) <= 1f;
         var targetDir = GlobalPosition.DirectionTo(_target);
         state.LinearVelocity = isNearTarget ? Vector3.Zero :
@@ -99,7 +102,7 @@ public partial class Boat : RigidBody3D {
         );
 
         IsAlive = false;
-        _deathTime = ElapsedTimeS();
+        _deathTime = Main.ElapsedTimeS();
 
         _sfxPlayer.Play();
 
@@ -124,15 +127,13 @@ public partial class Boat : RigidBody3D {
         }
 
         // Money is "score". Used for infinite progression.
-        Killed?.Invoke(_moneyIncrementOnKill);
+        OnKill?.Invoke(_moneyIncrementOnKill);
         Dolphin.MoneyLabel.Text = $"Money Earned: ${Main.Money:N0}"; // TODO: Event.
 
     }
 
-    private static float ElapsedTimeS() => Time.GetTicksMsec() / 1000f;
-
     private void SetRandomTarget() {
-        _targetAcquisTime = ElapsedTimeS();
+        _targetAcquisTime = Main.ElapsedTimeS();
         const float minDistance = 50.0f;
         const float maxDistance = 100.0f;
         var distance = ((float)_rng.NextDouble() * (maxDistance - minDistance)) + minDistance;

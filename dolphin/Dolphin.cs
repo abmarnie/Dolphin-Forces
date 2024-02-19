@@ -218,7 +218,7 @@ public partial class Dolphin : RigidBody3D {
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
-        var isTorpedoOffCooldown = Main.ElapsedTimeS > _lastLargeTorpedoFireTime + _largeTorpedoCooldown;
+        var isTorpedoOffCooldown = Main.ElapsedTimeS() > _lastLargeTorpedoFireTime + _largeTorpedoCooldown;
         if (isTorpedoOffCooldown && _isAttackHeld) {
             fireCount++;
             var torpedo = _largeTorpedoPackedScene.Instantiate<LargeTorpedo>();
@@ -233,7 +233,7 @@ public partial class Dolphin : RigidBody3D {
             }
             var torpedoForce = 40f + _speed;
             torpedo.ApplyImpulse(-torpedoForce * torpedo.Basis.Z);
-            _lastLargeTorpedoFireTime = Main.ElapsedTimeS;
+            _lastLargeTorpedoFireTime = Main.ElapsedTimeS();
         }
 
 
