@@ -6,83 +6,70 @@ namespace DolphinForces;
 
 public partial class Player : RigidBody3D {
 
-    public static bool IsCameraUnderwater() => _camera.GlobalPosition.Y <= -0.3f;
-
-    [Export] private Label _moneyLabel = null!;
-    public static float Money { get; private set; }
-
-
-    private static Camera3D _camera = null!;
-
     public event Action? OnJump;
     public event Action? OnWaterEntry;
-    public bool IsUnderwater => GlobalPosition.Y <= 0;
+
+    [Export] private Camera3D _camera = null!;
+    public bool IsCameraUnderwater() => _camera.GlobalPosition.Y <= -0.3f;
+
+    [Export] private Label _moneyLabel = null!;
+    public float Money { get; private set; }
+
+    private bool IsUnderwater => GlobalPosition.Y <= 0;
 
     private AnimationTree _animTree = null!;
 
-    private Godot.Environment _underwaterEnv = null!;
-    public float _mouseSens = 1;
+    private Godot.Environment _underwaterEnv = GD.Load<Godot.Environment>(
+        "res://water/underwater_environment.tres");
+
+    public float MouseSens = 1;
     private Vector3 _rotationFromMouse;
 
     private const float DEFAULT_SPEED = 25f;
     private float _speed = DEFAULT_SPEED;
 
-    private float _largeTorpedoCooldown = 0.5f;
+    [Export] private Node3D _largeTorpedoSpawnLocation1 = null!;
+    [Export] private Node3D _largeTorpedoSpawnLocation2 = null!;
     private PackedScene _largeTorpedoPackedScene = GD.Load<PackedScene>("res://torpedos/large_torpedo.tscn");
-    private Node3D _largeTorpedoSpawnLocation1 = null!;
-    private Node3D _largeTorpedoSpawnLocation2 = null!;
+    private float _largeTorpedoCooldown = 0.5f;
     private float _lastLargeTorpedoFireTime;
 
-    private AudioStream _splash_sfx = ResourceLoader.Load<AudioStream>("res://nathan/splash.mp3");
-    private AudioStream _robot_sfx = ResourceLoader.Load<AudioStream>("res://nathan/mixkit-futuristic-robot-movement-1412.wav");
-
+    private AudioStream _splashSfx = GD.Load<AudioStream>("res://nathan/splash.mp3");
+    private AudioStream _robotSfx = GD.Load<AudioStream>("res://nathan/mixkit-futuristic-robot-movement-1412.wav");
 
     private bool _isSplashSoundLoaded;
 
-    private AudioStreamPlayer3D _audioStreamPlayer = null!;
+    [Export] private AudioStreamPlayer3D _sfx = null!;
 
+    private const float INTRO_MAIN_TEXT_TIMELENGTH = 7f;
+    public static bool IsIntroPlaying() => _introMainTextTimer < CUTSCENE_END_TIME_LENGTH;
 
-    private const float _cutsceneTimeLength = 7f;
-    public static bool CutscenePlaying => _cutsceneEndTimer < _cutsceneEndTimeLength;
+    private float _cutsceneTimer;
 
-    // private const float _cutsceneTimeLength = 10f;
-    // public static bool CutscenePlaying => _cutsceneTimer < _cutsceneTimeLength;
+    [Export] private ColorRect _introOverlay = null!;
+    [Export] private Label _introMainLabel = null!;
+    [Export] private Label _introContinueLabel = null!;
 
-    private static float _cutsceneTimer = 0f;
-
-    private static ColorRect _introColorRect = null!;
-    private static Label _introLabel = null!;
-    private static Label _continueLabel = null!;
-
-    private static bool _playerRespondedToCutsceneFinish = false;
-    private bool _boostQueued;
-
-    private static bool _isAttackHeld = false;
-
+    private bool _hasPlayerPressedContinue;
+    private bool _isAttackHeld;
 
     public override void _Input(InputEvent @event) {
-        if (_cutsceneTimer > _cutsceneTimeLength) {
+        if (_cutsceneTimer > INTRO_MAIN_TEXT_TIMELENGTH) {
             if (@event.IsActionReleased("attack")) {
-                if (!_playerRespondedToCutsceneFinish)
-                    _audioStreamPlayer.Play();
-                _playerRespondedToCutsceneFinish = true;
+                if (!_hasPlayerPressedContinue)
+                    _sfx.Play();
+                _hasPlayerPressedContinue = true;
             }
         }
 
-        if (CutscenePlaying)
+        if (IsIntroPlaying())
             return;
 
         if (@event is InputEventMouseMotion mouseMotion && IsUnderwater) {
-            _rotationFromMouse.Y -= mouseMotion.Relative.X * _mouseSens * 0.005f;
-            _rotationFromMouse.X -= mouseMotion.Relative.Y * _mouseSens * 0.005f;
+            _rotationFromMouse.Y -= mouseMotion.Relative.X * MouseSens * 0.005f;
+            _rotationFromMouse.X -= mouseMotion.Relative.Y * MouseSens * 0.005f;
             var lookAngleBounds = Mathf.DegToRad(75.0f);
             _rotationFromMouse.X = Mathf.Clamp(_rotationFromMouse.X, -lookAngleBounds, lookAngleBounds);
-        }
-
-        if (IsUnderwater && _secondUpgradeObtained) {
-            // if (@event.IsActionPressed("boost")) {
-            //     _boostQueued = true;
-            // }
         }
 
         // if (@event.IsActionReleased("ui_cancel")) {
@@ -108,14 +95,14 @@ public partial class Player : RigidBody3D {
             _speed -= speedScrollDelta;
 
         const float minSpeed = 5f;
-        _speed = Mathf.Clamp(_speed, minSpeed, maxSpeed);
+        _speed = Mathf.Clamp(_speed, minSpeed, _maxSpeed);
 
     }
 
-    private float maxSpeed = 50f;
+    private float _maxSpeed = 50f;
 
 
-    private int fireCount = 0;
+    private int _fireCount;
 
     public override void _Ready() {
 
@@ -124,16 +111,10 @@ public partial class Player : RigidBody3D {
             _moneyLabel.Text = $"Money Earned: ${Money:N0}";
         };
 
-
-
         Input.MouseMode = Input.MouseModeEnum.Captured;
-        _camera = GetNode<Camera3D>("%Camera3D");
 
-        _animTree = GetNode<AnimationTree>("%AnimationTree");
-        Debug.Assert(_animTree is not null);
         _animTree.Set("parameters/speed_scale/scale", 1f);
 
-        _underwaterEnv = (Godot.Environment)GD.Load("res://water/underwater_environment.tres");
         Debug.Assert(_underwaterEnv is not null);
 
         Debug.Assert(ContactMonitor);
@@ -147,86 +128,67 @@ public partial class Player : RigidBody3D {
         }
 
         _lastLargeTorpedoFireTime = -_largeTorpedoCooldown;
-        _largeTorpedoSpawnLocation1 = GetNode<Node3D>("%LargeTorpedoSpawnLocation1");
-        Debug.Assert(_largeTorpedoSpawnLocation1 is not null);
-
-        _largeTorpedoSpawnLocation2 = GetNode<Node3D>("%LargeTorpedoSpawnLocation2");
-        Debug.Assert(_largeTorpedoSpawnLocation2 is not null);
-
-
-        _audioStreamPlayer = GetNode<AudioStreamPlayer3D>("%AudioStreamPlayer3D");
-        // _audioStreamPlayer.Finished += LoadSplashSound;
-
-        _introColorRect = this.GetDescendant<ColorRect>()!;
-        Debug.Assert(_introColorRect is not null);
-
-        _introLabel = _introColorRect.GetChild<Label>(0);
-        Debug.Assert(_introLabel is not null);
-        _introLabel.Modulate = new Color(1, 1, 1, 0);
-
-        _continueLabel = _introColorRect.GetChild<Label>(1);
-        Debug.Assert(_continueLabel is not null);
-        _continueLabel.Visible = false;
+        _introMainLabel.Modulate = new Color(1, 1, 1, 0);
+        _introContinueLabel.Visible = false;
 
     }
 
     private bool _firstPhysicsTime = true;
 
-    private float _introlabelAlpha = 0;
-    private static float _cutsceneEndTimer = 0;
+    private float _introlabelAlpha;
+    private static float _introMainTextTimer;
     private float _introlColorRectAlpha = 1;
-    private const float _cutsceneEndTimeLength = 10f;
+    private const float CUTSCENE_END_TIME_LENGTH = 10f;
 
-    private float _continueLabelAlpha = 0;
+    private float _continueLabelAlpha;
 
-    private bool _firstUpgradeObtained = false;
-    private bool _secondUpgradeObtained = false;
+    private bool _firstUpgradeObtained;
+    private bool _secondUpgradeObtained;
 
-    public static float FirstUpgradeCost = 10000f;
-    public static float SecondUpgradeCost = 20000f;
-    public static int numInfUpgrades = 0;
-    public static float InfiniteScalingUpgradeCost = 10000f;
+    private float _firstUpgradeCost = 10000f;
+    private float _secondUpgradeCost = 20000f;
+    private int _numInfUpgrades;
+    private float _infiniteScalingUpgradeCost = 10000f;
 
 
     public override void _PhysicsProcess(double delta) {
 
         _cutsceneTimer += (float)delta;
         const float alphaDelta = 0.0025f;
-        // _cutsceneTimer < _cutsceneTimeLength ||
-        if (!_playerRespondedToCutsceneFinish) {
-            _introColorRect.Visible = true;
+        if (!_hasPlayerPressedContinue) {
+            _introOverlay.Visible = true;
             _introlabelAlpha += alphaDelta;
             _introlabelAlpha = Mathf.Clamp(_introlabelAlpha, 0f, 1f);
-            _introLabel.Modulate = new Color(1, 1, 1, _introlabelAlpha);
-            if (_cutsceneTimer > _cutsceneTimeLength) {
+            _introMainLabel.Modulate = new Color(1, 1, 1, _introlabelAlpha);
+            if (_cutsceneTimer > INTRO_MAIN_TEXT_TIMELENGTH) {
                 _continueLabelAlpha += 2f * alphaDelta;
-                _continueLabel.Visible = true;
+                _introContinueLabel.Visible = true;
                 _continueLabelAlpha = Mathf.Clamp(_continueLabelAlpha, 0f, 1f);
-                _continueLabel.Modulate = new Color(1, 1, 1, _continueLabelAlpha);
+                _introContinueLabel.Modulate = new Color(1, 1, 1, _continueLabelAlpha);
             }
             return;
-        } else if (_playerRespondedToCutsceneFinish && _cutsceneEndTimer < _cutsceneEndTimeLength) {
-            _cutsceneEndTimer += (float)delta;
+        } else if (_hasPlayerPressedContinue && _introMainTextTimer < CUTSCENE_END_TIME_LENGTH) {
+            _introMainTextTimer += (float)delta;
             _introlabelAlpha -= alphaDelta / 1.5f;
             _introlColorRectAlpha -= alphaDelta / 1.5f;
             _continueLabelAlpha -= alphaDelta / 1.5f;
-            _introColorRect.Modulate = new Color(1, 1, 1, _introlColorRectAlpha);
-            _introLabel.Modulate = new Color(1, 1, 1, _introlabelAlpha);
-            _continueLabel.Modulate = new Color(1, 1, 1, 1);
+            _introOverlay.Modulate = new Color(1, 1, 1, _introlColorRectAlpha);
+            _introMainLabel.Modulate = new Color(1, 1, 1, _introlabelAlpha);
+            _introContinueLabel.Modulate = new Color(1, 1, 1, 1);
         } else {
             _firstPhysicsTime = false;
-            _introColorRect.Visible = false;
+            _introOverlay.Visible = false;
         }
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
         var isTorpedoOffCooldown = Main.ElapsedTimeS() > _lastLargeTorpedoFireTime + _largeTorpedoCooldown;
         if (isTorpedoOffCooldown && _isAttackHeld) {
-            fireCount++;
+            _fireCount++;
             var torpedo = _largeTorpedoPackedScene.Instantiate<LargeTorpedo>();
             GetTree().CurrentScene.AddChild(torpedo);
             torpedo.AddCollisionExceptionWith(this);
-            if (fireCount % 2 == 0) {
+            if (_fireCount % 2 == 0) {
                 torpedo.GlobalPosition = _largeTorpedoSpawnLocation1.GlobalPosition;
                 torpedo.GlobalRotation = _largeTorpedoSpawnLocation1.GlobalRotation;
             } else {
@@ -239,10 +201,10 @@ public partial class Player : RigidBody3D {
         }
 
 
-        if (Money >= FirstUpgradeCost && !_firstUpgradeObtained) {
+        if (Money >= _firstUpgradeCost && !_firstUpgradeObtained) {
             // MoneyLabel.Text = MoneyLabel.Text + "\n" + "$2000 earned. Comrade unlocked.";
-            _audioStreamPlayer.Stream = _robot_sfx;
-            _audioStreamPlayer.Play();
+            _sfx.Stream = _robotSfx;
+            _sfx.Play();
 
             var mainDolphin = GetNode<MeshInstance3D>("%CyborgDolphin_001");
             mainDolphin.Position = mainDolphin.Position with { X = -3.25f };
@@ -256,25 +218,25 @@ public partial class Player : RigidBody3D {
 
             _largeTorpedoCooldown /= 2f;
 
-        } else if (Money >= SecondUpgradeCost && !_secondUpgradeObtained) {
-            _audioStreamPlayer.Stream = _robot_sfx;
-            _audioStreamPlayer.Play();
+        } else if (Money >= _secondUpgradeCost && !_secondUpgradeObtained) {
+            _sfx.Stream = _robotSfx;
+            _sfx.Play();
 
             var brother = GetNode<MeshInstance3D>("%CyborgDolphin");
             brother.Visible = true;
             brother.Position = brother.Position with { Y = 3.25f };
             _secondUpgradeObtained = true;
-            maxSpeed = 80;
+            _maxSpeed = 80;
             _largeTorpedoCooldown /= 1.5f;
-        } else if (Money >= ((numInfUpgrades + 1) * InfiniteScalingUpgradeCost) + SecondUpgradeCost
+        } else if (Money >= ((_numInfUpgrades + 1) * _infiniteScalingUpgradeCost) + _secondUpgradeCost
             && _secondUpgradeObtained) {
 
-            numInfUpgrades++;
+            _numInfUpgrades++;
 
-            _audioStreamPlayer.Stream = _robot_sfx;
-            _audioStreamPlayer.Play();
+            _sfx.Stream = _robotSfx;
+            _sfx.Play();
 
-            maxSpeed *= 1.1f;
+            _maxSpeed *= 1.1f;
             _largeTorpedoCooldown /= 1.1f;
 
             UpdatePlayerMoneyLabel();
@@ -283,17 +245,17 @@ public partial class Player : RigidBody3D {
 
         _moneyLabel.Text = $"Money Earned: ${Money:N0}";
 
-        if (numInfUpgrades >= 1) {
+        if (_numInfUpgrades >= 1) {
             UpdatePlayerMoneyLabel();
-        } else if (Money >= SecondUpgradeCost) {
-            _moneyLabel.Text = _moneyLabel.Text + "\n" + $"${SecondUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
-        } else if (Money >= FirstUpgradeCost) {
-            _moneyLabel.Text = _moneyLabel.Text + "\n" + $"${FirstUpgradeCost} transfer queued. Torpedo fire rate increased.";
+        } else if (Money >= _secondUpgradeCost) {
+            _moneyLabel.Text = _moneyLabel.Text + "\n" + $"${_secondUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
+        } else if (Money >= _firstUpgradeCost) {
+            _moneyLabel.Text = _moneyLabel.Text + "\n" + $"${_firstUpgradeCost} transfer queued. Torpedo fire rate increased.";
         }
 
 
         void UpdatePlayerMoneyLabel() => _moneyLabel.Text = _moneyLabel.Text
-            + "\n" + $"${InfiniteScalingUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
+            + "\n" + $"${_infiniteScalingUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
 
 
         const float defaultFov = 75;
@@ -326,7 +288,7 @@ public partial class Player : RigidBody3D {
     private bool _firstTime = true;
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
-        if (CutscenePlaying) {
+        if (IsIntroPlaying()) {
             return;
         }
 
@@ -337,8 +299,8 @@ public partial class Player : RigidBody3D {
 
         if (IsUnderwater) {
             if (_impulsedApplied) {
-                _audioStreamPlayer.Stream = _splash_sfx;
-                _audioStreamPlayer.Play();
+                _sfx.Stream = _splashSfx;
+                _sfx.Play();
                 OnWaterEntry?.Invoke();
             }
             state.LinearVelocity = -_speed * Basis.Z;
@@ -346,7 +308,7 @@ public partial class Player : RigidBody3D {
             _impulsedApplied = false;
         } else {
             if (!_impulsedApplied) {
-                _audioStreamPlayer.Play();
+                _sfx.Play();
                 if (!_firstTime)
                     OnJump?.Invoke();
                 ApplyImpulse(-2f * _speed * Basis.Z);

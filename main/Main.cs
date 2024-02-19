@@ -11,9 +11,9 @@ public partial class Main : Node3D {
     [Export] private AudioStreamPlayer _music = null!;
     [Export] private AudioStreamPlayer _introFoghorn = null!;
 
-    private AudioStream _musicMetal = ResourceLoader.Load<AudioStream>(
+    private AudioStream _musicMetal = GD.Load<AudioStream>(
         "res://nathan/game_jam_metal Edit 1 Export 2.wav");
-    private AudioStream _musicPeaceful = ResourceLoader.Load<AudioStream>(
+    private AudioStream _musicPeaceful = GD.Load<AudioStream>(
         "res://nathan/Game Jam Edit 1 Export 1.wav");
     private float _musicPeacefulPlaybackPos;
 
@@ -35,9 +35,8 @@ public partial class Main : Node3D {
             _music.Stream = _musicMetal;
             _music.Play();
         }
-
     }
 
-    public override void _Process(double delta) => _underwaterTerrains.Visible = Player.IsCameraUnderwater();
+    public override void _Process(double delta) => _underwaterTerrains.Visible = _player.IsCameraUnderwater();
 
 }

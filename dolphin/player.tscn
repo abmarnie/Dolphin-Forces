@@ -203,19 +203,22 @@ _data = {
 [sub_resource type="BoxShape3D" id="BoxShape3D_asv8f"]
 size = Vector3(2, 2, 6)
 
-[node name="Player" type="RigidBody3D"]
+[node name="Player" type="RigidBody3D" node_paths=PackedStringArray("_camera", "_moneyLabel", "_largeTorpedoSpawnLocation1", "_largeTorpedoSpawnLocation2", "_audioStreamPlayer")]
 gravity_scale = 0.0
 can_sleep = false
 max_contacts_reported = 1
 contact_monitor = true
 script = ExtResource("1_8jkiy")
+_camera = NodePath("CamSpringArm3D/DesiredCameraPosition/Camera3D")
+_moneyLabel = NodePath("PlayerGuiCanvasLayer/MoneyLabel")
+_largeTorpedoSpawnLocation1 = NodePath("LargeTorpedoSpawnLocation1")
+_largeTorpedoSpawnLocation2 = NodePath("LargeTorpedoSpawnLocation2")
+_audioStreamPlayer = NodePath("Sfx")
 
 [node name="LargeTorpedoSpawnLocation1" type="Node3D" parent="."]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.982434, -0.18661, 0, 0.18661, 0.982434, 0, -1.90401, 0)
 
 [node name="LargeTorpedoSpawnLocation2" type="Node3D" parent="."]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 0.982434, -0.18661, 0, 0.18661, 0.982434, 0, -1.90401, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -233,22 +236,22 @@ bones/0/name = "Root"
 bones/0/parent = -1
 bones/0/rest = Transform3D(1, 0, 2.38419e-07, 0, 1, 0, -2.38419e-07, 0, 1, 0, -0.515753, 0)
 bones/0/enabled = true
-bones/0/position = Vector3(2.71047e-07, -0.300231, -6.46226e-14)
-bones/0/rotation = Quaternion(-0.0105224, 1.19203e-07, -1.87824e-09, 0.999945)
+bones/0/position = Vector3(2.71047e-07, -0.513461, -6.46226e-14)
+bones/0/rotation = Quaternion(0.0700161, 1.18917e-07, -1.01887e-08, 0.997546)
 bones/0/scale = Vector3(1, 1, 1)
 bones/1/name = "Body"
 bones/1/parent = 0
 bones/1/rest = Transform3D(1, -2.38349e-07, -6.45915e-07, -6.51492e-07, -0.0241905, -0.999707, 2.22654e-07, 0.999707, -0.0241905, -2.95825e-08, 0.629179, 0.124078)
 bones/1/enabled = true
 bones/1/position = Vector3(-2.95825e-08, 0.629179, 0.124078)
-bones/1/rotation = Quaternion(0.689989, 0.00483505, -0.00757868, 0.723764)
+bones/1/rotation = Quaternion(0.677413, 0.00590623, -0.00925753, 0.735521)
 bones/1/scale = Vector3(1, 1, 1)
 bones/2/name = "Head"
 bones/2/parent = 1
 bones/2/rest = Transform3D(1, 3.02714e-09, -6.358e-08, -3.32245e-09, 0.999989, -0.00464511, 6.35652e-08, 0.00464511, 0.999989, -1.77636e-15, 0.967108, 3.72529e-09)
 bones/2/enabled = true
 bones/2/position = Vector3(-1.77636e-15, 0.967108, 3.72529e-09)
-bones/2/rotation = Quaternion(0.177569, 0.00113758, -0.000304526, 0.984108)
+bones/2/rotation = Quaternion(-0.0331713, 0.00161626, -4.4401e-05, 0.999448)
 bones/2/scale = Vector3(1, 1, 1)
 bones/3/name = "topjaw"
 bones/3/parent = 2
@@ -296,29 +299,29 @@ bones/9/name = "Bone.004"
 bones/9/parent = 0
 bones/9/rest = Transform3D(1, 2.38415e-07, -1.35058e-09, 7.10543e-15, 0.00566465, 0.999984, 2.38419e-07, -0.999984, 0.00566465, 2.42158e-08, 0.629179, -0.101568)
 bones/9/enabled = true
-bones/9/position = Vector3(2.27308e-08, 0.597628, -0.101567)
-bones/9/rotation = Quaternion(-0.721283, -8.23428e-08, -8.57298e-08, 0.692641)
+bones/9/position = Vector3(2.42157e-08, 0.622718, -0.101568)
+bones/9/rotation = Quaternion(-0.651431, -9.04451e-08, -7.76566e-08, 0.758708)
 bones/9/scale = Vector3(1, 1, 1)
 bones/10/name = "Thigh"
 bones/10/parent = 9
 bones/10/rest = Transform3D(1, -6.2244e-17, 3.35833e-14, -3.30265e-16, 0.999932, 0.0116875, -3.35817e-14, -0.0116875, 0.999932, 4.63221e-23, 0.956004, -2.79397e-09)
 bones/10/enabled = true
 bones/10/position = Vector3(4.63221e-23, 0.956004, -2.79397e-09)
-bones/10/rotation = Quaternion(-0.129059, 1.57556e-14, 8.42919e-16, 0.991637)
+bones/10/rotation = Quaternion(-0.00767202, 1.93433e-14, 8.48139e-16, 0.999971)
 bones/10/scale = Vector3(1, 1, 1)
 bones/11/name = "leg"
 bones/11/parent = 10
 bones/11/rest = Transform3D(1, 1.27315e-15, -3.27851e-19, -1.27181e-15, 0.998957, 0.0456479, 5.84443e-17, -0.0456479, 0.998957, -2.28509e-23, 0.899142, -9.31323e-09)
 bones/11/enabled = true
 bones/11/position = Vector3(-2.28509e-23, 0.899142, -9.31323e-09)
-bones/11/rotation = Quaternion(-0.168397, -1.69221e-15, -3.69671e-15, 0.985719)
+bones/11/rotation = Quaternion(0.00895862, 3.52246e-15, 2.83715e-15, 0.99996)
 bones/11/scale = Vector3(1, 1, 1)
 bones/12/name = "foot"
 bones/12/parent = 11
 bones/12/rest = Transform3D(1, -1.34181e-15, -2.26925e-19, 1.34024e-15, 0.998842, -0.0481181, 6.47919e-17, 0.0481181, 0.998842, 4.02837e-22, 0.949682, -1.49012e-08)
 bones/12/enabled = true
 bones/12/position = Vector3(4.02837e-22, 0.949682, -1.49012e-08)
-bones/12/rotation = Quaternion(-0.074599, -7.61694e-16, -3.62437e-15, 0.997214)
+bones/12/rotation = Quaternion(-0.0419136, 3.90728e-15, 4.63507e-15, 0.999121)
 bones/12/scale = Vector3(1, 1, 1)
 
 [node name="CyborgDolphin" type="MeshInstance3D" parent="Dolphins/Armature/Skeleton3D"]
@@ -381,7 +384,6 @@ margin = 0.05
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.665, 0)
 
 [node name="Camera3D" type="Camera3D" parent="CamSpringArm3D/DesiredCameraPosition"]
-unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.665, 0)
 
 [node name="Sprite3D" type="Sprite3D" parent="CamSpringArm3D/DesiredCameraPosition/Camera3D"]
@@ -397,7 +399,7 @@ shape = SubResource("BoxShape3D_asv8f")
 
 [node name="PlayerGuiCanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="CanvasLayer" parent="PlayerGuiCanvasLayer" instance=ExtResource("6_3mlsh")]
+[node name="PauseMenu" parent="PlayerGuiCanvasLayer" instance=ExtResource("6_3mlsh")]
 visible = false
 
 [node name="MoneyLabel" type="Label" parent="PlayerGuiCanvasLayer"]
@@ -484,8 +486,7 @@ text = "Volume"
 [node name="HSlider" type="HSlider" parent="PlayerGuiCanvasLayer/Panel/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
-unique_name_in_owner = true
+[node name="Sfx" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("5_i1idw")
 bus = &"SFX"
 

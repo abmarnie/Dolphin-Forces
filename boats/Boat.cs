@@ -23,8 +23,8 @@ public partial class Boat : RigidBody3D {
 
     // Dynamic art.
     [Export] private GpuParticles3D[] _smokePfxs = null!;
-    private Resource _aliveTexture = ResourceLoader.Load("res://images/shared_metal_texture.png");
-    private Resource _deathTexture = ResourceLoader.Load("res://nathan/destroyed_boat_texture.png");
+    private Resource _aliveTexture = GD.Load("res://images/shared_metal_texture.png");
+    private Resource _deathTexture = GD.Load("res://nathan/destroyed_boat_texture.png");
 
     // Spawning.
     public bool IsAlive { get; private set; }
@@ -45,7 +45,7 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (Player.CutscenePlaying) {
+        if (Player.IsIntroPlaying()) {
             return;
         }
 
@@ -65,7 +65,7 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
-        if (Player.CutscenePlaying) {
+        if (Player.IsIntroPlaying()) {
             return;
         }
 
