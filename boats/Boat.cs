@@ -128,8 +128,6 @@ public partial class Boat : RigidBody3D {
 
         // Money is "score". Used for infinite progression.
         OnKill?.Invoke(_moneyIncrementOnKill);
-        Player.MoneyLabel.Text = $"Money Earned: ${Main.Money:N0}"; // TODO: Event.
-
     }
 
     private void SetRandomTarget() {

@@ -6,11 +6,14 @@ namespace DolphinForces;
 
 public partial class Player : RigidBody3D {
 
-    public static bool IsCameraUnderwater => _camera.GlobalPosition.Y <= -0.3f;
-    public static Label MoneyLabel;
+    public static bool IsCameraUnderwater() => _camera.GlobalPosition.Y <= -0.3f;
+
+    [Export] private Label _moneyLabel = null!;
+    public static float Money { get; private set; }
+
+
     private static Camera3D _camera = null!;
 
-    public event Action? OnInfUpgrade;
     public event Action? OnJump;
     public event Action? OnWaterEntry;
     public bool IsUnderwater => GlobalPosition.Y <= 0;
@@ -38,8 +41,6 @@ public partial class Player : RigidBody3D {
 
     private AudioStreamPlayer3D _audioStreamPlayer = null!;
 
-    public static Boat NearestObjective = null!;
-    private static Sprite3D _objectiveArrow = null!;
 
     private const float _cutsceneTimeLength = 7f;
     public static bool CutscenePlaying => _cutsceneEndTimer < _cutsceneEndTimeLength;
@@ -117,6 +118,14 @@ public partial class Player : RigidBody3D {
     private int fireCount = 0;
 
     public override void _Ready() {
+
+        Boat.OnKill += (amount) => {
+            Money += amount;
+            _moneyLabel.Text = $"Money Earned: ${Money:N0}";
+        };
+
+
+
         Input.MouseMode = Input.MouseModeEnum.Captured;
         _camera = GetNode<Camera3D>("%Camera3D");
 
@@ -147,13 +156,6 @@ public partial class Player : RigidBody3D {
 
         _audioStreamPlayer = GetNode<AudioStreamPlayer3D>("%AudioStreamPlayer3D");
         // _audioStreamPlayer.Finished += LoadSplashSound;
-
-        _objectiveArrow = this.GetDescendant<Sprite3D>()!;
-        Debug.Assert(_objectiveArrow is not null);
-        _objectiveArrow.Visible = false;
-
-        MoneyLabel = this.GetDescendant<Label>()!;
-        Debug.Assert(MoneyLabel is not null);
 
         _introColorRect = this.GetDescendant<ColorRect>()!;
         Debug.Assert(_introColorRect is not null);
@@ -237,7 +239,7 @@ public partial class Player : RigidBody3D {
         }
 
 
-        if (Main.Money >= FirstUpgradeCost && !_firstUpgradeObtained) {
+        if (Money >= FirstUpgradeCost && !_firstUpgradeObtained) {
             // MoneyLabel.Text = MoneyLabel.Text + "\n" + "$2000 earned. Comrade unlocked.";
             _audioStreamPlayer.Stream = _robot_sfx;
             _audioStreamPlayer.Play();
@@ -254,7 +256,7 @@ public partial class Player : RigidBody3D {
 
             _largeTorpedoCooldown /= 2f;
 
-        } else if (Main.Money >= SecondUpgradeCost && !_secondUpgradeObtained) {
+        } else if (Money >= SecondUpgradeCost && !_secondUpgradeObtained) {
             _audioStreamPlayer.Stream = _robot_sfx;
             _audioStreamPlayer.Play();
 
@@ -264,7 +266,7 @@ public partial class Player : RigidBody3D {
             _secondUpgradeObtained = true;
             maxSpeed = 80;
             _largeTorpedoCooldown /= 1.5f;
-        } else if (Main.Money >= (numInfUpgrades + 1) * InfiniteScalingUpgradeCost + SecondUpgradeCost
+        } else if (Money >= ((numInfUpgrades + 1) * InfiniteScalingUpgradeCost) + SecondUpgradeCost
             && _secondUpgradeObtained) {
 
             numInfUpgrades++;
@@ -275,9 +277,23 @@ public partial class Player : RigidBody3D {
             maxSpeed *= 1.1f;
             _largeTorpedoCooldown /= 1.1f;
 
-            OnInfUpgrade?.Invoke();
+            UpdatePlayerMoneyLabel();
         }
 
+
+        _moneyLabel.Text = $"Money Earned: ${Money:N0}";
+
+        if (numInfUpgrades >= 1) {
+            UpdatePlayerMoneyLabel();
+        } else if (Money >= SecondUpgradeCost) {
+            _moneyLabel.Text = _moneyLabel.Text + "\n" + $"${SecondUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
+        } else if (Money >= FirstUpgradeCost) {
+            _moneyLabel.Text = _moneyLabel.Text + "\n" + $"${FirstUpgradeCost} transfer queued. Torpedo fire rate increased.";
+        }
+
+
+        void UpdatePlayerMoneyLabel() => _moneyLabel.Text = _moneyLabel.Text
+            + "\n" + $"${InfiniteScalingUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
 
 
         const float defaultFov = 75;
@@ -301,7 +317,7 @@ public partial class Player : RigidBody3D {
             _animTree.Set("parameters/speed_scale/scale", 0f);
         }
 
-        _camera.Environment = IsCameraUnderwater ? _underwaterEnv : null;
+        _camera.Environment = IsCameraUnderwater() ? _underwaterEnv : null;
 
 
     }
@@ -325,12 +341,6 @@ public partial class Player : RigidBody3D {
                 _audioStreamPlayer.Play();
                 OnWaterEntry?.Invoke();
             }
-            // if (_firstTime)
-            //     _audioStreamPlayer.Play();
-            // if (_boostQueued) {
-            //     // _boostQueued = false;
-            //     // ApplyImpulse(-100f * Basis.Z);
-            // } else
             state.LinearVelocity = -_speed * Basis.Z;
             GravityScale = 0.0f;
             _impulsedApplied = false;
