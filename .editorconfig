@@ -92,7 +92,7 @@ dotnet_style_predefined_type_for_member_access = true
 
 # Explicitly write access modifiers for clarity. 
 # Use readonly modifier when possible for expressiveness.
-dotnet_style_require_accessibility_modifiers = always
+dotnet_style_require_accessibility_modifiers = omit_if_default
 dotnet_style_readonly_field = true
 
 # Explicitly add parenthesis when doing arithmetic or binary operators for clarity. 

@@ -13,30 +13,30 @@ public partial class Boat : RigidBody3D {
 
     // Design parameters.
     [ExportGroup("Design Params")]
-    [Export] private float _speed;
-    [Export] private float _targetAcquisCooldown;
-    [Export] private float _moneyIncrementOnKill;
+    [Export] float _speed;
+    [Export] float _targetAcquisCooldown;
+    [Export] float _moneyIncrementOnKill;
 
     // Audio.
     [ExportGroup("Node Refs")]
-    [Export] private AudioStreamPlayer3D _sfxPlayer = null!;
+    [Export] AudioStreamPlayer3D _sfxPlayer = null!;
 
     // Dynamic art.
-    [Export] private GpuParticles3D[] _smokePfxs = null!;
-    private Resource _aliveTexture = GD.Load("res://images/shared_metal_texture.png");
-    private Resource _deathTexture = GD.Load("res://nathan/destroyed_boat_texture.png");
+    [Export] GpuParticles3D[] _smokePfxs = null!;
+    Resource _aliveTexture = GD.Load("res://images/shared_metal_texture.png");
+    Resource _deathTexture = GD.Load("res://nathan/destroyed_boat_texture.png");
 
     // Spawning.
     public bool IsAlive { get; private set; }
-    private Vector3 _spawn;
-    private static int _numKilled;               // For game progression.
-    private static float _respawnCooldown = 10f; // For game progression.
-    private float _deathTime;
+    Vector3 _spawn;
+    static int _numKilled;               // For game progression.
+    static float _respawnCooldown = 10f; // For game progression.
+    float _deathTime;
 
     // Target acquisition.
-    private static readonly Random _rng = new();
-    private float _targetAcquisTime;
-    private Vector3 _target;
+    static readonly Random _rng = new();
+    float _targetAcquisTime;
+    Vector3 _target;
 
     public override void _Ready() {
         _spawn = GlobalPosition;
@@ -130,7 +130,7 @@ public partial class Boat : RigidBody3D {
         OnKill?.Invoke(_moneyIncrementOnKill);
     }
 
-    private void SetRandomTarget() {
+    void SetRandomTarget() {
         _targetAcquisTime = Main.ElapsedTimeS();
         const float minDistance = 50.0f;
         const float maxDistance = 100.0f;
@@ -141,7 +141,7 @@ public partial class Boat : RigidBody3D {
         LookAt(_target);
     }
 
-    private void Spawn() {
+    void Spawn() {
         IsAlive = true;
         GlobalPosition = _spawn;
         SetRandomTarget();

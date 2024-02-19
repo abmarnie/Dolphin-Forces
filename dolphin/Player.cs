@@ -9,54 +9,54 @@ public partial class Player : RigidBody3D {
     public event Action? OnJump;
     public event Action? OnWaterEntry;
 
-    [Export] private Node3D _desiredCamPos = null!; // TODO: Rename to springarm location.
-    [Export] private Node3D _dolphins = null!;
-    [Export] private Camera3D _cam = null!;
+    [Export] Node3D _desiredCamPos = null!; // TODO: Rename to springarm location.
+    [Export] Node3D _dolphins = null!;
+    [Export] Camera3D _cam = null!;
     public bool IsCameraUnderwater() => _cam.GlobalPosition.Y <= -0.3f;
 
-    [Export] private Label _moneyLabel = null!;
+    [Export] Label _moneyLabel = null!;
     public float Money { get; private set; }
 
-    private bool IsUnderwater => GlobalPosition.Y <= 0;
+    bool IsUnderwater => GlobalPosition.Y <= 0;
 
-    [Export] private AnimationTree _animTree = null!;
+    [Export] AnimationTree _animTree = null!;
 
-    private Godot.Environment _underwaterEnv = GD.Load<Godot.Environment>(
+    Godot.Environment _underwaterEnv = GD.Load<Godot.Environment>(
         "res://water/underwater_environment.tres");
 
     public float MouseSens = 1;
-    private Vector3 _rotationFromMouse;
+    Vector3 _rotationFromMouse;
 
-    private const float DEFAULT_SPEED = 25f;
-    private float _speed = DEFAULT_SPEED;
+    const float DEFAULT_SPEED = 25f;
+    float _speed = DEFAULT_SPEED;
 
-    [Export] private Node3D _largeTorpedoSpawnLocation1 = null!;
-    [Export] private Node3D _largeTorpedoSpawnLocation2 = null!;
-    private PackedScene _largeTorpedoPackedScene = GD.Load<PackedScene>("res://torpedos/large_torpedo.tscn");
-    private float _largeTorpedoCooldown = 0.5f;
-    private float _lastLargeTorpedoFireTime;
+    [Export] Node3D _largeTorpedoSpawnLocation1 = null!;
+    [Export] Node3D _largeTorpedoSpawnLocation2 = null!;
+    PackedScene _largeTorpedoPackedScene = GD.Load<PackedScene>("res://torpedos/large_torpedo.tscn");
+    float _largeTorpedoCooldown = 0.5f;
+    float _lastLargeTorpedoFireTime;
 
-    private AudioStream _splashSfx = GD.Load<AudioStream>("res://nathan/splash.mp3");
-    private AudioStream _robotSfx = GD.Load<AudioStream>("res://nathan/mixkit-futuristic-robot-movement-1412.wav");
+    AudioStream _splashSfx = GD.Load<AudioStream>("res://nathan/splash.mp3");
+    AudioStream _robotSfx = GD.Load<AudioStream>("res://nathan/mixkit-futuristic-robot-movement-1412.wav");
 
-    private bool _isSplashSoundLoaded;
+    bool _isSplashSoundLoaded;
 
-    [Export] private AudioStreamPlayer3D _sfx = null!;
+    [Export] AudioStreamPlayer3D _sfx = null!;
 
-    private const float INTRO_MAIN_TEXT_TIMELENGTH = 7f;
+    const float INTRO_MAIN_TEXT_TIMELENGTH = 7f;
     public static bool IsIntroPlaying() => _introMainTextTimer < CUTSCENE_END_TIME_LENGTH;
 
-    private float _cutsceneTimer;
+    float _cutsceneTimer;
 
-    [Export] private ColorRect _introOverlay = null!;
-    [Export] private Label _introMainLabel = null!;
-    [Export] private Label _introContinueLabel = null!;
+    [Export] ColorRect _introOverlay = null!;
+    [Export] Label _introMainLabel = null!;
+    [Export] Label _introContinueLabel = null!;
 
-    private bool _hasPlayerPressedContinue;
-    private bool _isAttackHeld;
+    bool _hasPlayerPressedContinue;
+    bool _isAttackHeld;
 
-    private Vector3 _camRotFromMouse;
-    private float _dolphinsPosXFromMouse;
+    Vector3 _camRotFromMouse;
+    float _dolphinsPosXFromMouse;
 
     public override void _Input(InputEvent @event) {
         if (_cutsceneTimer > INTRO_MAIN_TEXT_TIMELENGTH) {
@@ -77,18 +77,18 @@ public partial class Player : RigidBody3D {
             var lookAngleBounds = Mathf.DegToRad(75.0f);
             _rotationFromMouse.X = Mathf.Clamp(_rotationFromMouse.X, -lookAngleBounds, lookAngleBounds);
 
-            const float xPosIncrement = 0.1f;
-            const float yRotIncrement = 0.01f;
-            const float zRotIncrement = 0.1f;
+            const float xPosIncr = 0.1f;
+            const float yRotIncr = 0.01f;
+            const float zRotIncr = 0.1f;
             if (mouseMotion.Relative.X < 0) {
-                _dolphinsPosXFromMouse += xPosIncrement;
-                _camRotFromMouse.Y += yRotIncrement;
-                _camRotFromMouse.Z += zRotIncrement;
+                _dolphinsPosXFromMouse += xPosIncr;
+                _camRotFromMouse.Y += yRotIncr;
+                _camRotFromMouse.Z += zRotIncr;
 
             } else if (mouseMotion.Relative.X > 0) {
-                _dolphinsPosXFromMouse -= xPosIncrement;
-                _camRotFromMouse.Y -= yRotIncrement;
-                _camRotFromMouse.Z -= zRotIncrement;
+                _dolphinsPosXFromMouse -= xPosIncr;
+                _camRotFromMouse.Y -= yRotIncr;
+                _camRotFromMouse.Z -= zRotIncr;
             }
         }
 
@@ -111,10 +111,10 @@ public partial class Player : RigidBody3D {
 
     }
 
-    private float _maxSpeed = 50f;
+    float _maxSpeed = 50f;
 
 
-    private int _fireCount;
+    int _fireCount;
 
     public override void _Ready() {
 
@@ -145,22 +145,22 @@ public partial class Player : RigidBody3D {
 
     }
 
-    private bool _firstPhysicsTime = true;
+    bool _firstPhysicsTime = true;
 
-    private float _introlabelAlpha;
-    private static float _introMainTextTimer;
-    private float _introlColorRectAlpha = 1;
-    private const float CUTSCENE_END_TIME_LENGTH = 10f;
+    float _introlabelAlpha;
+    static float _introMainTextTimer;
+    float _introlColorRectAlpha = 1;
+    const float CUTSCENE_END_TIME_LENGTH = 10f;
 
-    private float _continueLabelAlpha;
+    float _continueLabelAlpha;
 
-    private bool _firstUpgradeObtained;
-    private bool _secondUpgradeObtained;
+    bool _firstUpgradeObtained;
+    bool _secondUpgradeObtained;
 
-    private float _firstUpgradeCost = 10000f;
-    private float _secondUpgradeCost = 20000f;
-    private int _numInfUpgrades;
-    private float _infiniteScalingUpgradeCost = 10000f;
+    float _firstUpgradeCost = 10000f;
+    float _secondUpgradeCost = 20000f;
+    int _numInfUpgrades;
+    float _infiniteScalingUpgradeCost = 10000f;
 
     public override void _Process(double delta) {
         var camLerpWeight = IsUnderwater ? 0.3f : 0.2f;
@@ -322,8 +322,8 @@ public partial class Player : RigidBody3D {
 
     }
 
-    private bool _impulsedApplied;
-    private bool _firstTime = true;
+    bool _impulsedApplied;
+    bool _firstTime = true;
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
         if (IsIntroPlaying()) {

@@ -6,16 +6,16 @@ public partial class Main : Node3D {
 
     public static float ElapsedTimeS() => Time.GetTicksMsec() / 1000f;
 
-    [Export] private Player _player = null!;
-    [Export] private Node3D _underwaterTerrains = null!;
-    [Export] private AudioStreamPlayer _music = null!;
-    [Export] private AudioStreamPlayer _introFoghorn = null!;
+    [Export] Player _player = null!;
+    [Export] Node3D _underwaterTerrains = null!;
+    [Export] AudioStreamPlayer _music = null!;
+    [Export] AudioStreamPlayer _introFoghorn = null!;
 
-    private AudioStream _musicMetal = GD.Load<AudioStream>(
+    AudioStream _musicMetal = GD.Load<AudioStream>(
         "res://nathan/game_jam_metal Edit 1 Export 2.wav");
-    private AudioStream _musicPeaceful = GD.Load<AudioStream>(
+    AudioStream _musicPeaceful = GD.Load<AudioStream>(
         "res://nathan/Game Jam Edit 1 Export 1.wav");
-    private float _musicPeacefulPlaybackPos;
+    float _musicPeacefulPlaybackPos;
 
     public override void _Ready() {
         _player.OnJump += SwitchToMetalMusic;
