@@ -6,8 +6,7 @@ namespace DolphinForces;
 public partial class Main : Node3D {
 
     public static float ElapsedTimeS => Time.GetTicksMsec() / 1000f;
-
-    public static float Money;
+    public static float Money { get; private set; }
 
     private AudioStreamPlayer _audioStreamPlayer = null!;
     private AudioStreamPlayer _fogHornPlayer = null!;
@@ -38,9 +37,13 @@ public partial class Main : Node3D {
         Debug.Assert(_metal_music is not null);
 
         _player.OnInfUpgrade += UpdateText;
+        // Dolphin.MoneyLabel.Text = $"Money Earned: ${Main.Money:N0}"; // TODO: Event.
+        Boat.Killed += IncrementMoney;
+
 
     }
 
+    private void IncrementMoney(float amount) => Money += amount;
 
     private void SwitchToPeacefulMusic() {
         _metal_playback = _audioStreamPlayer.GetPlaybackPosition();
@@ -53,21 +56,18 @@ public partial class Main : Node3D {
         _peaceful_playback = _audioStreamPlayer.GetPlaybackPosition();
         _audioStreamPlayer.Stream = _metal_music;
         _audioStreamPlayer.Play();
-        // _audioStreamPlayer.Seek(_metal_playback);
     }
 
     public override void _Process(double delta) => _terrain.Visible = Dolphin.IsCameraUnderwater;
-
-    // public static float Money => 1000f * NumDeadCamo + 500f * NumDeadFlag + 1250f * NumDeadRussian + 3000f * NumDeadYellow;
 
     public override void _PhysicsProcess(double delta) {
         Dolphin.MoneyLabel.Text = $"Money Earned: ${Money:N0}";
         if (Dolphin.numInfUpgrades >= 1) {
             UpdateText();
-        } else if (Main.Money >= Dolphin.SecondUpgradeCost) {
+        } else if (Money >= Dolphin.SecondUpgradeCost) {
             Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text + "\n" + $"${Dolphin.SecondUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
 
-        } else if (Main.Money >= Dolphin.FirstUpgradeCost) {
+        } else if (Money >= Dolphin.FirstUpgradeCost) {
             Dolphin.MoneyLabel.Text = Dolphin.MoneyLabel.Text + "\n" + $"${Dolphin.FirstUpgradeCost} transfer queued. Torpedo fire rate increased.";
         }
 

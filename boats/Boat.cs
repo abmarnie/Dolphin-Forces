@@ -6,6 +6,8 @@ namespace DolphinForces;
 
 public partial class Boat : RigidBody3D {
 
+    public static event Action<float>? Killed;
+
     // Design parameters.
     [ExportGroup("Design Params")]
     [Export] private float _speed;
@@ -115,13 +117,14 @@ public partial class Boat : RigidBody3D {
         AxisLockAngularY = false;
         AxisLockAngularZ = false;
 
-        // Give player upgrades and more targets to destroy as they progress.
+        // Give player more targets to destroy as they progress.
         _numKilled++;
         if (_numKilled % 30 == 0) {
             _respawnCooldown *= 0.9f;
         }
 
-        Main.Money += _moneyIncrementOnKill;
+        // Money is "score". Used for infinite progression.
+        Killed?.Invoke(_moneyIncrementOnKill);
         Dolphin.MoneyLabel.Text = $"Money Earned: ${Main.Money:N0}"; // TODO: Event.
 
     }
