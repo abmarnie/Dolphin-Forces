@@ -6,13 +6,11 @@ namespace DolphinForces;
 
 public partial class Boat : RigidBody3D {
 
-    private enum BoatType { Flag, Camo, Russian, Yellow }
-
     // Design parameters.
     [ExportGroup("Design Params")]
     [Export] private float _speed;
     [Export] private float _targetAcquisCooldown;
-    [Export] private BoatType _type;
+    [Export] private float _moneyIncrementOnKill;
 
     // Audio.
     [ExportGroup("Node Refs")]
@@ -26,6 +24,7 @@ public partial class Boat : RigidBody3D {
     // Spawning.
     public bool IsAlive { get; private set; }
     private Vector3 _spawn;
+    private static int _numKilled;               // For game progression.
     private static float _respawnCooldown = 10f; // For game progression.
     private float _deathTime;
 
@@ -74,10 +73,9 @@ public partial class Boat : RigidBody3D {
             return;
         }
 
-        // TODO: Boats can push one another, leading to boats jetting
-        // around underwater. Below is a low-effort hack to try to fix this,
-        // which doesn't seem to work. Boats being rigidbodies is needed to 
-        // allow the player to ragdoll them around. 
+        // TODO: Boats can push each other down, leading to some boats becoming
+        // stuck underwater (instead of at the surface). Below is a low-effort 
+        // hack to try to fix this, which doesn't seem to work. 
 
         var isReallySubmerged = GlobalPosition.Y < -0.5f;
         if (isReallySubmerged) {
@@ -101,7 +99,6 @@ public partial class Boat : RigidBody3D {
         IsAlive = false;
         _deathTime = ElapsedTimeS();
 
-        _sfxPlayer.Stop(); // TODO: Try deleting this.
         _sfxPlayer.Play();
 
         // Make the boat look destroyed. Some boats are composed of 
@@ -118,22 +115,15 @@ public partial class Boat : RigidBody3D {
         AxisLockAngularY = false;
         AxisLockAngularZ = false;
 
-        // Give the player more targets to destroy as they progress.
-        // TODO: Clean this (single numDead, money incremeneted by emitting signal).
-        switch (_type) {
-            case BoatType.Flag: Main.NumDeadFlag++; break;
-            case BoatType.Camo: Main.NumDeadCamo++; break;
-            case BoatType.Russian: Main.NumDeadRussian++; break;
-            case BoatType.Yellow: Main.NumDeadYellow++; break;
-            default: throw new InvalidOperationException("Unhandled boat type case.");
-        }
-        var numDeadBoats = Main.NumDeadYellow + Main.NumDeadRussian
-            + Main.NumDeadCamo + Main.NumDeadFlag;
-        if (numDeadBoats % 30 == 0) {
+        // Give player upgrades and more targets to destroy as they progress.
+        _numKilled++;
+        if (_numKilled % 30 == 0) {
             _respawnCooldown *= 0.9f;
         }
 
+        Main.Money += _moneyIncrementOnKill;
         Dolphin.MoneyLabel.Text = $"Money Earned: ${Main.Money:N0}"; // TODO: Event.
+
     }
 
     private static float ElapsedTimeS() => Time.GetTicksMsec() / 1000f;

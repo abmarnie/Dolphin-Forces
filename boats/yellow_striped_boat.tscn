@@ -16,7 +16,7 @@ can_sleep = false
 script = ExtResource("1_tisu7")
 _speed = 100.0
 _targetAcquisCooldown = 5.0
-_type = 3
+_moneyIncrementOnKill = 3000.0
 _sfxPlayer = NodePath("AudioStreamPlayer3D")
 _smokePfxs = [NodePath("SmokePfx"), NodePath("SmokePfx2"), NodePath("SmokePfx3")]
 

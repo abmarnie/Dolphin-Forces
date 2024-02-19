@@ -7,10 +7,7 @@ public partial class Main : Node3D {
 
     public static float ElapsedTimeS => Time.GetTicksMsec() / 1000f;
 
-    public static int NumDeadCamo;
-    public static int NumDeadFlag;
-    public static int NumDeadRussian;
-    public static int NumDeadYellow;
+    public static float Money;
 
     private AudioStreamPlayer _audioStreamPlayer = null!;
     private AudioStreamPlayer _fogHornPlayer = null!;
@@ -42,11 +39,6 @@ public partial class Main : Node3D {
 
         _player.OnInfUpgrade += UpdateText;
 
-        // Dolphin.SetObjective(GetNode<ObjectiveManager>("%FlagBoats"));
-        // _boats = this.Descendants<Boat>();
-        // Debug.Assert(_boats is not null);
-        // Debug.Assert(_boats.Count > 0);
-
     }
 
 
@@ -66,7 +58,7 @@ public partial class Main : Node3D {
 
     public override void _Process(double delta) => _terrain.Visible = Dolphin.IsCameraUnderwater;
 
-    public static float Money => 1000f * NumDeadCamo + 500f * NumDeadFlag + 1250f * NumDeadRussian + 3000f * NumDeadYellow;
+    // public static float Money => 1000f * NumDeadCamo + 500f * NumDeadFlag + 1250f * NumDeadRussian + 3000f * NumDeadYellow;
 
     public override void _PhysicsProcess(double delta) {
         Dolphin.MoneyLabel.Text = $"Money Earned: ${Money:N0}";

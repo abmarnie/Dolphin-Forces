@@ -17,6 +17,7 @@ can_sleep = false
 script = ExtResource("1_ex7w5")
 _speed = 1.0
 _targetAcquisCooldown = 100.0
+_moneyIncrementOnKill = 500.0
 _sfxPlayer = NodePath("AudioStreamPlayer3D")
 _smokePfxs = [NodePath("SmokePfx"), NodePath("SmokePfx2"), NodePath("SmokePfx3")]
 
