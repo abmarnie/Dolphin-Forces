@@ -12,12 +12,14 @@ streams_count = 1
 stream_0/stream = ExtResource("3_nm7be")
 stream_0/weight = 1.0
 
-[node name="CanvasLayer" type="CanvasLayer"]
+[node name="PauseMenu" type="Control"]
 process_mode = 3
-follow_viewport_enabled = true
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_scddq")
 
 [node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

@@ -30,12 +30,12 @@ shader_parameter/Scale2 = 19.68
 shader_parameter/CausticOpacity = 0.2
 shader_parameter/ColorParameter = Color(1, 0.709804, 1, 1)
 
-[node name="Main" type="Node3D" node_paths=PackedStringArray("_music", "_introFoghorn", "_underwaterTerrains", "_player")]
+[node name="Main" type="Node3D" node_paths=PackedStringArray("_player", "_underwaterTerrains", "_music", "_introFoghorn")]
 script = ExtResource("1_11si0")
+_player = NodePath("Player")
+_underwaterTerrains = NodePath("UnderwaterTerrains")
 _music = NodePath("Music")
 _introFoghorn = NodePath("IntroFoghorn")
-_underwaterTerrains = NodePath("UnderwaterTerrains")
-_player = NodePath("Player")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)

@@ -9,15 +9,17 @@ public partial class Player : RigidBody3D {
     public event Action? OnJump;
     public event Action? OnWaterEntry;
 
-    [Export] private Camera3D _camera = null!;
-    public bool IsCameraUnderwater() => _camera.GlobalPosition.Y <= -0.3f;
+    [Export] private Node3D _desiredCamPos = null!; // TODO: Rename to springarm location.
+    [Export] private Node3D _dolphins = null!;
+    [Export] private Camera3D _cam = null!;
+    public bool IsCameraUnderwater() => _cam.GlobalPosition.Y <= -0.3f;
 
     [Export] private Label _moneyLabel = null!;
     public float Money { get; private set; }
 
     private bool IsUnderwater => GlobalPosition.Y <= 0;
 
-    private AnimationTree _animTree = null!;
+    [Export] private AnimationTree _animTree = null!;
 
     private Godot.Environment _underwaterEnv = GD.Load<Godot.Environment>(
         "res://water/underwater_environment.tres");
@@ -53,6 +55,9 @@ public partial class Player : RigidBody3D {
     private bool _hasPlayerPressedContinue;
     private bool _isAttackHeld;
 
+    private Vector3 _camRotFromMouse;
+    private float _dolphinsPosXFromMouse;
+
     public override void _Input(InputEvent @event) {
         if (_cutsceneTimer > INTRO_MAIN_TEXT_TIMELENGTH) {
             if (@event.IsActionReleased("attack")) {
@@ -66,21 +71,28 @@ public partial class Player : RigidBody3D {
             return;
 
         if (@event is InputEventMouseMotion mouseMotion && IsUnderwater) {
-            _rotationFromMouse.Y -= mouseMotion.Relative.X * MouseSens * 0.005f;
-            _rotationFromMouse.X -= mouseMotion.Relative.Y * MouseSens * 0.005f;
+            const float sensScale = 0.005f;
+            _rotationFromMouse.Y -= mouseMotion.Relative.X * MouseSens * sensScale;
+            _rotationFromMouse.X -= mouseMotion.Relative.Y * MouseSens * sensScale;
             var lookAngleBounds = Mathf.DegToRad(75.0f);
             _rotationFromMouse.X = Mathf.Clamp(_rotationFromMouse.X, -lookAngleBounds, lookAngleBounds);
+
+            const float xPosIncrement = 0.1f;
+            const float yRotIncrement = 0.01f;
+            const float zRotIncrement = 0.1f;
+            if (mouseMotion.Relative.X < 0) {
+                _dolphinsPosXFromMouse += xPosIncrement;
+                _camRotFromMouse.Y += yRotIncrement;
+                _camRotFromMouse.Z += zRotIncrement;
+
+            } else if (mouseMotion.Relative.X > 0) {
+                _dolphinsPosXFromMouse -= xPosIncrement;
+                _camRotFromMouse.Y -= yRotIncrement;
+                _camRotFromMouse.Z -= zRotIncrement;
+            }
         }
 
-        // if (@event.IsActionReleased("ui_cancel")) {
-        //     Input.MouseMode = Input.MouseMode switch {
-        //         Input.MouseModeEnum.Visible => Input.MouseModeEnum.Captured,
-        //         Input.MouseModeEnum.Captured => Input.MouseModeEnum.Visible,
-        //         _ => throw new NotImplementedException(),
-        //     };
-        // }
-
-        if (@event.IsActionPressed("attack")) { // TODO: Cooldown bar async fill.
+        if (@event.IsActionPressed("attack")) {
             _isAttackHeld = true;
         }
 
@@ -150,6 +162,36 @@ public partial class Player : RigidBody3D {
     private int _numInfUpgrades;
     private float _infiniteScalingUpgradeCost = 10000f;
 
+    public override void _Process(double delta) {
+        var camLerpWeight = IsUnderwater ? 0.3f : 0.2f;
+
+        _cam.GlobalPosition = _cam.GlobalPosition.Lerp(
+            to: _desiredCamPos.GlobalPosition,
+            weight: 0.3f
+        );
+
+        _cam.GlobalRotation = new Vector3(
+            x: Mathf.LerpAngle(_cam.GlobalRotation.X, _desiredCamPos.GlobalRotation.X, camLerpWeight),
+            y: Mathf.LerpAngle(_cam.GlobalRotation.Y, _desiredCamPos.GlobalRotation.Y, camLerpWeight),
+            z: Mathf.LerpAngle(_cam.Rotation.Z, _desiredCamPos.Rotation.Z, camLerpWeight)
+        );
+
+        const float defaultFov = 75;
+        const float fovScalingFactor = 0.25f;
+        _cam.Fov = defaultFov + (defaultFov * (_speed - DEFAULT_SPEED) / DEFAULT_SPEED * fovScalingFactor);
+
+        _dolphins.Rotation = _dolphins.Rotation with {
+            Y = Mathf.LerpAngle(_dolphins.Rotation.Y, _camRotFromMouse.Y, .1f),
+            Z = Mathf.LerpAngle(_dolphins.Rotation.Z, _camRotFromMouse.Z, .1f)
+        };
+
+        _dolphins.Position = _dolphins.Position with {
+            X = Mathf.Lerp(_dolphins.Position.X, _dolphinsPosXFromMouse, 0.1f)
+        };
+
+        _camRotFromMouse = _camRotFromMouse.Lerp(Vector3.Zero, .1f);
+        _dolphinsPosXFromMouse = Mathf.Lerp(_dolphinsPosXFromMouse, 0f, 0.1f);
+    }
 
     public override void _PhysicsProcess(double delta) {
 
@@ -258,10 +300,6 @@ public partial class Player : RigidBody3D {
             + "\n" + $"${_infiniteScalingUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
 
 
-        const float defaultFov = 75;
-        const float fovScalingFactor = 0.25f; // Adjust this value as needed
-        _camera.Fov = defaultFov + (defaultFov * (_speed - DEFAULT_SPEED) / DEFAULT_SPEED * fovScalingFactor);
-
         const float animSpeedTuningScale = 3f;
         _animTree.Set("parameters/speed_scale/scale", animSpeedTuningScale * _speed / DEFAULT_SPEED);
 
@@ -279,7 +317,7 @@ public partial class Player : RigidBody3D {
             _animTree.Set("parameters/speed_scale/scale", 0f);
         }
 
-        _camera.Environment = IsCameraUnderwater() ? _underwaterEnv : null;
+        _cam.Environment = IsCameraUnderwater() ? _underwaterEnv : null;
 
 
     }

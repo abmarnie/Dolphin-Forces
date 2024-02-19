@@ -1,4 +1,4 @@
-extends CanvasLayer
+extends Control
 
 @onready var fry: AudioStreamPlayer = $Fry
 @onready var color_rect: ColorRect = $ColorRect
