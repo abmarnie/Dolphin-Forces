@@ -18,23 +18,26 @@ public partial class Main : Node3D {
     float _musicPeacefulPlaybackPos;
 
     public override void _Ready() {
-        _player.OnJump += SwitchToMetalMusic;
-        _player.OnWaterEntry += SwitchToPeacefulMusic;
+        _player.OnIntroEnd += PlayMetalMusic;
+        _player.OnJump += PlayMetalMusic;
+        _player.OnWaterEntry += PlayPeacefulMusic;
 
         _music.Stop();
         _introFoghorn.Play();
 
-        void SwitchToPeacefulMusic() {
+        void PlayPeacefulMusic() {
             _music.Stream = _musicPeaceful;
             _music.Play();
             _music.Seek(_musicPeacefulPlaybackPos);
         }
 
-        void SwitchToMetalMusic() {
+        void PlayMetalMusic() {
             _musicPeacefulPlaybackPos = _music.GetPlaybackPosition();
             _music.Stream = _musicMetal;
             _music.Play();
         }
+
+        _underwaterTerrains.Visible = true;
     }
 
     public override void _Process(double delta) => _underwaterTerrains.Visible = _player.IsCameraUnderwater();

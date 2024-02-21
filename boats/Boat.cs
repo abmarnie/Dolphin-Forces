@@ -96,7 +96,7 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (Player.IsIntroPlaying()) {
+        if (!Player.HasIntroEnded()) {
             return;
         }
 
@@ -116,7 +116,7 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
-        if (Player.IsIntroPlaying()) {
+        if (!Player.HasIntroEnded()) {
             return;
         }
 
