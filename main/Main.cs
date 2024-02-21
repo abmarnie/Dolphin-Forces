@@ -40,6 +40,11 @@ public partial class Main : Node3D {
         _underwaterTerrains.Visible = true;
     }
 
-    public override void _Process(double delta) => _underwaterTerrains.Visible = _player.IsCameraUnderwater();
+    public override void _Process(double delta) {
+        if (!Player.HasIntroEnded()) {
+            return;
+        }
 
+        _underwaterTerrains.Visible = _player.IsCameraUnderwater();
+    }
 }

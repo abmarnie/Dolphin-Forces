@@ -5,8 +5,6 @@ using Godot;
 namespace DolphinForces;
 
 // TODO: Randomized boat spawning system (don't share texture...).
-// TODO: Boat "type object" determines speed & targetAquisCooldown.
-// TODO: Better randomized target behaviour..
 
 /// <summary> Controls boat enemies. </summary>
 public partial class Boat : RigidBody3D {
@@ -100,12 +98,20 @@ public partial class Boat : RigidBody3D {
             return;
         }
 
+        var isSubmerged = GlobalPosition.Y <= 0;
+        GravityScale = isSubmerged ? 0.0f : 10f;
+
         if (!IsAlive) {
             var isRespawnOffCooldown = Main.ElapsedTimeS() >= _deathTime + _respawnCooldown;
             if (isRespawnOffCooldown) {
                 Spawn();
             }
             return;
+        }
+
+        var isReallySubmerged = GlobalPosition.Y < -0.5f;
+        if (isReallySubmerged) {
+            GravityScale = -1f;
         }
 
         var targetAcquisOffCooldown = _targetAcquisTime >= Main.ElapsedTimeS() + _targetAcquisCooldown;
@@ -120,24 +126,6 @@ public partial class Boat : RigidBody3D {
             return;
         }
 
-        // HACK: Cancel gravity if submerged to simulate buoyancy.
-        var isSubmerged = GlobalPosition.Y <= 0;
-        GravityScale = isSubmerged ? 0.0f : 9.8f;
-
-        if (!IsAlive) {
-            return;
-        }
-
-        // TODO: Boats can push each other down, leading to some boats becoming
-        // stuck underwater (instead of at the surface). Below is a low-effort 
-        // hack to try to fix this, which doesn't seem to work. 
-
-        var isReallySubmerged = GlobalPosition.Y < -0.5f;
-        if (isReallySubmerged) {
-            var upwardForceToPreventJank = new Vector3(0, 10.0f, 0);
-            state.ApplyCentralImpulse(upwardForceToPreventJank);
-        }
-
         // Move towards the target direction.
         var isNearTarget = GlobalPosition.DistanceTo(_target) <= 1f;
         var targetDir = GlobalPosition.DirectionTo(_target);
@@ -150,7 +138,7 @@ public partial class Boat : RigidBody3D {
         const float minDist = 50.0f;
         const float maxDist = 100.0f;
         var dist = ((float)_rng.NextDouble() * (maxDist - minDist)) + minDist;
-        var angle = (float)_rng.NextDouble();
+        var angle = (float)_rng.NextDouble() * 2 * Mathf.Pi;
         var dir = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)).Normalized();
         _target = GlobalPosition + (dir * dist);
         LookAt(_target);

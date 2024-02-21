@@ -40,7 +40,6 @@ public partial class Torpedo : RigidBody3D {
         }
     }
 
-
     void Explode() {
         // Leave behind a short-lasting "explosion artefact".
         var explosion = _explosionFactory.Instantiate<TorpedoExplosion>();

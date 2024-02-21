@@ -147,9 +147,9 @@ public partial class Player : RigidBody3D {
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
         _lastAttackTime = -_attackCooldown; // Allow player to fire right away.
-        _animTree.Set("parameters/speed_scale/scale", 1f);
+        _animTree.Set("parameters/speed_scale/scale", 0f);
 
-        Rotation = Rotation with { X = -LOOK_ANGLE_MAX };
+        _cam.GlobalTransform = _desiredCamPos.GlobalTransform;
 
         // Intro labels begin invisible, then they fade in.
         _introText.Modulate = Colors.White with { A = 0 };
