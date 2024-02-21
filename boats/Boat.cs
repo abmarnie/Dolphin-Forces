@@ -43,7 +43,7 @@ public partial class Boat : RigidBody3D {
         Debug.Assert(ContactMonitor);
         Debug.Assert(MaxContactsReported >= 1);
         Debug.Assert(_deathPfxs is not null);
-        Debug.Assert(_deathPfxs.Length > 0);
+        Debug.Assert(_deathPfxs.Length > 0, $"{Name}");
 
         foreach (var deathPfx in _deathPfxs) {
             Debug.Assert(deathPfx is not null);
@@ -55,14 +55,11 @@ public partial class Boat : RigidBody3D {
         BodyEntered += OnBodyEntered;
 
         void OnBodyEntered(Node body) {
+            // The boat should only be killed by collision from the Player
+            // or from a Torpedo.
             if (!IsAlive || body is not (Player or Torpedo)) {
                 return;
             }
-
-            Debug.Assert(
-                condition: IsAlive,
-                message: $"Already dead boat was just killed."
-            );
 
             IsAlive = false;
             _deathTime = Main.ElapsedTimeS();
@@ -91,7 +88,6 @@ public partial class Boat : RigidBody3D {
 
             // Money is "score". Used for infinite progression.
             OnKill?.Invoke(_moneyIncrementOnKill);
-
         }
     }
 

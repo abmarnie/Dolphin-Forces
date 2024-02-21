@@ -6,6 +6,8 @@ namespace DolphinForces;
 
 public partial class Player : RigidBody3D {
 
+    public static bool IsIntroPlaying() => _introOverlayState != IntroOverlayState.Ended;
+
     // Events are used to change music in main script.
     public event Action? OnJump;
     public event Action? OnWaterEntry;
@@ -22,17 +24,21 @@ public partial class Player : RigidBody3D {
     // Dynamic visuals.
     [Export] AnimationTree _animTree = null!;
     Godot.Environment _waterEnv = GD.Load<Godot.Environment>(
-        "res://water/underwater_environment.tres");
+        "res://water/underwater_environment.tres"); // Used for camera postprocess.
 
+    // Movement.
+    const float LOOK_ANGLE_MAX = 5 * Mathf.Pi / 12; // 75 deg
     public float MouseSens = 1;
     Vector3 _playerRotInput;
     Vector3 _camRotInput;
     float _dolphinPosXInput;
-
     const float DEFAULT_SPEED = 25f;
     float _maxSpeed = 50f;
     float _speed = DEFAULT_SPEED;
+    bool _impulsedApplied;
+    bool _firstIntegrateForces = true;
 
+    // Torpedo logic.
     [Export] Node3D _torpedoSpawn1 = null!;
     [Export] Node3D _torpedoSpawn2 = null!;
     PackedScene _torpedoFactory = GD.Load<PackedScene>("res://torpedos/torpedo.tscn");
@@ -41,28 +47,43 @@ public partial class Player : RigidBody3D {
     float _torpedoFireTime;
     bool _isAttackInputPressed;
 
+    // Sfx.
     [Export] AudioStreamPlayer3D _sfx = null!;
     AudioStream _splashSfx = GD.Load<AudioStream>("res://nathan/splash.mp3");
-    AudioStream _robotSfx = GD.Load<AudioStream>("res://nathan/mixkit-futuristic-robot-movement-1412.wav");
+    AudioStream _robotSfx = GD.Load<AudioStream>(
+        "res://nathan/mixkit-futuristic-robot-movement-1412.wav");
 
+    // Intro text.
+    enum IntroOverlayState { Starting, WaitingForPlayer, Ending, Ended }
+    static IntroOverlayState _introOverlayState;
     [Export] ColorRect _introOverlay = null!;
     [Export] Label _introMainLabel = null!;
     [Export] Label _introContinuePrompt = null!;
-    const float INTRO_MAIN_TEXT_TIMELENGTH = 7f;
-    bool _hasUserContinuedIntro;
 
+    // Pause menu.
     [Export] Control _pauseMenu = null!;
 
-    const float LOOK_ANGLE_MAX = 5 * Mathf.Pi / 12; // 75 deg
+    // Game progression.
+    bool _firstUpgradeObtained;
+    bool _secondUpgradeObtained;
+    int _numInfUpgrades;
+    float _infiniteScalingUpgradeCost = 10000f;
+
 
     public override void _Input(InputEvent @event) {
 
         // End the intro once the player responds to the continue prompt.
-        if (Main.ElapsedTimeS() > INTRO_MAIN_TEXT_TIMELENGTH) {
+        if (_introOverlayState is IntroOverlayState.WaitingForPlayer) {
             if (@event.IsActionReleased("attack")) {
-                if (!_hasUserContinuedIntro)
-                    _sfx.Play();
-                _hasUserContinuedIntro = true;
+                _introOverlayState = IntroOverlayState.Ending;
+                _sfx.Play();
+                var introOverlayFadeOut = _introOverlay.CreateTween();
+                _ = introOverlayFadeOut.TweenProperty(_introOverlay, "modulate",
+                    Colors.White with { A = 0 }, 1f);
+                introOverlayFadeOut.Finished += () => {
+                    _introOverlayState = IntroOverlayState.Ended;
+                    _introOverlay.Visible = false;
+                };
             }
         }
 
@@ -70,7 +91,7 @@ public partial class Player : RigidBody3D {
             return;
         }
 
-        // Read inputs and cache the results for use in main update loops:
+        // Caches inputs for use in update loops.
 
         if (@event is InputEventMouseMotion mouseMotion && IsUnderwater()) {
             const float sensScale = 0.005f;
@@ -114,6 +135,8 @@ public partial class Player : RigidBody3D {
     public override void _Ready() {
 
         Debug.Assert(_waterEnv is not null);
+        Debug.Assert(!_pauseMenu.Visible);
+        Debug.Assert(!_introContinuePrompt.Visible);
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
@@ -125,28 +148,21 @@ public partial class Player : RigidBody3D {
         }
 
         _torpedoFireTime = -_torpedoCooldown;
-        _introMainLabel.Modulate = Colors.White;
+        var invisColor = Colors.White with { A = 0 };
+        _introMainLabel.Modulate = invisColor;
+        _introContinuePrompt.Modulate = invisColor;
         _animTree.Set("parameters/speed_scale/scale", 1f);
 
-        Debug.Assert(!_pauseMenu.Visible);
-        Debug.Assert(!_introContinuePrompt.Visible);
-
+        _introOverlayState = IntroOverlayState.Starting;
+        var introTextFadeIn = _introMainLabel.CreateTween();
+        _ = introTextFadeIn.TweenProperty(_introMainLabel, "modulate", Colors.White, 1f);
+        introTextFadeIn.Finished += () => {
+            _introContinuePrompt.Visible = true;
+            var continuePromptFadeIn = _introContinuePrompt.CreateTween();
+            _ = continuePromptFadeIn.TweenProperty(_introContinuePrompt, "modulate", Colors.White, 1f);
+            continuePromptFadeIn.Finished += () => _introOverlayState = IntroOverlayState.WaitingForPlayer;
+        };
     }
-
-    bool _firstPhysicsTime = true;
-
-    float _introlabelAlpha;
-    static float _introMainTextTimer;
-    float _introlColorRectAlpha = 1;
-    const float CUTSCENE_END_TIME_LENGTH = 10f;
-
-    float _continueLabelAlpha;
-
-    bool _firstUpgradeObtained;
-    bool _secondUpgradeObtained;
-
-    int _numInfUpgrades;
-    float _infiniteScalingUpgradeCost = 10000f;
 
     public override void _Process(double delta) {
         var camLerpWeight = IsUnderwater() ? 0.3f : 0.2f;
@@ -180,32 +196,6 @@ public partial class Player : RigidBody3D {
     }
 
     public override void _PhysicsProcess(double delta) {
-
-        const float alphaDelta = 0.0025f;
-        if (!_hasUserContinuedIntro) {
-            _introOverlay.Visible = true;
-            _introlabelAlpha += alphaDelta;
-            _introlabelAlpha = Mathf.Clamp(_introlabelAlpha, 0f, 1f);
-            _introMainLabel.Modulate = new Color(1, 1, 1, _introlabelAlpha);
-            if (Main.ElapsedTimeS() > INTRO_MAIN_TEXT_TIMELENGTH) {
-                _continueLabelAlpha += 2f * alphaDelta;
-                _introContinuePrompt.Visible = true;
-                _continueLabelAlpha = Mathf.Clamp(_continueLabelAlpha, 0f, 1f);
-                _introContinuePrompt.Modulate = new Color(1, 1, 1, _continueLabelAlpha);
-            }
-            return;
-        } else if (_hasUserContinuedIntro && _introMainTextTimer < CUTSCENE_END_TIME_LENGTH) {
-            _introMainTextTimer += (float)delta;
-            _introlabelAlpha -= alphaDelta / 1.5f;
-            _introlColorRectAlpha -= alphaDelta / 1.5f;
-            _continueLabelAlpha -= alphaDelta / 1.5f;
-            _introOverlay.Modulate = new Color(1, 1, 1, _introlColorRectAlpha);
-            _introMainLabel.Modulate = new Color(1, 1, 1, _introlabelAlpha);
-            _introContinuePrompt.Modulate = new Color(1, 1, 1, 1);
-        } else {
-            _firstPhysicsTime = false;
-            _introOverlay.Visible = false;
-        }
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
@@ -287,7 +277,6 @@ public partial class Player : RigidBody3D {
         void UpdatePlayerMoneyLabel() => _moneyLabel.Text = _moneyLabel.Text
             + "\n" + $"${_infiniteScalingUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
 
-
         const float animSpeedTuningScale = 3f;
         _animTree.Set("parameters/speed_scale/scale", animSpeedTuningScale * _speed / DEFAULT_SPEED);
 
@@ -309,15 +298,12 @@ public partial class Player : RigidBody3D {
 
     }
 
-    bool _impulsedApplied;
-    bool _firstTime = true;
-
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
         if (IsIntroPlaying()) {
             return;
         }
 
-        if (_firstTime) {
+        if (_firstIntegrateForces) {
             OnJump?.Invoke();
         }
 
@@ -334,22 +320,21 @@ public partial class Player : RigidBody3D {
         } else {
             if (!_impulsedApplied) {
                 _sfx.Play();
-                if (!_firstTime)
+                if (!_firstIntegrateForces)
                     OnJump?.Invoke();
                 ApplyImpulse(-2f * _speed * Basis.Z);
             }
-            if (_firstTime)
+            if (_firstIntegrateForces)
                 GravityScale = 1f;
             else
                 GravityScale = 9.8f;
             _impulsedApplied = true;
         }
-        _firstTime = false;
+        _firstIntegrateForces = false;
 
     }
 
 
-    public static bool IsIntroPlaying() => _introMainTextTimer < CUTSCENE_END_TIME_LENGTH;
 
     // Used to update Terrain visbility.
     public bool IsCameraUnderwater() => _cam.GlobalPosition.Y <= -0.3f;

@@ -19,7 +19,8 @@ public partial class TorpedoExplosion : Node3D {
 
     public override void _PhysicsProcess(double delta) {
         const float maxLifetime = 5f;
-        if (Main.ElapsedTimeS() > _spawnTime + maxLifetime) {
+        var isAliveForTooLong = Main.ElapsedTimeS() > _spawnTime + maxLifetime;
+        if (isAliveForTooLong) {
             QueueFree();
         }
     }
