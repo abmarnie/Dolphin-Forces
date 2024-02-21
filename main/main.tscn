@@ -444,7 +444,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -292.126, 0, 91.0376)
 
 [node name="YellowStripedBoat" parent="Boats/YellowStripedBoats3" instance=ExtResource("9_aahfs")]
 
-[node name="YellowStripedBoat2" parent="Boats/YellowStripedBoats3" instance=ExtResource("9_aahfs")]
+[node name="YellowStripedBoat2" parent="Boats/YellowStripedBoats3" node_paths=PackedStringArray("_deathPfxs") instance=ExtResource("9_aahfs")]
+_deathPfxs = []
 
 [node name="YellowStripedBoat3" parent="Boats/YellowStripedBoats3" instance=ExtResource("9_aahfs")]
 

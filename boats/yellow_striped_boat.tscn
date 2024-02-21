@@ -3,22 +3,24 @@
 [ext_resource type="Script" path="res://boats/Boat.cs" id="1_tisu7"]
 [ext_resource type="ArrayMesh" uid="uid://bkpysn8jrejls" path="res://boats/boats_YellowStripedBoatMesh.tres" id="2_er8su"]
 [ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://nathan/smoke_pfx.tscn" id="3_bt36k"]
-[ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_3d_particle.tscn" id="4_70nr6"]
+[ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_pfx.tscn" id="4_3menl"]
 [ext_resource type="AudioStream" uid="uid://bfxiptv37ikt5" path="res://nathan/explosion_F_minor.wav" id="5_frefo"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
 radius = 5.0
 height = 24.355
 
-[node name="YellowStripedBoat" type="RigidBody3D" node_paths=PackedStringArray("_sfxPlayer", "_smokePfxs")]
+[node name="YellowStripedBoat" type="RigidBody3D" node_paths=PackedStringArray("_sfxPlayer", "_deathPfxs")]
 gravity_scale = 0.0
 can_sleep = false
+max_contacts_reported = 1
+contact_monitor = true
 script = ExtResource("1_tisu7")
 _speed = 100.0
 _targetAcquisCooldown = 5.0
 _moneyIncrementOnKill = 3000.0
 _sfxPlayer = NodePath("AudioStreamPlayer3D")
-_smokePfxs = [NodePath("SmokePfx"), NodePath("SmokePfx2"), NodePath("SmokePfx3")]
+_deathPfxs = [NodePath("SmokePfx"), NodePath("SmokePfx2"), NodePath("ExplosionPfx")]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
@@ -35,7 +37,7 @@ emitting = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.73061)
 emitting = false
 
-[node name="SmokePfx3" parent="." instance=ExtResource("4_70nr6")]
+[node name="ExplosionPfx" parent="." instance=ExtResource("4_3menl")]
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("5_frefo")

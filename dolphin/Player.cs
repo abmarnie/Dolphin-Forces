@@ -6,99 +6,99 @@ namespace DolphinForces;
 
 public partial class Player : RigidBody3D {
 
+    // Events are used to change music in main script.
     public event Action? OnJump;
     public event Action? OnWaterEntry;
 
-    [Export] Node3D _desiredCamPos = null!; // TODO: Rename to springarm location.
+    // Used to juice up the camera.
+    [Export] Node3D _desiredCamPos = null!;
     [Export] Node3D _dolphins = null!;
     [Export] Camera3D _cam = null!;
-    public bool IsCameraUnderwater() => _cam.GlobalPosition.Y <= -0.3f;
 
+    // Used for game progression.
     [Export] Label _moneyLabel = null!;
-    public float Money { get; private set; }
+    float _money;
 
-    bool IsUnderwater => GlobalPosition.Y <= 0;
-
+    // Dynamic visuals.
     [Export] AnimationTree _animTree = null!;
-
-    Godot.Environment _underwaterEnv = GD.Load<Godot.Environment>(
+    Godot.Environment _waterEnv = GD.Load<Godot.Environment>(
         "res://water/underwater_environment.tres");
 
     public float MouseSens = 1;
-    Vector3 _rotationFromMouse;
+    Vector3 _playerRotInput;
+    Vector3 _camRotInput;
+    float _dolphinPosXInput;
 
     const float DEFAULT_SPEED = 25f;
+    float _maxSpeed = 50f;
     float _speed = DEFAULT_SPEED;
 
-    [Export] Node3D _largeTorpedoSpawnLocation1 = null!;
-    [Export] Node3D _largeTorpedoSpawnLocation2 = null!;
-    PackedScene _largeTorpedoPackedScene = GD.Load<PackedScene>("res://torpedos/large_torpedo.tscn");
-    float _largeTorpedoCooldown = 0.5f;
-    float _lastLargeTorpedoFireTime;
+    [Export] Node3D _torpedoSpawn1 = null!;
+    [Export] Node3D _torpedoSpawn2 = null!;
+    PackedScene _torpedoFactory = GD.Load<PackedScene>("res://torpedos/torpedo.tscn");
+    float _torpedoCooldown = 0.5f;
+    int _torpedoFireCount; // For alternating between spawn1 and spawn2.
+    float _torpedoFireTime;
+    bool _isAttackInputPressed;
 
+    [Export] AudioStreamPlayer3D _sfx = null!;
     AudioStream _splashSfx = GD.Load<AudioStream>("res://nathan/splash.mp3");
     AudioStream _robotSfx = GD.Load<AudioStream>("res://nathan/mixkit-futuristic-robot-movement-1412.wav");
 
-    bool _isSplashSoundLoaded;
-
-    [Export] AudioStreamPlayer3D _sfx = null!;
-
-    const float INTRO_MAIN_TEXT_TIMELENGTH = 7f;
-    public static bool IsIntroPlaying() => _introMainTextTimer < CUTSCENE_END_TIME_LENGTH;
-
-    float _cutsceneTimer;
-
     [Export] ColorRect _introOverlay = null!;
     [Export] Label _introMainLabel = null!;
-    [Export] Label _introContinueLabel = null!;
+    [Export] Label _introContinuePrompt = null!;
+    const float INTRO_MAIN_TEXT_TIMELENGTH = 7f;
+    bool _hasUserContinuedIntro;
 
-    bool _hasPlayerPressedContinue;
-    bool _isAttackHeld;
+    [Export] Control _pauseMenu = null!;
 
-    Vector3 _camRotFromMouse;
-    float _dolphinsPosXFromMouse;
+    const float LOOK_ANGLE_MAX = 5 * Mathf.Pi / 12; // 75 deg
 
     public override void _Input(InputEvent @event) {
-        if (_cutsceneTimer > INTRO_MAIN_TEXT_TIMELENGTH) {
+
+        // End the intro once the player responds to the continue prompt.
+        if (Main.ElapsedTimeS() > INTRO_MAIN_TEXT_TIMELENGTH) {
             if (@event.IsActionReleased("attack")) {
-                if (!_hasPlayerPressedContinue)
+                if (!_hasUserContinuedIntro)
                     _sfx.Play();
-                _hasPlayerPressedContinue = true;
+                _hasUserContinuedIntro = true;
             }
         }
 
-        if (IsIntroPlaying())
+        if (IsIntroPlaying()) {
             return;
+        }
 
-        if (@event is InputEventMouseMotion mouseMotion && IsUnderwater) {
+        // Read inputs and cache the results for use in main update loops:
+
+        if (@event is InputEventMouseMotion mouseMotion && IsUnderwater()) {
             const float sensScale = 0.005f;
-            _rotationFromMouse.Y -= mouseMotion.Relative.X * MouseSens * sensScale;
-            _rotationFromMouse.X -= mouseMotion.Relative.Y * MouseSens * sensScale;
-            var lookAngleBounds = Mathf.DegToRad(75.0f);
-            _rotationFromMouse.X = Mathf.Clamp(_rotationFromMouse.X, -lookAngleBounds, lookAngleBounds);
+            _playerRotInput.Y -= mouseMotion.Relative.X * MouseSens * sensScale;
+            _playerRotInput.X -= mouseMotion.Relative.Y * MouseSens * sensScale;
+            _playerRotInput.X = Mathf.Clamp(_playerRotInput.X, -LOOK_ANGLE_MAX, LOOK_ANGLE_MAX);
 
             const float xPosIncr = 0.1f;
             const float yRotIncr = 0.01f;
             const float zRotIncr = 0.1f;
             if (mouseMotion.Relative.X < 0) {
-                _dolphinsPosXFromMouse += xPosIncr;
-                _camRotFromMouse.Y += yRotIncr;
-                _camRotFromMouse.Z += zRotIncr;
+                _dolphinPosXInput += xPosIncr;
+                _camRotInput.Y += yRotIncr;
+                _camRotInput.Z += zRotIncr;
 
             } else if (mouseMotion.Relative.X > 0) {
-                _dolphinsPosXFromMouse -= xPosIncr;
-                _camRotFromMouse.Y -= yRotIncr;
-                _camRotFromMouse.Z -= zRotIncr;
+                _dolphinPosXInput -= xPosIncr;
+                _camRotInput.Y -= yRotIncr;
+                _camRotInput.Z -= zRotIncr;
             }
         }
 
         if (@event.IsActionPressed("attack")) {
-            _isAttackHeld = true;
+            _isAttackInputPressed = true;
         }
 
         if (@event.IsActionReleased("attack"))
-            _isAttackHeld = false;
-
+            _isAttackInputPressed = false;
 
         const float speedScrollDelta = 1f;
         if (@event.IsActionReleased("scroll_up"))
@@ -111,37 +111,25 @@ public partial class Player : RigidBody3D {
 
     }
 
-    float _maxSpeed = 50f;
-
-
-    int _fireCount;
-
     public override void _Ready() {
 
-        Boat.OnKill += (amount) => {
-            Money += amount;
-            _moneyLabel.Text = $"Money Earned: ${Money:N0}";
-        };
+        Debug.Assert(_waterEnv is not null);
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
-        _animTree.Set("parameters/speed_scale/scale", 1f);
+        Boat.OnKill += IncrementMoney;
 
-        Debug.Assert(_underwaterEnv is not null);
-
-        Debug.Assert(ContactMonitor);
-        Debug.Assert(MaxContactsReported >= 1);
-        BodyEntered += KillBoat;
-
-        static void KillBoat(Node body) {
-            if (body is Boat boat && boat.IsAlive) {
-                boat.Kill();
-            }
+        void IncrementMoney(float amount) {
+            _money += amount;
+            _moneyLabel.Text = $"Money Earned: ${_money:N0}";
         }
 
-        _lastLargeTorpedoFireTime = -_largeTorpedoCooldown;
-        _introMainLabel.Modulate = new Color(1, 1, 1, 0);
-        _introContinueLabel.Visible = false;
+        _torpedoFireTime = -_torpedoCooldown;
+        _introMainLabel.Modulate = Colors.White;
+        _animTree.Set("parameters/speed_scale/scale", 1f);
+
+        Debug.Assert(!_pauseMenu.Visible);
+        Debug.Assert(!_introContinuePrompt.Visible);
 
     }
 
@@ -157,13 +145,11 @@ public partial class Player : RigidBody3D {
     bool _firstUpgradeObtained;
     bool _secondUpgradeObtained;
 
-    float _firstUpgradeCost = 10000f;
-    float _secondUpgradeCost = 20000f;
     int _numInfUpgrades;
     float _infiniteScalingUpgradeCost = 10000f;
 
     public override void _Process(double delta) {
-        var camLerpWeight = IsUnderwater ? 0.3f : 0.2f;
+        var camLerpWeight = IsUnderwater() ? 0.3f : 0.2f;
 
         _cam.GlobalPosition = _cam.GlobalPosition.Lerp(
             to: _desiredCamPos.GlobalPosition,
@@ -181,42 +167,41 @@ public partial class Player : RigidBody3D {
         _cam.Fov = defaultFov + (defaultFov * (_speed - DEFAULT_SPEED) / DEFAULT_SPEED * fovScalingFactor);
 
         _dolphins.Rotation = _dolphins.Rotation with {
-            Y = Mathf.LerpAngle(_dolphins.Rotation.Y, _camRotFromMouse.Y, .1f),
-            Z = Mathf.LerpAngle(_dolphins.Rotation.Z, _camRotFromMouse.Z, .1f)
+            Y = Mathf.LerpAngle(_dolphins.Rotation.Y, _camRotInput.Y, .1f),
+            Z = Mathf.LerpAngle(_dolphins.Rotation.Z, _camRotInput.Z, .1f)
         };
 
         _dolphins.Position = _dolphins.Position with {
-            X = Mathf.Lerp(_dolphins.Position.X, _dolphinsPosXFromMouse, 0.1f)
+            X = Mathf.Lerp(_dolphins.Position.X, _dolphinPosXInput, 0.1f)
         };
 
-        _camRotFromMouse = _camRotFromMouse.Lerp(Vector3.Zero, .1f);
-        _dolphinsPosXFromMouse = Mathf.Lerp(_dolphinsPosXFromMouse, 0f, 0.1f);
+        _camRotInput = _camRotInput.Lerp(Vector3.Zero, .1f);
+        _dolphinPosXInput = Mathf.Lerp(_dolphinPosXInput, 0f, 0.1f);
     }
 
     public override void _PhysicsProcess(double delta) {
 
-        _cutsceneTimer += (float)delta;
         const float alphaDelta = 0.0025f;
-        if (!_hasPlayerPressedContinue) {
+        if (!_hasUserContinuedIntro) {
             _introOverlay.Visible = true;
             _introlabelAlpha += alphaDelta;
             _introlabelAlpha = Mathf.Clamp(_introlabelAlpha, 0f, 1f);
             _introMainLabel.Modulate = new Color(1, 1, 1, _introlabelAlpha);
-            if (_cutsceneTimer > INTRO_MAIN_TEXT_TIMELENGTH) {
+            if (Main.ElapsedTimeS() > INTRO_MAIN_TEXT_TIMELENGTH) {
                 _continueLabelAlpha += 2f * alphaDelta;
-                _introContinueLabel.Visible = true;
+                _introContinuePrompt.Visible = true;
                 _continueLabelAlpha = Mathf.Clamp(_continueLabelAlpha, 0f, 1f);
-                _introContinueLabel.Modulate = new Color(1, 1, 1, _continueLabelAlpha);
+                _introContinuePrompt.Modulate = new Color(1, 1, 1, _continueLabelAlpha);
             }
             return;
-        } else if (_hasPlayerPressedContinue && _introMainTextTimer < CUTSCENE_END_TIME_LENGTH) {
+        } else if (_hasUserContinuedIntro && _introMainTextTimer < CUTSCENE_END_TIME_LENGTH) {
             _introMainTextTimer += (float)delta;
             _introlabelAlpha -= alphaDelta / 1.5f;
             _introlColorRectAlpha -= alphaDelta / 1.5f;
             _continueLabelAlpha -= alphaDelta / 1.5f;
             _introOverlay.Modulate = new Color(1, 1, 1, _introlColorRectAlpha);
             _introMainLabel.Modulate = new Color(1, 1, 1, _introlabelAlpha);
-            _introContinueLabel.Modulate = new Color(1, 1, 1, 1);
+            _introContinuePrompt.Modulate = new Color(1, 1, 1, 1);
         } else {
             _firstPhysicsTime = false;
             _introOverlay.Visible = false;
@@ -224,43 +209,46 @@ public partial class Player : RigidBody3D {
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
-        var isTorpedoOffCooldown = Main.ElapsedTimeS() > _lastLargeTorpedoFireTime + _largeTorpedoCooldown;
-        if (isTorpedoOffCooldown && _isAttackHeld) {
-            _fireCount++;
-            var torpedo = _largeTorpedoPackedScene.Instantiate<LargeTorpedo>();
+        var isTorpedoOffCooldown = Main.ElapsedTimeS() > _torpedoFireTime + _torpedoCooldown;
+        if (isTorpedoOffCooldown && _isAttackInputPressed) {
+            _torpedoFireCount++;
+            var torpedo = _torpedoFactory.Instantiate<Torpedo>();
             GetTree().CurrentScene.AddChild(torpedo);
             torpedo.AddCollisionExceptionWith(this);
-            if (_fireCount % 2 == 0) {
-                torpedo.GlobalPosition = _largeTorpedoSpawnLocation1.GlobalPosition;
-                torpedo.GlobalRotation = _largeTorpedoSpawnLocation1.GlobalRotation;
+            if (_torpedoFireCount % 2 == 0) {
+                torpedo.GlobalPosition = _torpedoSpawn1.GlobalPosition;
+                torpedo.GlobalRotation = _torpedoSpawn1.GlobalRotation;
             } else {
-                torpedo.GlobalPosition = _largeTorpedoSpawnLocation2.GlobalPosition;
-                torpedo.GlobalRotation = _largeTorpedoSpawnLocation2.GlobalRotation;
+                torpedo.GlobalPosition = _torpedoSpawn2.GlobalPosition;
+                torpedo.GlobalRotation = _torpedoSpawn2.GlobalRotation;
             }
             var torpedoForce = 40f + _speed;
             torpedo.ApplyImpulse(-torpedoForce * torpedo.Basis.Z);
-            _lastLargeTorpedoFireTime = Main.ElapsedTimeS();
+            _torpedoFireTime = Main.ElapsedTimeS();
         }
 
+        const float firstUpgradeCost = 10000f;
+        const float secondUpgradeCost = 20000f;
 
-        if (Money >= _firstUpgradeCost && !_firstUpgradeObtained) {
+
+        if (_money >= firstUpgradeCost && !_firstUpgradeObtained) {
             // MoneyLabel.Text = MoneyLabel.Text + "\n" + "$2000 earned. Comrade unlocked.";
             _sfx.Stream = _robotSfx;
             _sfx.Play();
 
             var mainDolphin = GetNode<MeshInstance3D>("%CyborgDolphin_001");
             mainDolphin.Position = mainDolphin.Position with { X = -3.25f };
-            _largeTorpedoSpawnLocation1.Position = _largeTorpedoSpawnLocation1.Position with { X = -3.25f };
+            _torpedoSpawn1.Position = _torpedoSpawn1.Position with { X = -3.25f };
 
             var brother = GetNode<MeshInstance3D>("%CyborgDolphin_002");
             brother.Visible = true;
             brother.Position = brother.Position with { X = 3.25f };
-            _largeTorpedoSpawnLocation2.Position = _largeTorpedoSpawnLocation2.Position with { X = 3.25f };
+            _torpedoSpawn2.Position = _torpedoSpawn2.Position with { X = 3.25f };
             _firstUpgradeObtained = true;
 
-            _largeTorpedoCooldown /= 2f;
+            _torpedoCooldown /= 2f;
 
-        } else if (Money >= _secondUpgradeCost && !_secondUpgradeObtained) {
+        } else if (_money >= secondUpgradeCost && !_secondUpgradeObtained) {
             _sfx.Stream = _robotSfx;
             _sfx.Play();
 
@@ -269,8 +257,8 @@ public partial class Player : RigidBody3D {
             brother.Position = brother.Position with { Y = 3.25f };
             _secondUpgradeObtained = true;
             _maxSpeed = 80;
-            _largeTorpedoCooldown /= 1.5f;
-        } else if (Money >= ((_numInfUpgrades + 1) * _infiniteScalingUpgradeCost) + _secondUpgradeCost
+            _torpedoCooldown /= 1.5f;
+        } else if (_money >= ((_numInfUpgrades + 1) * _infiniteScalingUpgradeCost) + secondUpgradeCost
             && _secondUpgradeObtained) {
 
             _numInfUpgrades++;
@@ -279,20 +267,20 @@ public partial class Player : RigidBody3D {
             _sfx.Play();
 
             _maxSpeed *= 1.1f;
-            _largeTorpedoCooldown /= 1.1f;
+            _torpedoCooldown /= 1.1f;
 
             UpdatePlayerMoneyLabel();
         }
 
 
-        _moneyLabel.Text = $"Money Earned: ${Money:N0}";
+        _moneyLabel.Text = $"Money Earned: ${_money:N0}";
 
         if (_numInfUpgrades >= 1) {
             UpdatePlayerMoneyLabel();
-        } else if (Money >= _secondUpgradeCost) {
-            _moneyLabel.Text = _moneyLabel.Text + "\n" + $"${_secondUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
-        } else if (Money >= _firstUpgradeCost) {
-            _moneyLabel.Text = _moneyLabel.Text + "\n" + $"${_firstUpgradeCost} transfer queued. Torpedo fire rate increased.";
+        } else if (_money >= secondUpgradeCost) {
+            _moneyLabel.Text = _moneyLabel.Text + "\n" + $"${secondUpgradeCost} transfer queued. Max speed (SCROLL_WHEEL) and fire rate increased.";
+        } else if (_money >= firstUpgradeCost) {
+            _moneyLabel.Text = _moneyLabel.Text + "\n" + $"${firstUpgradeCost} transfer queued. Torpedo fire rate increased.";
         }
 
 
@@ -303,22 +291,21 @@ public partial class Player : RigidBody3D {
         const float animSpeedTuningScale = 3f;
         _animTree.Set("parameters/speed_scale/scale", animSpeedTuningScale * _speed / DEFAULT_SPEED);
 
-        if (IsUnderwater) {
-            Rotation = new Vector3(_rotationFromMouse.X, _rotationFromMouse.Y, Rotation.Z);
+        if (IsUnderwater()) {
+            Rotation = Rotation with {
+                X = _playerRotInput.X,
+                Y = _playerRotInput.Y
+            };
         } else {
+            _animTree.Set("parameters/speed_scale/scale", 0f);
             const float airborneRotSpeed = 2f;
             Rotation -= airborneRotSpeed * (float)delta * Vector3.Right;
+            Rotation = Rotation with { X = Mathf.Clamp(Rotation.X, -LOOK_ANGLE_MAX, LOOK_ANGLE_MAX) };
 
-            var radians75 = Mathf.DegToRad(75.0f);
-            Rotation = Rotation with { X = Mathf.Clamp(Rotation.X, -radians75, radians75) };
-            // Rotation = new Vector3(Mathf.Clamp(Rotation.X, -radians75, radians75), Rotation.Y, Rotation.Y);
-
-            _rotationFromMouse = Rotation;
-            _animTree.Set("parameters/speed_scale/scale", 0f);
+            _playerRotInput = Rotation;
         }
 
-        _cam.Environment = IsCameraUnderwater() ? _underwaterEnv : null;
-
+        _cam.Environment = IsCameraUnderwater() ? _waterEnv : null;
 
     }
 
@@ -335,7 +322,7 @@ public partial class Player : RigidBody3D {
         }
 
 
-        if (IsUnderwater) {
+        if (IsUnderwater()) {
             if (_impulsedApplied) {
                 _sfx.Stream = _splashSfx;
                 _sfx.Play();
@@ -360,5 +347,14 @@ public partial class Player : RigidBody3D {
         _firstTime = false;
 
     }
+
+
+    public static bool IsIntroPlaying() => _introMainTextTimer < CUTSCENE_END_TIME_LENGTH;
+
+    // Used to update Terrain visbility.
+    public bool IsCameraUnderwater() => _cam.GlobalPosition.Y <= -0.3f;
+
+    bool IsUnderwater() => GlobalPosition.Y <= 0;
+
 
 }

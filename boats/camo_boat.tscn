@@ -4,21 +4,23 @@
 [ext_resource type="Script" path="res://boats/Boat.cs" id="1_rxo1l"]
 [ext_resource type="AudioStream" uid="uid://bfxiptv37ikt5" path="res://nathan/explosion_F_minor.wav" id="3_minsu"]
 [ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://nathan/smoke_pfx.tscn" id="4_ta8xn"]
-[ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_3d_particle.tscn" id="5_mrfok"]
+[ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_pfx.tscn" id="5_7y7dk"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
 radius = 5.0
 height = 24.355
 
-[node name="CamoBoat" type="RigidBody3D" node_paths=PackedStringArray("_sfxPlayer", "_smokePfxs")]
+[node name="CamoBoat" type="RigidBody3D" node_paths=PackedStringArray("_sfxPlayer", "_deathPfxs")]
 gravity_scale = 0.0
 can_sleep = false
+max_contacts_reported = 1
+contact_monitor = true
 script = ExtResource("1_rxo1l")
 _speed = 25.0
 _targetAcquisCooldown = 15.0
 _moneyIncrementOnKill = 1000.0
-_sfxPlayer = NodePath("AudioStreamPlayer3D")
-_smokePfxs = [NodePath("SmokePfx"), NodePath("SmokePfx2"), NodePath("SmokePfx3")]
+_sfxPlayer = NodePath("ExplosionSfx")
+_deathPfxs = [NodePath("SmokePfx"), NodePath("SmokePfx2"), NodePath("ExplosionPfx")]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
@@ -28,7 +30,7 @@ mesh = ExtResource("1_2p2ce")
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -4.62861)
 shape = SubResource("CapsuleShape3D_7vlyt")
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+[node name="ExplosionSfx" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("3_minsu")
 bus = &"SFX"
 
@@ -39,4 +41,4 @@ emitting = false
 [node name="SmokePfx2" parent="." instance=ExtResource("4_ta8xn")]
 emitting = false
 
-[node name="SmokePfx3" parent="." instance=ExtResource("5_mrfok")]
+[node name="ExplosionPfx" parent="." instance=ExtResource("5_7y7dk")]

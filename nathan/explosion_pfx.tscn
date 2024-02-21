@@ -32,7 +32,7 @@ color_ramp = SubResource("GradientTexture1D_w0hqv")
 [sub_resource type="QuadMesh" id="QuadMesh_pl6xc"]
 size = Vector2(5, 5)
 
-[node name="Explosion3dParticle" type="GPUParticles3D"]
+[node name="ExplosionPfx" type="GPUParticles3D"]
 material_override = SubResource("StandardMaterial3D_8lbn4")
 emitting = false
 amount = 100

@@ -25,9 +25,9 @@ albedo_texture = ExtResource("1_kxw6d")
 material = SubResource("StandardMaterial3D_eywam")
 size = Vector2(0.15, 0.15)
 
-[node name="GPUParticles3D" type="GPUParticles3D"]
-amount = 200
-lifetime = 5.0
+[node name="BubblePfx" type="GPUParticles3D"]
+amount = 300
+lifetime = 7.0
 speed_scale = 1.2
 process_material = SubResource("ParticleProcessMaterial_p7340")
 draw_pass_1 = SubResource("QuadMesh_mnnp3")

@@ -22,7 +22,7 @@ public partial class Boat : RigidBody3D {
     [Export] AudioStreamPlayer3D _sfxPlayer = null!;
 
     // Dynamic art.
-    [Export] GpuParticles3D[] _smokePfxs = null!;
+    [Export] GpuParticles3D[] _deathPfxs = null!;
     Resource _aliveTexture = GD.Load("res://images/shared_metal_texture.png");
     Resource _deathTexture = GD.Load("res://nathan/destroyed_boat_texture.png");
 
@@ -39,9 +39,60 @@ public partial class Boat : RigidBody3D {
     Vector3 _target;
 
     public override void _Ready() {
-        _spawn = GlobalPosition;
         Debug.Assert(!CanSleep);
+        Debug.Assert(ContactMonitor);
+        Debug.Assert(MaxContactsReported >= 1);
+        Debug.Assert(_deathPfxs is not null);
+        Debug.Assert(_deathPfxs.Length > 0);
+
+        foreach (var deathPfx in _deathPfxs) {
+            Debug.Assert(deathPfx is not null);
+        }
+
+        _spawn = GlobalPosition;
         Spawn();
+
+        BodyEntered += OnBodyEntered;
+
+        void OnBodyEntered(Node body) {
+            if (!IsAlive || body is not (Player or Torpedo)) {
+                return;
+            }
+
+            Debug.Assert(
+                condition: IsAlive,
+                message: $"Already dead boat was just killed."
+            );
+
+            IsAlive = false;
+            _deathTime = Main.ElapsedTimeS();
+
+            _sfxPlayer.Play();
+
+            // Make the boat look destroyed. Some boats are composed of 
+            // more than one mesh. All boat meshes share the same texture.
+            var meshes = this.Descendants<MeshInstance3D>();
+            meshes.ForEach(
+                mesh => mesh.GetActiveMaterial(0)?
+                    .Set("albedo_texture", _deathTexture)
+            );
+            Array.ForEach(_deathPfxs, pfx => pfx.Emitting = true);
+
+            // So that the player can watch destroyed boats spin around for fun.
+            AxisLockAngularX = false;
+            AxisLockAngularY = false;
+            AxisLockAngularZ = false;
+
+            // Give player more targets to destroy as they progress.
+            _numKilled++;
+            if (_numKilled % 30 == 0) {
+                _respawnCooldown *= 0.9f;
+            }
+
+            // Money is "score". Used for infinite progression.
+            OnKill?.Invoke(_moneyIncrementOnKill);
+
+        }
     }
 
     public override void _PhysicsProcess(double delta) {
@@ -94,42 +145,6 @@ public partial class Boat : RigidBody3D {
             new Vector3(targetDir.X, 0, targetDir.Z) * _speed;
     }
 
-    public void Kill() {
-
-        Debug.Assert(
-            condition: IsAlive,
-            message: $"Already dead boat was just killed."
-        );
-
-        IsAlive = false;
-        _deathTime = Main.ElapsedTimeS();
-
-        _sfxPlayer.Play();
-
-        // Make the boat look destroyed. Some boats are composed of 
-        // more than one mesh. All boat meshes share the same texture.
-        var meshes = this.Descendants<MeshInstance3D>();
-        meshes.ForEach(
-            mesh => mesh.GetActiveMaterial(0)?
-                .Set("albedo_texture", _deathTexture)
-        );
-        Array.ForEach(_smokePfxs, pfx => pfx.Emitting = true);
-
-        // So that the player can watch destroyed boats spin around for fun.
-        AxisLockAngularX = false;
-        AxisLockAngularY = false;
-        AxisLockAngularZ = false;
-
-        // Give player more targets to destroy as they progress.
-        _numKilled++;
-        if (_numKilled % 30 == 0) {
-            _respawnCooldown *= 0.9f;
-        }
-
-        // Money is "score". Used for infinite progression.
-        OnKill?.Invoke(_moneyIncrementOnKill);
-    }
-
     void SetRandomTarget() {
         _targetAcquisTime = Main.ElapsedTimeS();
         const float minDistance = 50.0f;
@@ -155,7 +170,7 @@ public partial class Boat : RigidBody3D {
             mesh => mesh.GetActiveMaterial(0)?
                 .Set("albedo_texture", _aliveTexture)
         );
-        Array.ForEach(_smokePfxs, pfx => pfx.Emitting = false);
+        Array.ForEach(_deathPfxs, pfx => pfx.Emitting = false);
     }
 
 }
