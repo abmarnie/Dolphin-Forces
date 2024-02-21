@@ -4,9 +4,12 @@ using Godot;
 
 namespace DolphinForces;
 
+// TODO: Check if pausing requires me to poll Input.MouseMode = Input.MouseModeEnum.Captured;
+
+
 public partial class Player : RigidBody3D {
 
-    public static bool IsIntroPlaying() => _introOverlayState != IntroOverlayState.Ended;
+    public static bool IsIntroPlaying() => _introScreenState != IntroScreenState.Ended;
 
     // Events are used to change music in main script.
     public event Action? OnJump;
@@ -35,7 +38,7 @@ public partial class Player : RigidBody3D {
     const float DEFAULT_SPEED = 25f;
     float _maxSpeed = 50f;
     float _speed = DEFAULT_SPEED;
-    bool _impulsedApplied;
+    bool _impulseApplied;
     bool _firstIntegrateForces = true;
 
     // Torpedo logic.
@@ -44,7 +47,7 @@ public partial class Player : RigidBody3D {
     PackedScene _torpedoFactory = GD.Load<PackedScene>("res://torpedos/torpedo.tscn");
     float _torpedoCooldown = 0.5f;
     int _torpedoFireCount; // For alternating between spawn1 and spawn2.
-    float _torpedoFireTime;
+    float _lastTorpedoFireTime;
     bool _isAttackInputPressed;
 
     // Sfx.
@@ -53,12 +56,12 @@ public partial class Player : RigidBody3D {
     AudioStream _robotSfx = GD.Load<AudioStream>(
         "res://nathan/mixkit-futuristic-robot-movement-1412.wav");
 
-    // Intro text.
-    enum IntroOverlayState { Starting, WaitingForPlayer, Ending, Ended }
-    static IntroOverlayState _introOverlayState;
-    [Export] ColorRect _introOverlay = null!;
-    [Export] Label _introMainLabel = null!;
-    [Export] Label _introContinuePrompt = null!;
+    // Intro.
+    enum IntroScreenState { Starting, WaitingForPlayer, Ending, Ended }
+    static IntroScreenState _introScreenState;
+    [Export] ColorRect _introScreen = null!;
+    [Export] Label _introText = null!;
+    [Export] Label _continuePrompt = null!;
 
     // Pause menu.
     [Export] Control _pauseMenu = null!;
@@ -73,16 +76,15 @@ public partial class Player : RigidBody3D {
     public override void _Input(InputEvent @event) {
 
         // End the intro once the player responds to the continue prompt.
-        if (_introOverlayState is IntroOverlayState.WaitingForPlayer) {
+        if (_introScreenState is IntroScreenState.WaitingForPlayer) {
             if (@event.IsActionReleased("attack")) {
-                _introOverlayState = IntroOverlayState.Ending;
+                _introScreenState = IntroScreenState.Ending;
                 _sfx.Play();
-                var introOverlayFadeOut = _introOverlay.CreateTween();
-                _ = introOverlayFadeOut.TweenProperty(_introOverlay, "modulate",
-                    Colors.White with { A = 0 }, 1f);
+                var introOverlayFadeOut = _introScreen.CreateTween();
+                _ = introOverlayFadeOut.TweenProperty(_introScreen, "modulate", Colors.White with { A = 0 }, 3f);
                 introOverlayFadeOut.Finished += () => {
-                    _introOverlayState = IntroOverlayState.Ended;
-                    _introOverlay.Visible = false;
+                    _introScreenState = IntroScreenState.Ended;
+                    _introScreen.Visible = false;
                 };
             }
         }
@@ -91,14 +93,16 @@ public partial class Player : RigidBody3D {
             return;
         }
 
-        // Caches inputs for use in update loops.
+        // Rest of this method caches inputs for use in update loops.
 
         if (@event is InputEventMouseMotion mouseMotion && IsUnderwater()) {
+            // For rotating the player root (inside `_PhysicsProcess`).
             const float sensScale = 0.005f;
             _playerRotInput.Y -= mouseMotion.Relative.X * MouseSens * sensScale;
             _playerRotInput.X -= mouseMotion.Relative.Y * MouseSens * sensScale;
             _playerRotInput.X = Mathf.Clamp(_playerRotInput.X, -LOOK_ANGLE_MAX, LOOK_ANGLE_MAX);
 
+            // For juicing up the camera and player offset (inside `_Process`).
             const float xPosIncr = 0.1f;
             const float yRotIncr = 0.01f;
             const float zRotIncr = 0.1f;
@@ -118,14 +122,16 @@ public partial class Player : RigidBody3D {
             _isAttackInputPressed = true;
         }
 
-        if (@event.IsActionReleased("attack"))
+        if (@event.IsActionReleased("attack")) {
             _isAttackInputPressed = false;
+        }
 
         const float speedScrollDelta = 1f;
-        if (@event.IsActionReleased("scroll_up"))
+        if (@event.IsActionReleased("scroll_up")) {
             _speed += speedScrollDelta;
-        else if (@event.IsActionReleased("scroll_down"))
+        } else if (@event.IsActionReleased("scroll_down")) {
             _speed -= speedScrollDelta;
+        }
 
         const float minSpeed = 5f;
         _speed = Mathf.Clamp(_speed, minSpeed, _maxSpeed);
@@ -136,7 +142,7 @@ public partial class Player : RigidBody3D {
 
         Debug.Assert(_waterEnv is not null);
         Debug.Assert(!_pauseMenu.Visible);
-        Debug.Assert(!_introContinuePrompt.Visible);
+        Debug.Assert(!_continuePrompt.Visible);
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
@@ -147,21 +153,27 @@ public partial class Player : RigidBody3D {
             _moneyLabel.Text = $"Money Earned: ${_money:N0}";
         }
 
-        _torpedoFireTime = -_torpedoCooldown;
-        var invisColor = Colors.White with { A = 0 };
-        _introMainLabel.Modulate = invisColor;
-        _introContinuePrompt.Modulate = invisColor;
+        _lastTorpedoFireTime = -_torpedoCooldown; // Allow player to fire right away.
         _animTree.Set("parameters/speed_scale/scale", 1f);
 
-        _introOverlayState = IntroOverlayState.Starting;
-        var introTextFadeIn = _introMainLabel.CreateTween();
-        _ = introTextFadeIn.TweenProperty(_introMainLabel, "modulate", Colors.White, 1f);
-        introTextFadeIn.Finished += () => {
-            _introContinuePrompt.Visible = true;
-            var continuePromptFadeIn = _introContinuePrompt.CreateTween();
-            _ = continuePromptFadeIn.TweenProperty(_introContinuePrompt, "modulate", Colors.White, 1f);
-            continuePromptFadeIn.Finished += () => _introOverlayState = IntroOverlayState.WaitingForPlayer;
-        };
+        // Intro labels begin invisible, then they fade in.
+        _introText.Modulate = Colors.White with { A = 0 };
+        _continuePrompt.Modulate = Colors.White with { A = 0 };
+
+        _introScreenState = IntroScreenState.Starting;
+        var introTextFadeIn = _introText.CreateTween();
+        _ = introTextFadeIn.TweenProperty(_introText, "modulate", Colors.White, 7f);
+        introTextFadeIn.Finished += FadeInContinuePrompt;
+
+        void FadeInContinuePrompt() {
+            _continuePrompt.Visible = true;
+            var continuePromptFadeIn = _continuePrompt.CreateTween();
+            _ = continuePromptFadeIn.TweenProperty(_continuePrompt, "modulate", Colors.White, 2f);
+
+            // Player is stuck on intro screen until they
+            continuePromptFadeIn.Finished += () => _introScreenState = IntroScreenState.WaitingForPlayer;
+        }
+
     }
 
     public override void _Process(double delta) {
@@ -197,32 +209,31 @@ public partial class Player : RigidBody3D {
 
     public override void _PhysicsProcess(double delta) {
 
-        Input.MouseMode = Input.MouseModeEnum.Captured;
 
-        var isTorpedoOffCooldown = Main.ElapsedTimeS() > _torpedoFireTime + _torpedoCooldown;
-        if (isTorpedoOffCooldown && _isAttackInputPressed) {
-            _torpedoFireCount++;
+        var isTorpedoOffCooldown = Main.ElapsedTimeS() > _lastTorpedoFireTime + _torpedoCooldown;
+        if (_isAttackInputPressed && isTorpedoOffCooldown) {
+            // Spawn torpedo.
             var torpedo = _torpedoFactory.Instantiate<Torpedo>();
             GetTree().CurrentScene.AddChild(torpedo);
             torpedo.AddCollisionExceptionWith(this);
-            if (_torpedoFireCount % 2 == 0) {
-                torpedo.GlobalPosition = _torpedoSpawn1.GlobalPosition;
-                torpedo.GlobalRotation = _torpedoSpawn1.GlobalRotation;
-            } else {
-                torpedo.GlobalPosition = _torpedoSpawn2.GlobalPosition;
-                torpedo.GlobalRotation = _torpedoSpawn2.GlobalRotation;
-            }
-            var torpedoForce = 40f + _speed;
-            torpedo.ApplyImpulse(-torpedoForce * torpedo.Basis.Z);
-            _torpedoFireTime = Main.ElapsedTimeS();
+
+            // Alternate between left and right. These coincide if player doesn't
+            // have first upgrade. 
+            _torpedoFireCount++;
+            torpedo.GlobalPosition = _torpedoFireCount % 2 == 0 ? _torpedoSpawn1.GlobalPosition : _torpedoSpawn2.GlobalPosition;
+            torpedo.GlobalRotation = _torpedoFireCount % 2 == 0 ? _torpedoSpawn1.GlobalRotation : _torpedoSpawn2.GlobalRotation;
+
+            // Send torpedo forwards.
+            var force = 40f + _speed;
+            torpedo.ApplyImpulse(-force * torpedo.Basis.Z);
+
+            _lastTorpedoFireTime = Main.ElapsedTimeS();
         }
 
         const float firstUpgradeCost = 10000f;
         const float secondUpgradeCost = 20000f;
 
-
         if (_money >= firstUpgradeCost && !_firstUpgradeObtained) {
-            // MoneyLabel.Text = MoneyLabel.Text + "\n" + "$2000 earned. Comrade unlocked.";
             _sfx.Stream = _robotSfx;
             _sfx.Play();
 
@@ -309,16 +320,16 @@ public partial class Player : RigidBody3D {
 
 
         if (IsUnderwater()) {
-            if (_impulsedApplied) {
+            if (_impulseApplied) {
                 _sfx.Stream = _splashSfx;
                 _sfx.Play();
                 OnWaterEntry?.Invoke();
             }
             state.LinearVelocity = -_speed * Basis.Z;
             GravityScale = 0.0f;
-            _impulsedApplied = false;
+            _impulseApplied = false;
         } else {
-            if (!_impulsedApplied) {
+            if (!_impulseApplied) {
                 _sfx.Play();
                 if (!_firstIntegrateForces)
                     OnJump?.Invoke();
@@ -328,7 +339,7 @@ public partial class Player : RigidBody3D {
                 GravityScale = 1f;
             else
                 GravityScale = 9.8f;
-            _impulsedApplied = true;
+            _impulseApplied = true;
         }
         _firstIntegrateForces = false;
 
