@@ -4,6 +4,10 @@ using Godot;
 
 namespace DolphinForces;
 
+// TODO: Randomized boat spawning system (don't share texture...).
+// TODO: Boat "type object" determines speed & targetAquisCooldown.
+// TODO: Better randomized target behaviour..
+
 /// <summary> Controls boat enemies. </summary>
 public partial class Boat : RigidBody3D {
 
@@ -55,7 +59,7 @@ public partial class Boat : RigidBody3D {
         BodyEntered += OnBodyEntered;
 
         void OnBodyEntered(Node body) {
-            // The boat should only be killed by collision from the Player
+            // The boat should *only* be killed by collision from the Player
             // or from a Torpedo.
             if (!IsAlive || body is not (Player or Torpedo)) {
                 return;
@@ -67,7 +71,7 @@ public partial class Boat : RigidBody3D {
             _sfxPlayer.Play();
 
             // Make the boat look destroyed. Some boats are composed of 
-            // more than one mesh. All boat meshes share the same texture.
+            // more than one mesh. All boat meshes use the same texture.
             var meshes = this.Descendants<MeshInstance3D>();
             meshes.ForEach(
                 mesh => mesh.GetActiveMaterial(0)?
@@ -75,7 +79,7 @@ public partial class Boat : RigidBody3D {
             );
             Array.ForEach(_deathPfxs, pfx => pfx.Emitting = true);
 
-            // So that the player can watch destroyed boats spin around for fun.
+            // So player can ragdoll boats for fun.
             AxisLockAngularX = false;
             AxisLockAngularY = false;
             AxisLockAngularZ = false;
@@ -143,12 +147,12 @@ public partial class Boat : RigidBody3D {
 
     void SetRandomTarget() {
         _targetAcquisTime = Main.ElapsedTimeS();
-        const float minDistance = 50.0f;
-        const float maxDistance = 100.0f;
-        var distance = ((float)_rng.NextDouble() * (maxDistance - minDistance)) + minDistance;
-        var angle = (float)_rng.NextDouble() * Mathf.Pi * 2;
-        var direction = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)).Normalized();
-        _target = GlobalPosition + (direction * distance);
+        const float minDist = 50.0f;
+        const float maxDist = 100.0f;
+        var dist = ((float)_rng.NextDouble() * (maxDist - minDist)) + minDist;
+        var angle = (float)_rng.NextDouble();
+        var dir = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)).Normalized();
+        _target = GlobalPosition + (dir * dist);
         LookAt(_target);
     }
 
