@@ -54,6 +54,8 @@ height = 2.98
 [node name="Torpedo" type="RigidBody3D" node_paths=PackedStringArray("_wooshSfx")]
 gravity_scale = 0.0
 can_sleep = false
+max_contacts_reported = 1
+contact_monitor = true
 script = ExtResource("1_uprjq")
 _wooshSfx = NodePath("WooshSfx")
 

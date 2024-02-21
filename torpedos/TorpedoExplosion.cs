@@ -2,6 +2,8 @@ using Godot;
 
 namespace DolphinForces;
 
+// TODO: Torpedo explosion destroys boats.
+
 public partial class TorpedoExplosion : Node3D {
 
     [Export] AudioStreamPlayer3D _sfx = null!;
@@ -24,4 +26,5 @@ public partial class TorpedoExplosion : Node3D {
             QueueFree();
         }
     }
+
 }

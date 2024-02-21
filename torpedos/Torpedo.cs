@@ -10,6 +10,9 @@ public partial class Torpedo : RigidBody3D {
     float _spawnTime;
 
     public override void _Ready() {
+        Debug.Assert(!CanSleep);
+        Debug.Assert(ContactMonitor);
+        Debug.Assert(MaxContactsReported >= 1);
         Debug.Assert(GravityScale == 0f);
         Debug.Assert(_explosionFactory is not null);
 
