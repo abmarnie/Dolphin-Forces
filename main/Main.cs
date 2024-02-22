@@ -38,6 +38,7 @@ public partial class Main : Node3D {
         }
 
         _underwaterTerrains.Visible = true;
+
     }
 
     public override void _Process(double delta) {
@@ -47,4 +48,5 @@ public partial class Main : Node3D {
 
         _underwaterTerrains.Visible = _player.IsCameraUnderwater();
     }
+
 }

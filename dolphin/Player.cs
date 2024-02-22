@@ -143,6 +143,7 @@ public partial class Player : RigidBody3D {
     public override void _Ready() {
         Debug.Assert(_underwaterRenderEnv is not null);
         Debug.Assert(!_pauseMenu.Visible);
+        Debug.Assert(_cam.TopLevel);
 
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
@@ -150,6 +151,7 @@ public partial class Player : RigidBody3D {
         _animTree.Set("parameters/speed_scale/scale", 0f);
 
         _cam.GlobalTransform = _desiredCamPos.GlobalTransform;
+        _cam.GlobalPosition += -5f * Vector3.Forward;
 
         // Intro labels begin invisible, then they fade in.
         _introText.Modulate = Colors.White with { A = 0 };

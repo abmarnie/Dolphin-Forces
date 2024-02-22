@@ -98,8 +98,17 @@ public partial class Boat : RigidBody3D {
             return;
         }
 
+        // The boat shouldn't be affected by gravity if submerged.
         var isSubmerged = GlobalPosition.Y <= 0;
-        GravityScale = isSubmerged ? 0.0f : 10f;
+        var isDeeplySubmerged = GlobalPosition.Y <= -1f;
+        GravityScale =
+            IsAlive ?
+                isDeeplySubmerged ? -1f
+                : isSubmerged ? 0f
+                : 10f
+            :
+                isSubmerged ? 0.25f
+                : 10f;
 
         if (!IsAlive) {
             var isRespawnOffCooldown = Main.ElapsedTimeS() >= _deathTime + _respawnCooldown;
@@ -107,11 +116,6 @@ public partial class Boat : RigidBody3D {
                 Spawn();
             }
             return;
-        }
-
-        var isReallySubmerged = GlobalPosition.Y < -0.5f;
-        if (isReallySubmerged) {
-            GravityScale = -1f;
         }
 
         var targetAcquisOffCooldown = _targetAcquisTime >= Main.ElapsedTimeS() + _targetAcquisCooldown;
@@ -122,7 +126,7 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
-        if (!Player.HasIntroEnded()) {
+        if (!Player.HasIntroEnded() || !IsAlive) {
             return;
         }
 
