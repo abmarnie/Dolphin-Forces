@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://dioum0gp840cc"
-path="res://.godot/imported/peaceful_music.wav-83d897f37133014f703e55e848f92f9e.sample"
+path="res://.godot/imported/peaceful_music.wav-6b26b68bdc762937f55e91c03fd874ee.sample"
 
 [deps]
 
-source_file="res://nathan/peaceful_music.wav"
-dest_files=["res://.godot/imported/peaceful_music.wav-83d897f37133014f703e55e848f92f9e.sample"]
+source_file="res://main/peaceful_music.wav"
+dest_files=["res://.godot/imported/peaceful_music.wav-6b26b68bdc762937f55e91c03fd874ee.sample"]
 
 [params]
 

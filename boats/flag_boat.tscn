@@ -5,9 +5,9 @@
 [ext_resource type="Texture2D" uid="uid://13uj3h5ql64q" path="res://shared_images/shared_metal_texture.png" id="2_sdq3m"]
 [ext_resource type="Texture2D" uid="uid://ddwx3auft8qnx" path="res://boats/destroyed_boat_texture.png" id="3_4w7mp"]
 [ext_resource type="ArrayMesh" uid="uid://biimikonkvanq" path="res://boats/boats_FlagMesh.tres" id="3_fhksw"]
-[ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://nathan/smoke_pfx.tscn" id="4_26dgs"]
-[ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_pfx.tscn" id="5_m8vg1"]
-[ext_resource type="AudioStream" uid="uid://bfxiptv37ikt5" path="res://nathan/explosion_F_minor.wav" id="6_ek1sg"]
+[ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://pfxs/smoke/smoke_pfx.tscn" id="4_26dgs"]
+[ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://pfxs/explosion/explosion_pfx.tscn" id="7_6iywe"]
+[ext_resource type="AudioStream" uid="uid://bfxiptv37ikt5" path="res://boats/boat_explosion_f_minor_sfx.wav" id="8_33h2q"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
 radius = 5.0
@@ -46,8 +46,8 @@ emitting = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -9.3735)
 emitting = false
 
-[node name="ExplosionPfx" parent="." instance=ExtResource("5_m8vg1")]
+[node name="ExplosionPfx" parent="." instance=ExtResource("7_6iywe")]
 
 [node name="ExplosionSfx" type="AudioStreamPlayer3D" parent="."]
-stream = ExtResource("6_ek1sg")
+stream = ExtResource("8_33h2q")
 bus = &"SFX"

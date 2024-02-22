@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://dvorv0gg8kawe"
-path="res://.godot/imported/cartoon-mixed-fx-eating-vocal.wav-5d1be5a5df7395d91e4d95d93045185d.sample"
+path="res://.godot/imported/cartoon-mixed-fx-eating-vocal.wav-b1950e92a9baacc24c9fc32b9f70d861.sample"
 
 [deps]
 
-source_file="res://nathan/cartoon-mixed-fx-eating-vocal.wav"
-dest_files=["res://.godot/imported/cartoon-mixed-fx-eating-vocal.wav-5d1be5a5df7395d91e4d95d93045185d.sample"]
+source_file="res://unused/cartoon-mixed-fx-eating-vocal.wav"
+dest_files=["res://.godot/imported/cartoon-mixed-fx-eating-vocal.wav-b1950e92a9baacc24c9fc32b9f70d861.sample"]
 
 [params]
 

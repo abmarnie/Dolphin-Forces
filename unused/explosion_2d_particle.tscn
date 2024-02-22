@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://c45bei4tahlj4"]
 
-[ext_resource type="Texture2D" uid="uid://dno0cg1lo3fpp" path="res://nathan/white_smugde.png" id="1_x2jfy"]
+[ext_resource type="Texture2D" uid="uid://dno0cg1lo3fpp" path="res://unused/white_smugde.png" id="1_x2jfy"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_xmrvs"]
 blend_mode = 1

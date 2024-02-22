@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://bfxiptv37ikt5"
-path="res://.godot/imported/explosion_F_minor.wav-99f71268b39c0541201886d13b7175f6.sample"
+path="res://.godot/imported/boat_explosion_f_minor_sfx.wav-451ed13cd22022b0c0c30f8efd54d79a.sample"
 
 [deps]
 
-source_file="res://nathan/explosion_F_minor.wav"
-dest_files=["res://.godot/imported/explosion_F_minor.wav-99f71268b39c0541201886d13b7175f6.sample"]
+source_file="res://boats/boat_explosion_f_minor_sfx.wav"
+dest_files=["res://.godot/imported/boat_explosion_f_minor_sfx.wav-451ed13cd22022b0c0c30f8efd54d79a.sample"]
 
 [params]
 

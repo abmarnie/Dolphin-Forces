@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1md8e5k7wsjq"
-path.s3tc="res://.godot/imported/fire.png-9d4cc7b0213fa9d78de55df93d8bd477.s3tc.ctex"
+uid="uid://dno0cg1lo3fpp"
+path.s3tc="res://.godot/imported/white_smugde.png-f5ff165b10e6f0a7a16e4468d9e14898.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://nathan/fire.png"
-dest_files=["res://.godot/imported/fire.png-9d4cc7b0213fa9d78de55df93d8bd477.s3tc.ctex"]
+source_file="res://unused/white_smugde.png"
+dest_files=["res://.godot/imported/white_smugde.png-f5ff165b10e6f0a7a16e4468d9e14898.s3tc.ctex"]
 
 [params]
 

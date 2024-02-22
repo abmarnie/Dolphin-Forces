@@ -1,18 +1,17 @@
-[gd_scene load_steps=18 format=3 uid="uid://cc6ij0vhq6iyh"]
+[gd_scene load_steps=17 format=3 uid="uid://cc6ij0vhq6iyh"]
 
 [ext_resource type="Script" path="res://main/Main.cs" id="1_11si0"]
 [ext_resource type="Environment" uid="uid://cefclkylmgwxx" path="res://main/main_environment.tres" id="2_3coom"]
-[ext_resource type="AudioStream" uid="uid://jb0sfvh1cacw" path="res://nathan/metal_music.wav" id="2_82qdx"]
+[ext_resource type="AudioStream" uid="uid://jb0sfvh1cacw" path="res://main/metal_music.wav" id="2_82qdx"]
 [ext_resource type="PackedScene" uid="uid://li41t3qh0gpx" path="res://player/player.tscn" id="2_ofsg3"]
-[ext_resource type="AudioStream" uid="uid://dioum0gp840cc" path="res://nathan/peaceful_music.wav" id="3_r0d7e"]
+[ext_resource type="AudioStream" uid="uid://dioum0gp840cc" path="res://main/peaceful_music.wav" id="3_r0d7e"]
 [ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://main/water/water_caustic_visualshader.tres" id="5_aptly"]
 [ext_resource type="PackedScene" uid="uid://dosonc0o3fxy5" path="res://underwater_terrain/underwater_terrain.tscn" id="5_flkfk"]
 [ext_resource type="PackedScene" uid="uid://stofy3ce1kuw" path="res://boats/camo_boat.tscn" id="7_82of6"]
 [ext_resource type="PackedScene" uid="uid://dd35f5c64qkfl" path="res://boats/flag_boat.tscn" id="8_jtem8"]
 [ext_resource type="PackedScene" uid="uid://c3p3ma6lp7k1h" path="res://boats/russian_boat.tscn" id="8_scbwa"]
 [ext_resource type="PackedScene" uid="uid://bth55vlfy2a5l" path="res://boats/yellow_striped_boat.tscn" id="9_aahfs"]
-[ext_resource type="PackedScene" uid="uid://cedh0ufnngimr" path="res://nathan/audio_stream_player.tscn" id="9_w7vuu"]
-[ext_resource type="AudioStream" uid="uid://cwoiis6lucnp3" path="res://nathan/boat-horn-6204.mp3" id="12_cpqkn"]
+[ext_resource type="AudioStream" uid="uid://cwoiis6lucnp3" path="res://main/boat_horn_intro_sfx.mp3" id="12_cpqkn"]
 [ext_resource type="PackedScene" uid="uid://boonqn8pmnf32" path="res://kevin/fish_swarm_guide.tscn" id="13_7lqs1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y0os8"]
@@ -465,8 +464,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 868.143, 0, -110.494)
 
 [node name="YellowStripedBoat4" parent="Boats/YellowStripedBoats2" instance=ExtResource("9_aahfs")]
 
-[node name="Music" parent="." instance=ExtResource("9_w7vuu")]
-autoplay = false
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_r0d7e")
+volume_db = -5.0
 bus = &"OST"
 
 [node name="IntroFoghorn" type="AudioStreamPlayer" parent="."]

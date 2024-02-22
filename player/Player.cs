@@ -21,6 +21,8 @@ public partial class Player : RigidBody3D {
     [Export] Node3D _desiredCamPos = null!;
     [Export] Node3D _dolphinsNode = null!;
     [Export] Camera3D _cam = null!;
+    Vector3 _dolphinRotSmoothing;
+    float _dolphinPosXInput;
 
     // For game progression.
     [Export] Label _moneyLabel = null!;
@@ -29,14 +31,12 @@ public partial class Player : RigidBody3D {
     // Dynamic visuals.
     [Export] AnimationTree _animTree = null!;
     [Export] MeshInstance3D[] _dolphinMeshes = null!;
-    [Export] Godot.Environment _underwaterRenderEnv;
+    [Export] Godot.Environment _underwaterRenderEnv = null!;
 
     // Movement.
     const float LOOK_ANGLE_MAX = 5 * Mathf.Pi / 12; // 75 deg
     public float MouseSens = 1;
     Vector3 _nextRotation;
-    Vector3 _dolphinRotSmoothing;
-    float _dolphinPosXInput;
     const float DEFAULT_SPEED = 25f;
     float _maxSpeed = 50f;
     float _speed = DEFAULT_SPEED;
@@ -96,13 +96,13 @@ public partial class Player : RigidBody3D {
         // Rest of this method caches inputs for use in update loops.
 
         if (@event is InputEventMouseMotion mouseMotion && IsUnderwater) {
-            // For rotating the player root (inside `_PhysicsProcess`).
+            // For rotating the actual player root.
             const float sensScale = 0.005f;
             _nextRotation.Y -= mouseMotion.Relative.X * MouseSens * sensScale;
             _nextRotation.X -= mouseMotion.Relative.Y * MouseSens * sensScale;
             _nextRotation.X = Mathf.Clamp(_nextRotation.X, -LOOK_ANGLE_MAX, LOOK_ANGLE_MAX);
 
-            // For juicing up the camera and player offset (inside `_Process`).
+            // For juicing up the camera and player offset.
             const float xPosIncr = 0.1f;
             const float yRotIncr = 0.01f;
             const float zRotIncr = 0.1f;

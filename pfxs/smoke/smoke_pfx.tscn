@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://8j57ml138fvb"]
 
-[ext_resource type="Texture2D" uid="uid://d1md8e5k7wsjq" path="res://nathan/fire.png" id="1_oi6nh"]
+[ext_resource type="Texture2D" uid="uid://d1md8e5k7wsjq" path="res://shared_images/fire_texture.png" id="1_oi6nh"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8lbn4"]
 blend_mode = 1

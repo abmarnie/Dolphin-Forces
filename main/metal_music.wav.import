@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://jb0sfvh1cacw"
-path="res://.godot/imported/metal_music.wav-1b86766478b851036fde794eb8b6e1c5.sample"
+path="res://.godot/imported/metal_music.wav-7fccfe846963dbd38bf576e526ce343c.sample"
 
 [deps]
 
-source_file="res://nathan/metal_music.wav"
-dest_files=["res://.godot/imported/metal_music.wav-1b86766478b851036fde794eb8b6e1c5.sample"]
+source_file="res://main/metal_music.wav"
+dest_files=["res://.godot/imported/metal_music.wav-7fccfe846963dbd38bf576e526ce343c.sample"]
 
 [params]
 

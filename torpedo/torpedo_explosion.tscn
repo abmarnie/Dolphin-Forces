@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://c1mfjdhtqe7ib"]
 
 [ext_resource type="Script" path="res://torpedo/TorpedoExplosion.cs" id="1_ww2h1"]
-[ext_resource type="AudioStream" uid="uid://8na434qgtecs" path="res://nathan/hq-explosion-6288.mp3" id="2_o0t67"]
-[ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_pfx.tscn" id="3_8vebn"]
+[ext_resource type="AudioStream" uid="uid://8na434qgtecs" path="res://torpedo/torpedo_explosion_sfx.mp3" id="2_ccy1d"]
+[ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://pfxs/explosion/explosion_pfx.tscn" id="3_he0yk"]
 
 [node name="TorpedoExplosion" type="Node3D" node_paths=PackedStringArray("_sfx", "_pfx")]
 script = ExtResource("1_ww2h1")
@@ -10,6 +10,6 @@ _sfx = NodePath("Sfx")
 _pfx = NodePath("ExplosionPfx")
 
 [node name="Sfx" type="AudioStreamPlayer3D" parent="."]
-stream = ExtResource("2_o0t67")
+stream = ExtResource("2_ccy1d")
 
-[node name="ExplosionPfx" parent="." instance=ExtResource("3_8vebn")]
+[node name="ExplosionPfx" parent="." instance=ExtResource("3_he0yk")]
