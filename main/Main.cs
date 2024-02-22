@@ -37,7 +37,7 @@ public partial class Main : Node3D {
             _music.Play();
         }
 
-        _underwaterTerrains.Visible = true;
+        _underwaterTerrains.Visible = false;
 
     }
 

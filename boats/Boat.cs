@@ -25,7 +25,7 @@ public partial class Boat : RigidBody3D {
 
     // Dynamic art.
     [Export] GpuParticles3D[] _deathPfxs = null!;
-    Resource _aliveTexture = GD.Load("res://images/shared_metal_texture.png");
+    Resource _aliveTexture = GD.Load("res://shared_images/shared_metal_texture.png");
     Resource _deathTexture = GD.Load("res://nathan/destroyed_boat_texture.png");
 
     // Spawning.

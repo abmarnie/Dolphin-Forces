@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bpjqegmreibll"]
+
+[ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://water/water_caustic_visualshader.tres" id="1_2gqny"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_2gqny")
+shader_parameter/Speed = 0.3
+shader_parameter/Scale = 22.0
+shader_parameter/Scale2 = 19.0
+shader_parameter/CausticOpacity = 0.05
+shader_parameter/ColorParameter = Color(0.960784, 0.878431, 1, 1)

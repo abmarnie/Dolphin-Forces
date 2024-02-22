@@ -13,7 +13,7 @@ config_version=5
 config/name="dolphin_forces"
 run/main_scene="res://main/main.tscn"
 config/features=PackedStringArray("4.2", "C#", "Forward Plus")
-config/icon="res://images/desktop_icon.png"
+config/icon="res://shared_images/desktop_icon.png"
 
 [autoload]
 

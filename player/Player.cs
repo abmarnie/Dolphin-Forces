@@ -29,8 +29,7 @@ public partial class Player : RigidBody3D {
     // Dynamic visuals.
     [Export] AnimationTree _animTree = null!;
     [Export] MeshInstance3D[] _dolphinMeshes = null!;
-    Godot.Environment _underwaterRenderEnv = GD.Load<Godot.Environment>(
-        "res://water/underwater_environment.tres");
+    [Export] Godot.Environment _underwaterRenderEnv;
 
     // Movement.
     const float LOOK_ANGLE_MAX = 5 * Mathf.Pi / 12; // 75 deg
@@ -181,9 +180,14 @@ public partial class Player : RigidBody3D {
                     : _moneyLabel.Text[_moneyLabel.Text.IndexOf('\n')..]
                 );
 
-            var hasEnoughForNextUpgrade = _money >= UPGRADE_COST * (_numUpgrades + 1);
-            if (hasEnoughForNextUpgrade) {
-                if (_numUpgrades == 0) {
+            var cantAffordUpgrade = _money < UPGRADE_COST * (_numUpgrades + 1);
+            if (cantAffordUpgrade) {
+                return;
+            }
+
+            switch (_numUpgrades) {
+                case 0:
+
                     PerformUpgrade(
                         newMaxSpeed: _maxSpeed,
                         newAttackCooldown: _attackCooldown / 2f
@@ -198,7 +202,10 @@ public partial class Player : RigidBody3D {
                     secondDolphin.Position = secondDolphin.Position with { X = 3.25f };
                     _torpedoSpawn2.Position = _torpedoSpawn2.Position with { X = 3.25f };
 
-                } else if (_numUpgrades == 1) {
+                    break;
+
+                case 1:
+
                     PerformUpgrade(
                         newMaxSpeed: 80f,
                         newAttackCooldown: _attackCooldown / 1.5f
@@ -207,22 +214,27 @@ public partial class Player : RigidBody3D {
                     var thirdDolphin = _dolphinMeshes[0];
                     thirdDolphin.Visible = true;
                     thirdDolphin.Position = thirdDolphin.Position with { Y = 3.25f };
-                } else if (_numUpgrades > 1) {
+
+                    break;
+
+                default:
+
                     PerformUpgrade(
                         newMaxSpeed: _maxSpeed * 1.1f,
                         newAttackCooldown: _attackCooldown / 1.1f
                     );
-                }
 
-                void PerformUpgrade(float newMaxSpeed, float newAttackCooldown) {
-                    _numUpgrades++;
-                    _sfx.Stream = _robotSfx;
-                    _sfx.Play();
-                    _moneyLabel.Text += $"\n${UPGRADE_COST} transfer queued."
-                        + $" Max speed (SCROLL_WHEEL) and fire rate increased.";
-                    _maxSpeed = newMaxSpeed;
-                    _attackCooldown = newAttackCooldown;
-                }
+                    break;
+            }
+
+            void PerformUpgrade(float newMaxSpeed, float newAttackCooldown) {
+                _numUpgrades++;
+                _sfx.Stream = _robotSfx;
+                _sfx.Play();
+                _moneyLabel.Text += $"\n${UPGRADE_COST} transfer queued."
+                    + $" Max speed (SCROLL_WHEEL) and fire rate increased.";
+                _maxSpeed = newMaxSpeed;
+                _attackCooldown = newAttackCooldown;
             }
         }
     }
