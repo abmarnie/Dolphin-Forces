@@ -1,10 +1,8 @@
-[gd_scene load_steps=17 format=3 uid="uid://cc6ij0vhq6iyh"]
+[gd_scene load_steps=15 format=3 uid="uid://cc6ij0vhq6iyh"]
 
 [ext_resource type="Script" path="res://main/Main.cs" id="1_11si0"]
 [ext_resource type="Environment" uid="uid://cefclkylmgwxx" path="res://main/main_environment.tres" id="2_3coom"]
-[ext_resource type="AudioStream" uid="uid://jb0sfvh1cacw" path="res://main/metal_music.wav" id="2_82qdx"]
 [ext_resource type="PackedScene" uid="uid://li41t3qh0gpx" path="res://player/player.tscn" id="2_ofsg3"]
-[ext_resource type="AudioStream" uid="uid://dioum0gp840cc" path="res://main/peaceful_music.wav" id="3_r0d7e"]
 [ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://main/water/water_caustic_visualshader.tres" id="5_aptly"]
 [ext_resource type="PackedScene" uid="uid://dosonc0o3fxy5" path="res://underwater_terrain/underwater_terrain.tscn" id="5_flkfk"]
 [ext_resource type="PackedScene" uid="uid://stofy3ce1kuw" path="res://boats/camo_boat.tscn" id="7_82of6"]
@@ -31,14 +29,14 @@ shader_parameter/Scale2 = 19.68
 shader_parameter/CausticOpacity = 0.2
 shader_parameter/ColorParameter = Color(1, 0.709804, 1, 1)
 
-[node name="Main" type="Node3D" node_paths=PackedStringArray("_player", "_underwaterTerrains", "_music", "_introFoghorn")]
+[node name="Main" type="Node3D" node_paths=PackedStringArray("_player", "_underwaterTerrains", "_introFoghorn", "_introScreen", "_introText", "_continuePrompt")]
 script = ExtResource("1_11si0")
 _player = NodePath("Player")
 _underwaterTerrains = NodePath("UnderwaterTerrains")
-_music = NodePath("Music")
 _introFoghorn = NodePath("IntroFoghorn")
-_musicMetal = ExtResource("2_82qdx")
-_musicPeaceful = ExtResource("3_r0d7e")
+_introScreen = NodePath("CanvasLayer/IntroScreen")
+_introText = NodePath("CanvasLayer/IntroScreen/IntroText")
+_continuePrompt = NodePath("CanvasLayer/IntroScreen/ContinuePrompt")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
@@ -464,11 +462,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 868.143, 0, -110.494)
 
 [node name="YellowStripedBoat4" parent="Boats/YellowStripedBoats2" instance=ExtResource("9_aahfs")]
 
-[node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_r0d7e")
-volume_db = -5.0
-bus = &"OST"
-
 [node name="IntroFoghorn" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("12_cpqkn")
 volume_db = -0.955
@@ -476,3 +469,49 @@ bus = &"SFX"
 
 [node name="FishSwarmGuide" parent="." instance=ExtResource("13_7lqs1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -21, 0)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="IntroScreen" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="IntroText" type="Label" parent="CanvasLayer/IntroScreen"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -600.0
+offset_top = -239.0
+offset_right = 600.0
+offset_bottom = 239.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+text = "In this victorious cybernetic epoch, we accelerate our traverse through aeonic timescapes. We spiral violently, into arcane depths, into singularity. Antiquated paradigms crumble. The ancien régime is no more. This is aufheben. The world-spirit invigorated, it guides us towards zealous embrace of ever-more-rhizomatic approaches to warfare. New signifiers emerge. Icons of a transcendent era. This odyssey is more than a mere challenge to our perceived reality; it is a dialectical exploration of true partisianship. Amidst the foreboding shadow of eternity, we navigate a liminal waltz between anarchy and order, a dance resonating with the pulsating techno-heartbeat of a nascent, formidable, glorious state. Tellurocratic and thalassocratic regimes converge seamlessly, heralding the birth of a unified front."
+autowrap_mode = 2
+
+[node name="ContinuePrompt" type="Label" parent="CanvasLayer/IntroScreen"]
+custom_minimum_size = Vector2(1200, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = 216.0
+offset_right = 400.0
+offset_bottom = 306.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 24
+text = "Ram into enemies with MOVE_MOUSE. Fire torpedos with LEFT_CLICK. Adjust boosters with SCROLL_WHEEL. Adjust operating system volumes down for comfort. Left click to continue..."
+autowrap_mode = 2

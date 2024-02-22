@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using Godot;
 
@@ -6,16 +5,8 @@ namespace DolphinForces;
 
 public partial class Player : RigidBody3D {
 
-    // For global guard clause to "pause" game.
-    public static bool HasIntroEnded() => _introScreenState == IntroScreenState.Ended;
-
     // For updating Terrain visbility in main script.
     public bool IsCameraUnderwater() => _cam.GlobalPosition.Y <= -0.3f;
-
-    // Events for changing music in main script.
-    public event Action? OnIntroEnd;
-    public event Action? OnJump;
-    public event Action? OnWaterEntry;
 
     // For smoother camera and dolphin rotation with respect to player input.
     [Export] Node3D _desiredCamPos = null!;
@@ -52,97 +43,28 @@ public partial class Player : RigidBody3D {
     float _lastAttackTime;
     bool _isAttackInputPressed;
 
-    // Sfx.
+    // Audio.
+    [Export] AudioStreamPlayer _music = null!;
+    [Export] AudioStream _metalMusic = null!;
+    [Export] AudioStream _peacefulMusic = null!;
+    float _peacefulMusicPlaybackPos;
     [Export] AudioStreamPlayer3D _sfx = null!;
     [Export] AudioStream _splashSfx = null!;
     [Export] AudioStream _robotSfx = null!;
-
-    // Intro.
-    enum IntroScreenState { Starting, WaitingForPlayer, Ending, Ended }
-    static IntroScreenState _introScreenState;
-    [Export] ColorRect _introScreen = null!;
-    [Export] Label _introText = null!;
-    [Export] Label _continuePrompt = null!;
 
     // Pause menu.
     [Export] Control _pauseMenu = null!;
 
     // Game progression.
-    int _numUpgrades;
     const float UPGRADE_COST = 10000f;
-
-    public override void _Input(InputEvent @event) {
-        // End the intro once the player responds to the continue prompt.
-        if (_introScreenState is IntroScreenState.WaitingForPlayer) {
-            if (@event.IsActionReleased("attack")) {
-                _introScreenState = IntroScreenState.Ending;
-                _sfx.Play();
-                var introOverlayFadeOut = _introScreen.CreateTween();
-                _ = introOverlayFadeOut.TweenProperty(_introScreen, "modulate",
-                    Colors.White with { A = 0 }, 3f);
-                introOverlayFadeOut.Finished += () => {
-                    _introScreenState = IntroScreenState.Ended;
-                    OnIntroEnd?.Invoke();
-                    GravityScale = 10f;
-                    _introScreen.Visible = false;
-                };
-            }
-        }
-
-        if (!HasIntroEnded()) {
-            return;
-        }
-
-        // Rest of this method caches inputs for use in update loops.
-
-        if (@event is InputEventMouseMotion mouseMotion && IsUnderwater) {
-            // For rotating the actual player root.
-            const float sensScale = 0.005f;
-            _nextRotation.Y -= mouseMotion.Relative.X * MouseSens * sensScale;
-            _nextRotation.X -= mouseMotion.Relative.Y * MouseSens * sensScale;
-            _nextRotation.X = Mathf.Clamp(_nextRotation.X, -LOOK_ANGLE_MAX, LOOK_ANGLE_MAX);
-
-            // For juicing up the camera and player offset.
-            const float xPosIncr = 0.1f;
-            const float yRotIncr = 0.01f;
-            const float zRotIncr = 0.1f;
-            if (mouseMotion.Relative.X < 0) {
-                _dolphinPosXInput += xPosIncr;
-                _dolphinRotSmoothing.Y += yRotIncr;
-                _dolphinRotSmoothing.Z += zRotIncr;
-
-            } else if (mouseMotion.Relative.X > 0) {
-                _dolphinPosXInput -= xPosIncr;
-                _dolphinRotSmoothing.Y -= yRotIncr;
-                _dolphinRotSmoothing.Z -= zRotIncr;
-            }
-        }
-
-        if (@event.IsActionPressed("attack")) {
-            _isAttackInputPressed = true;
-        }
-
-        if (@event.IsActionReleased("attack")) {
-            _isAttackInputPressed = false;
-        }
-
-        const float speedScrollDelta = 1f;
-        if (@event.IsActionReleased("scroll_up")) {
-            _speed += speedScrollDelta;
-        } else if (@event.IsActionReleased("scroll_down")) {
-            _speed -= speedScrollDelta;
-        }
-
-        const float minSpeed = 5f;
-        _speed = Mathf.Clamp(_speed, minSpeed, _maxSpeed);
-
-    }
+    int _numUpgrades;
 
     public override void _Ready() {
         Debug.Assert(_underwaterRenderEnv is not null);
         Debug.Assert(!_pauseMenu.Visible);
         Debug.Assert(_cam.TopLevel);
 
+        _music.Stop();
         Input.MouseMode = Input.MouseModeEnum.Captured;
 
         _lastAttackTime = -_attackCooldown; // Allow player to fire right away.
@@ -151,27 +73,9 @@ public partial class Player : RigidBody3D {
         _cam.GlobalTransform = _desiredCamPos.GlobalTransform;
         _cam.GlobalPosition += -5f * Vector3.Forward;
 
-        // Intro labels begin invisible, then they fade in.
-        _introText.Modulate = Colors.White with { A = 0 };
-        _continuePrompt.Modulate = Colors.White with { A = 0 };
+        Boat.OnKill += IncrMoneyAndUpgradesIfNeeded;
 
-        _introScreenState = IntroScreenState.Starting;
-        var introTextFadeIn = _introText.CreateTween();
-        _ = introTextFadeIn.TweenProperty(_introText, "modulate", Colors.White, 1f); // 16f;
-        introTextFadeIn.Finished += FadeInContinuePrompt;
-
-        void FadeInContinuePrompt() {
-            _continuePrompt.Visible = true;
-            var continuePromptFadeIn = _continuePrompt.CreateTween();
-            _ = continuePromptFadeIn.TweenProperty(_continuePrompt, "modulate", Colors.White, 1f);
-
-            // Player is stuck on intro screen until they respond.
-            continuePromptFadeIn.Finished += () => _introScreenState = IntroScreenState.WaitingForPlayer;
-        }
-
-        Boat.OnKill += IncrementMoney;
-
-        void IncrementMoney(float amount) {
+        void IncrMoneyAndUpgradesIfNeeded(float amount) {
             _money += amount;
             _moneyLabel.Text = $"Money Earned: ${_money:N0}"
                 + (
@@ -238,8 +142,58 @@ public partial class Player : RigidBody3D {
         }
     }
 
+    public override void _Input(InputEvent @event) {
+        if (!Main.IsGameStarted()) {
+            return;
+        }
+
+        // Rest of this method caches inputs for use in update loops.
+
+        if (@event is InputEventMouseMotion mouseMotion && IsUnderwater) {
+            // For rotating the actual player root.
+            const float sensScale = 0.005f;
+            _nextRotation.Y -= mouseMotion.Relative.X * MouseSens * sensScale;
+            _nextRotation.X -= mouseMotion.Relative.Y * MouseSens * sensScale;
+            _nextRotation.X = Mathf.Clamp(_nextRotation.X, -LOOK_ANGLE_MAX, LOOK_ANGLE_MAX);
+
+            // For juicing up the camera and player offset.
+            const float xPosIncr = 0.1f;
+            const float yRotIncr = 0.01f;
+            const float zRotIncr = 0.1f;
+            if (mouseMotion.Relative.X < 0) {
+                _dolphinPosXInput += xPosIncr;
+                _dolphinRotSmoothing.Y += yRotIncr;
+                _dolphinRotSmoothing.Z += zRotIncr;
+
+            } else if (mouseMotion.Relative.X > 0) {
+                _dolphinPosXInput -= xPosIncr;
+                _dolphinRotSmoothing.Y -= yRotIncr;
+                _dolphinRotSmoothing.Z -= zRotIncr;
+            }
+        }
+
+        if (@event.IsActionPressed("attack")) {
+            _isAttackInputPressed = true;
+        }
+
+        if (@event.IsActionReleased("attack")) {
+            _isAttackInputPressed = false;
+        }
+
+        const float speedScrollDelta = 1f;
+        if (@event.IsActionReleased("scroll_up")) {
+            _speed += speedScrollDelta;
+        } else if (@event.IsActionReleased("scroll_down")) {
+            _speed -= speedScrollDelta;
+        }
+
+        const float minSpeed = 5f;
+        _speed = Mathf.Clamp(_speed, minSpeed, _maxSpeed);
+
+    }
+
     public override void _Process(double delta) {
-        if (!HasIntroEnded()) {
+        if (!Main.IsGameStarted()) {
             return;
         }
 
@@ -262,7 +216,7 @@ public partial class Player : RigidBody3D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (!HasIntroEnded()) {
+        if (!Main.IsGameStarted()) {
             return;
         }
 
@@ -331,7 +285,7 @@ public partial class Player : RigidBody3D {
     bool _firstTimeCallingIntegrateForces; // To prevent erroneous sfx on game start. 
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
-        if (!HasIntroEnded()) {
+        if (!Main.IsGameStarted()) {
             return;
         }
 
@@ -342,7 +296,13 @@ public partial class Player : RigidBody3D {
             if (_wasAirborne) {
                 // The player just entered the water. 
                 GravityScale = 0.0f;
-                OnWaterEntry?.Invoke();
+
+                // Peaceful music is only played here, hence no seperate method
+                // (unlike metal music).
+                _music.Stream = _peacefulMusic;
+                _music.Play();
+                _music.Seek(_peacefulMusicPlaybackPos);
+
                 _sfx.Stream = _splashSfx;
                 _sfx.Play();
             }
@@ -354,7 +314,7 @@ public partial class Player : RigidBody3D {
                 // Unless they just left the water, in which case, simulate a jump.
                 ApplyImpulse(-2f * _speed * Basis.Z);
                 GravityScale = 10f;
-                OnJump?.Invoke();
+                PlayMetalMusic();
 
                 // Since player starts airborne, this check is needed to prevent
                 // erroneous splash sfx right after intro ends.
@@ -368,6 +328,14 @@ public partial class Player : RigidBody3D {
         }
 
         _firstTimeCallingIntegrateForces = false;
+    }
+
+    public void PlaySfx() => _sfx.Play();
+
+    public void PlayMetalMusic() {
+        _peacefulMusicPlaybackPos = _music.GetPlaybackPosition();
+        _music.Stream = _metalMusic;
+        _music.Play();
     }
 
 }

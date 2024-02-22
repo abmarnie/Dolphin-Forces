@@ -6,11 +6,9 @@ namespace DolphinForces;
 
 // TODO: Randomized boat spawning system (don't share texture...).
 
-/// <summary> Controls boat enemies. </summary>
 public partial class Boat : RigidBody3D {
 
-    /// <summary> Occurs when an enemy is killed. Argument is money value
-    /// of killed enemy. </summary>
+    /// <summary> Argument is money value of killed enemy. </summary>
     public static event Action<float>? OnKill;
 
     // Design parameters.
@@ -29,11 +27,11 @@ public partial class Boat : RigidBody3D {
     [Export] Resource _deathTexture = null!;
 
     // Spawning.
-    public bool IsAlive { get; private set; }
     Vector3 _spawn;
     static int _numKilled;               // For game progression.
     static float _respawnCooldown = 10f; // For game progression.
     float _deathTime;
+    bool _isAlive;
 
     // Target acquisition.
     static readonly Random _rng = new();
@@ -59,11 +57,11 @@ public partial class Boat : RigidBody3D {
         void OnBodyEntered(Node body) {
             // The boat should *only* be killed by collision from the Player
             // or from a Torpedo.
-            if (!IsAlive || body is not (Player or Torpedo)) {
+            if (!_isAlive || body is not (Player or Torpedo)) {
                 return;
             }
 
-            IsAlive = false;
+            _isAlive = false;
             _deathTime = Main.ElapsedTimeS();
 
             _sfxPlayer.Play();
@@ -94,7 +92,7 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _PhysicsProcess(double delta) {
-        if (!Player.HasIntroEnded()) {
+        if (!Main.IsGameStarted()) {
             return;
         }
 
@@ -102,7 +100,7 @@ public partial class Boat : RigidBody3D {
         var isSubmerged = GlobalPosition.Y <= 0;
         var isDeeplySubmerged = GlobalPosition.Y <= -1f;
         GravityScale =
-            IsAlive ?
+            _isAlive ?
                 isDeeplySubmerged ? -1f
                 : isSubmerged ? 0f
                 : 10f
@@ -110,7 +108,7 @@ public partial class Boat : RigidBody3D {
                 isSubmerged ? 0.25f
                 : 10f;
 
-        if (!IsAlive) {
+        if (!_isAlive) {
             var isRespawnOffCooldown = Main.ElapsedTimeS() >= _deathTime + _respawnCooldown;
             if (isRespawnOffCooldown) {
                 Spawn();
@@ -126,7 +124,7 @@ public partial class Boat : RigidBody3D {
     }
 
     public override void _IntegrateForces(PhysicsDirectBodyState3D state) {
-        if (!Player.HasIntroEnded() || !IsAlive) {
+        if (!Main.IsGameStarted() || !_isAlive) {
             return;
         }
 
@@ -149,7 +147,7 @@ public partial class Boat : RigidBody3D {
     }
 
     void Spawn() {
-        IsAlive = true;
+        _isAlive = true;
         GlobalPosition = _spawn;
         SetRandomTarget();
 
