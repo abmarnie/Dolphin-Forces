@@ -70,6 +70,7 @@ public partial class Player : RigidBody3D {
         _lastAttackTime = -_attackCooldown; // Allow player to fire right away.
         _animTree.Set("parameters/speed_scale/scale", 0f);
 
+        // Camera inspector position is incorrect.
         _cam.GlobalTransform = _desiredCamPos.GlobalTransform;
         _cam.GlobalPosition += -5f * Vector3.Forward;
 

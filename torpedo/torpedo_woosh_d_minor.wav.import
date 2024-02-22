@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://cq53bp4nfumve"
-path="res://.godot/imported/torpedo-woosh_D_minor.wav-786da94da066c50f7aedecc2f004eeab.sample"
+path="res://.godot/imported/torpedo_woosh_d_minor.wav-499edd1f395b96a39620de0d1a8b240c.sample"
 
 [deps]
 
-source_file="res://torpedo/torpedo-woosh_D_minor.wav"
-dest_files=["res://.godot/imported/torpedo-woosh_D_minor.wav-786da94da066c50f7aedecc2f004eeab.sample"]
+source_file="res://torpedo/torpedo_woosh_d_minor.wav"
+dest_files=["res://.godot/imported/torpedo_woosh_d_minor.wav-499edd1f395b96a39620de0d1a8b240c.sample"]
 
 [params]
 
