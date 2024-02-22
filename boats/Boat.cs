@@ -34,7 +34,6 @@ public partial class Boat : RigidBody3D {
     bool _isAlive;
 
     // Target acquisition.
-    static readonly Random _rng = new();
     float _targetAcquisTime;
     Vector3 _target;
 
@@ -139,8 +138,8 @@ public partial class Boat : RigidBody3D {
         _targetAcquisTime = Main.ElapsedTimeS();
         const float minDist = 50.0f;
         const float maxDist = 100.0f;
-        var dist = ((float)_rng.NextDouble() * (maxDist - minDist)) + minDist;
-        var angle = (float)_rng.NextDouble() * 2 * Mathf.Pi;
+        var dist = ((float)Main.Rng.NextDouble() * (maxDist - minDist)) + minDist;
+        var angle = (float)Main.Rng.NextDouble() * 2 * Mathf.Pi;
         var dir = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)).Normalized();
         _target = GlobalPosition + (dir * dist);
         LookAt(_target);

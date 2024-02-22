@@ -1,3 +1,4 @@
+using System;
 using Godot;
 
 namespace DolphinForces;
@@ -8,6 +9,7 @@ public partial class Main : Node3D {
     public static bool IsGameStarted() => _introScreenState == IntroScreenState.Ended;
 
     public static float ElapsedTimeS() => Time.GetTicksMsec() / 1000f;
+    public static readonly Random Rng = new();
 
     [Export] Player _player = null!;
     [Export] Node3D _underwaterTerrains = null!;

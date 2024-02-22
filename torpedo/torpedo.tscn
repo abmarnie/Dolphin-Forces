@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://torpedo/Torpedo.cs" id="1_uprjq"]
 [ext_resource type="PackedScene" uid="uid://c1mfjdhtqe7ib" path="res://torpedo/torpedo_explosion.tscn" id="2_8csr4"]
 [ext_resource type="Texture2D" uid="uid://13uj3h5ql64q" path="res://shared_images/shared_metal_texture.png" id="2_t2sdo"]
-[ext_resource type="AudioStream" uid="uid://cq53bp4nfumve" path="res://torpedo/torpedo_woosh_d_minor.wav" id="3_xxaht"]
 [ext_resource type="PackedScene" uid="uid://cd0rg1matpdvo" path="res://pfxs/bubble/bubble_pfx.tscn" id="4_mnjqm"]
+[ext_resource type="AudioStream" uid="uid://cq53bp4nfumve" path="res://torpedo/torpedo_woosh_d_minor.wav" id="4_y82j1"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sqfm0"]
 resource_name = "Material"
@@ -72,7 +72,7 @@ shape = SubResource("CapsuleShape3D_c2eq7")
 
 [node name="WooshSfx" type="AudioStreamPlayer3D" parent="."]
 unique_name_in_owner = true
-stream = ExtResource("3_xxaht")
+stream = ExtResource("4_y82j1")
 
 [node name="GPUParticles3D" parent="." instance=ExtResource("4_mnjqm")]
 transform = Transform3D(1, 0, 0, 0, -0.0157074, -0.999877, 0, 0.999877, -0.0157074, 0, 0.0033187, -0.0811696)

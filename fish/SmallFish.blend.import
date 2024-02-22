@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://cx778xquauf53"
-path="res://.godot/imported/SmallFish.blend-b1c40c4945ac1abf521b7b5506d33708.scn"
+path="res://.godot/imported/SmallFish.blend-d9bc11de31d42404e3db6f9cfad9a660.scn"
 
 [deps]
 
-source_file="res://kevin/SmallFish.blend"
-dest_files=["res://.godot/imported/SmallFish.blend-b1c40c4945ac1abf521b7b5506d33708.scn"]
+source_file="res://fish/SmallFish.blend"
+dest_files=["res://.godot/imported/SmallFish.blend-d9bc11de31d42404e3db6f9cfad9a660.scn"]
 
 [params]
 
@@ -1829,6 +1829,18 @@ _subresources={
 "slice_99/save_to_file/path": "",
 "slice_99/start_frame": 0,
 "slices/amount": 0
+}
+},
+"meshes": {
+"SmallFish_Cylinder_043": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"lods/normal_split_angle": 25.0,
+"save_to_file/enabled": true,
+"save_to_file/make_streamable": "",
+"save_to_file/path": "res://fish/fish_mesh.tres"
 }
 }
 }
