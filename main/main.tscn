@@ -515,5 +515,5 @@ autowrap_mode = 2
 
 [node name="Fish" type="Node3D" parent="."]
 
-[node name="FishMultimesh" parent="Fish" instance=ExtResource("2_tvkbb")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+[node name="FishMultimesh" parent="Fish" node_paths=PackedStringArray("_avoid") instance=ExtResource("2_tvkbb")]
+_avoid = NodePath("../../Player")
