@@ -1,14 +1,15 @@
-[gd_scene load_steps=9 format=3 uid="uid://debx6cdvrib6h"]
+[gd_scene load_steps=10 format=3 uid="uid://debx6cdvrib6h"]
 
-[ext_resource type="Script" path="res://torpedos/Torpedo.cs" id="1_uprjq"]
-[ext_resource type="Texture2D" uid="uid://bajkpxxfw2wmu" path="res://textures/BoatTextures (1).png" id="2_q6hd1"]
-[ext_resource type="AudioStream" uid="uid://cq53bp4nfumve" path="res://nathan/torpedo-woosh_D_minor.wav" id="3_xxaht"]
-[ext_resource type="PackedScene" uid="uid://cd0rg1matpdvo" path="res://nathan/bubble_pfx.tscn" id="4_mnjqm"]
+[ext_resource type="Script" path="res://torpedo/Torpedo.cs" id="1_uprjq"]
+[ext_resource type="PackedScene" uid="uid://c1mfjdhtqe7ib" path="res://torpedo/torpedo_explosion.tscn" id="2_8csr4"]
+[ext_resource type="Texture2D" uid="uid://13uj3h5ql64q" path="res://shared_images/shared_metal_texture.png" id="2_t2sdo"]
+[ext_resource type="AudioStream" uid="uid://cq53bp4nfumve" path="res://torpedo/torpedo-woosh_D_minor.wav" id="3_xxaht"]
+[ext_resource type="PackedScene" uid="uid://cd0rg1matpdvo" path="res://pfxs/bubble/bubble_pfx.tscn" id="4_mnjqm"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sqfm0"]
 resource_name = "Material"
 cull_mode = 2
-albedo_texture = ExtResource("2_q6hd1")
+albedo_texture = ExtResource("2_t2sdo")
 metallic = 0.362264
 roughness = 0.284906
 texture_filter = 2
@@ -58,6 +59,7 @@ max_contacts_reported = 1
 contact_monitor = true
 script = ExtResource("1_uprjq")
 _wooshSfx = NodePath("WooshSfx")
+_explosionFactory = ExtResource("2_8csr4")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1.14641e-16, 2.62268e-09, -0.06, 0.06, -2.62268e-09, 0, -2.62268e-09, -0.06, -2.62268e-09, 0.05, 0, 0)

@@ -6,7 +6,7 @@ namespace DolphinForces;
 public partial class Torpedo : RigidBody3D {
 
     [Export] AudioStreamPlayer3D _wooshSfx = null!;
-    PackedScene _explosionFactory = GD.Load<PackedScene>("res://torpedos/torpedo_explosion.tscn");
+    [Export] PackedScene _explosionFactory = null!;
     float _spawnTime;
 
     public override void _Ready() {

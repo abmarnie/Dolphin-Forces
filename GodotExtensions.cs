@@ -3,7 +3,7 @@ using Godot;
 
 namespace DolphinForces;
 
-/// <summary> Static helper extension methods for Godot types. </summary>
+/// <summary> Static helper methods for Godot types. </summary>
 public static class GodotExtensions {
 
     /// <summary> Returns list of descendants of a given type, ordered using

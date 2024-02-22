@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://dioum0gp840cc"
-path="res://.godot/imported/Game Jam Edit 1 Export 1.wav-5581fef8f5001f1824f35936a6300287.sample"
+path="res://.godot/imported/peaceful_music.wav-83d897f37133014f703e55e848f92f9e.sample"
 
 [deps]
 
-source_file="res://nathan/Game Jam Edit 1 Export 1.wav"
-dest_files=["res://.godot/imported/Game Jam Edit 1 Export 1.wav-5581fef8f5001f1824f35936a6300287.sample"]
+source_file="res://nathan/peaceful_music.wav"
+dest_files=["res://.godot/imported/peaceful_music.wav-83d897f37133014f703e55e848f92f9e.sample"]
 
 [params]
 

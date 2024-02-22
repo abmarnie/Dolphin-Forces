@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://c1mfjdhtqe7ib"]
 
-[ext_resource type="Script" path="res://torpedos/TorpedoExplosion.cs" id="1_ww2h1"]
+[ext_resource type="Script" path="res://torpedo/TorpedoExplosion.cs" id="1_ww2h1"]
 [ext_resource type="AudioStream" uid="uid://8na434qgtecs" path="res://nathan/hq-explosion-6288.mp3" id="2_o0t67"]
 [ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_pfx.tscn" id="3_8vebn"]
 

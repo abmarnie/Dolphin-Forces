@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://gqrqaxuq5dn6"
-path.s3tc="res://.godot/imported/white_smugde2.png-7c0b7f82e11f3eb3995858ef7c9e29c8.s3tc.ctex"
+uid="uid://2hopn385wimj"
+path.s3tc="res://.godot/imported/bubble_2.png-387f2f5c0d9d5a0376087a5ee9ff456f.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://nathan/white_smugde2.png"
-dest_files=["res://.godot/imported/white_smugde2.png-7c0b7f82e11f3eb3995858ef7c9e29c8.s3tc.ctex"]
+source_file="res://pfxs/bubble/bubble_2.png"
+dest_files=["res://.godot/imported/bubble_2.png-387f2f5c0d9d5a0376087a5ee9ff456f.s3tc.ctex"]
 
 [params]
 

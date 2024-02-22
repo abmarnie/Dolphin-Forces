@@ -11,10 +11,8 @@ public partial class Main : Node3D {
     [Export] AudioStreamPlayer _music = null!;
     [Export] AudioStreamPlayer _introFoghorn = null!;
 
-    AudioStream _musicMetal = GD.Load<AudioStream>(
-        "res://nathan/game_jam_metal Edit 1 Export 2.wav");
-    AudioStream _musicPeaceful = GD.Load<AudioStream>(
-        "res://nathan/Game Jam Edit 1 Export 1.wav");
+    [Export] AudioStream _musicMetal = null!;
+    [Export] AudioStream _musicPeaceful = null!;
     float _musicPeacefulPlaybackPos;
 
     public override void _Ready() {

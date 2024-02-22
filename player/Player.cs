@@ -46,7 +46,7 @@ public partial class Player : RigidBody3D {
     // Torpedo logic.
     [Export] Node3D _torpedoSpawn1 = null!;
     [Export] Node3D _torpedoSpawn2 = null!;
-    PackedScene _torpedoFactory = GD.Load<PackedScene>("res://torpedos/torpedo.tscn");
+    [Export] PackedScene _torpedoFactory = null!;
     float _attackCooldown = 0.5f;
     int _numTorpedosFired; // For alternating between spawn1 and spawn2.
     float _lastAttackTime;
@@ -54,9 +54,8 @@ public partial class Player : RigidBody3D {
 
     // Sfx.
     [Export] AudioStreamPlayer3D _sfx = null!;
-    AudioStream _splashSfx = GD.Load<AudioStream>("res://nathan/splash.mp3");
-    AudioStream _robotSfx = GD.Load<AudioStream>(
-        "res://nathan/mixkit-futuristic-robot-movement-1412.wav");
+    [Export] AudioStream _splashSfx = null!;
+    [Export] AudioStream _robotSfx = null!;
 
     // Intro.
     enum IntroScreenState { Starting, WaitingForPlayer, Ending, Ended }

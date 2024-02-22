@@ -1,8 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://c3p3ma6lp7k1h"]
+[gd_scene load_steps=9 format=3 uid="uid://c3p3ma6lp7k1h"]
 
 [ext_resource type="Script" path="res://boats/Boat.cs" id="1_72smp"]
 [ext_resource type="ArrayMesh" uid="uid://mov8h77bubdl" path="res://boats/boats_RussianBoatMesh.tres" id="2_3dw23"]
+[ext_resource type="Texture2D" uid="uid://13uj3h5ql64q" path="res://shared_images/shared_metal_texture.png" id="2_fivk1"]
 [ext_resource type="AudioStream" uid="uid://bfxiptv37ikt5" path="res://nathan/explosion_F_minor.wav" id="3_6qd8p"]
+[ext_resource type="Texture2D" uid="uid://ddwx3auft8qnx" path="res://boats/destroyed_boat_texture.png" id="3_f3i8j"]
 [ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://nathan/smoke_pfx.tscn" id="4_0b2oa"]
 [ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://nathan/explosion_pfx.tscn" id="5_0k50v"]
 
@@ -21,6 +23,8 @@ _targetAcquisCooldown = 15.0
 _moneyIncrementOnKill = 1250.0
 _sfxPlayer = NodePath("ExplosionSfx")
 _deathPfxs = [NodePath("SmokePfx"), NodePath("SmokePfx2"), NodePath("ExplosionPfx")]
+_aliveTexture = ExtResource("2_fivk1")
+_deathTexture = ExtResource("3_f3i8j")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
