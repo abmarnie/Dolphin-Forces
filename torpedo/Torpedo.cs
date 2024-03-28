@@ -16,7 +16,7 @@ public partial class Torpedo : RigidBody3D {
         Debug.Assert(GravityScale == 0f);
         Debug.Assert(_explosionFactory is not null);
 
-        _spawnTime = Main.ElapsedTimeS();
+        _spawnTime = Time.GetTicksMsec() / 1000f;
         _wooshSfx.Play();
 
         BodyEntered += OnBodyEntered;
@@ -34,7 +34,7 @@ public partial class Torpedo : RigidBody3D {
         }
 
         const float maxLifetime = 20f;
-        var isAliveForTooLong = Main.ElapsedTimeS() > _spawnTime + maxLifetime;
+        var isAliveForTooLong = Time.GetTicksMsec() / 1000f > _spawnTime + maxLifetime;
         if (isAliveForTooLong) {
             Explode();
         }

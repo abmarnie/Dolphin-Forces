@@ -7,8 +7,6 @@ public partial class Main : Node3D {
 
     // For global guard clause to "pause" game.
     public static bool IsGameStarted() => _introScreenState == IntroScreenState.Ended;
-
-    public static float ElapsedTimeS() => Time.GetTicksMsec() / 1000f;
     public static readonly Random Rng = new();
 
     [Export] Player _player = null!;

@@ -14,7 +14,7 @@ public partial class Boat : RigidBody3D {
     // Design parameters.
     [ExportGroup("Design Params")]
     [Export] float _speed;
-    [Export] float _targetAcquisCooldown;
+    [Export] float _targetAcquisitionCooldown;
     [Export] float _moneyIncrementOnKill;
 
     // Audio.
@@ -27,9 +27,9 @@ public partial class Boat : RigidBody3D {
     [Export] Resource _deathTexture = null!;
 
     // Spawning.
-    Vector3 _spawn;
-    static int _numKilled;               // For game progression.
     static float _respawnCooldown = 10f; // For game progression.
+    static int _numKilled;               // For game progression.
+    Vector3 _spawn;
     float _deathTime;
     bool _isAlive;
 
@@ -61,7 +61,7 @@ public partial class Boat : RigidBody3D {
             }
 
             _isAlive = false;
-            _deathTime = Main.ElapsedTimeS();
+            _deathTime = Time.GetTicksMsec() / 1000f;
 
             _sfxPlayer.Play();
 
@@ -108,14 +108,14 @@ public partial class Boat : RigidBody3D {
                 : 10f;
 
         if (!_isAlive) {
-            var isRespawnOffCooldown = Main.ElapsedTimeS() >= _deathTime + _respawnCooldown;
+            var isRespawnOffCooldown = Time.GetTicksMsec() / 1000f >= _deathTime + _respawnCooldown;
             if (isRespawnOffCooldown) {
                 Spawn();
             }
             return;
         }
 
-        var targetAcquisOffCooldown = _targetAcquisTime >= Main.ElapsedTimeS() + _targetAcquisCooldown;
+        var targetAcquisOffCooldown = _targetAcquisTime >= Time.GetTicksMsec() / 1000f + _targetAcquisitionCooldown;
         var isNearTarget = GlobalPosition.DistanceTo(_target) < 5f;
         if (targetAcquisOffCooldown || isNearTarget) {
             SetRandomTarget();
@@ -135,7 +135,7 @@ public partial class Boat : RigidBody3D {
     }
 
     void SetRandomTarget() {
-        _targetAcquisTime = Main.ElapsedTimeS();
+        _targetAcquisTime = Time.GetTicksMsec() / 1000f;
         const float minDist = 50.0f;
         const float maxDist = 100.0f;
         var dist = (float)Main.Rng.NextDouble() * (maxDist - minDist) + minDist;

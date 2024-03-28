@@ -22,7 +22,7 @@ public partial class Player : RigidBody3D {
     // Dynamic visuals.
     [Export] AnimationTree _animTree = null!;
     [Export] MeshInstance3D[] _dolphinMeshes = null!;
-    [Export] Godot.Environment _underwaterRenderEnv = null!;
+    [Export] Environment _underwaterRenderEnv = null!;
 
     // Movement.
     const float LOOK_ANGLE_MAX = 5 * Mathf.Pi / 12; // 75 deg
@@ -212,7 +212,7 @@ public partial class Player : RigidBody3D {
         // Camera FoV scales relative to current speed for funny.
         const float defaultFov = 75;
         const float fovScalingFactor = 0.25f;
-        _cam.Fov = defaultFov + (defaultFov * (_speed - DEFAULT_SPEED) / DEFAULT_SPEED * fovScalingFactor);
+        _cam.Fov = defaultFov + defaultFov * (_speed - DEFAULT_SPEED) / DEFAULT_SPEED * fovScalingFactor;
         _cam.Fov = Mathf.Clamp(_cam.Fov, 1f, 179f);
     }
 
@@ -230,7 +230,7 @@ public partial class Player : RigidBody3D {
             IsUnderwater ? animSpeedTuningScale * _speed / DEFAULT_SPEED
             : 0f);
 
-        var isAttackOffCooldown = Main.ElapsedTimeS() > _lastAttackTime + _attackCooldown;
+        var isAttackOffCooldown = Time.GetTicksMsec() / 1000f > _lastAttackTime + _attackCooldown;
         if (_isAttackInputPressed && isAttackOffCooldown) {
             // Spawn torpedo and prevent self-collisions.
             var torpedo = _torpedoFactory.Instantiate<Torpedo>();
@@ -253,7 +253,7 @@ public partial class Player : RigidBody3D {
             torpedo.ApplyImpulse(-force * torpedo.Basis.Z);
 
             // For checking if attack is off cooldown.
-            _lastAttackTime = Main.ElapsedTimeS();
+            _lastAttackTime = Time.GetTicksMsec() / 1000f;
         }
 
         if (IsUnderwater) {

@@ -11,7 +11,7 @@ public partial class TorpedoExplosion : Node3D {
     float _spawnTime;
 
     public override void _Ready() {
-        _spawnTime = Main.ElapsedTimeS();
+        _spawnTime = Time.GetTicksMsec() / 1000f;
 
         _sfx.Play();
 
@@ -21,7 +21,7 @@ public partial class TorpedoExplosion : Node3D {
 
     public override void _PhysicsProcess(double delta) {
         const float maxLifetime = 5f;
-        var isAliveForTooLong = Main.ElapsedTimeS() > _spawnTime + maxLifetime;
+        var isAliveForTooLong = Time.GetTicksMsec() / 1000f > _spawnTime + maxLifetime;
         if (isAliveForTooLong) {
             QueueFree();
         }
