@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddwx3auft8qnx"
-path="res://.godot/imported/destroyed_boat_texture.png-74517552b60080f8464fd0a9f1094786.ctex"
+path="res://.godot/imported/boat_destroyed_albedo.png-42cbb40fe11c0812f7744b8a09be72aa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://boats/destroyed_boat_texture.png"
-dest_files=["res://.godot/imported/destroyed_boat_texture.png-74517552b60080f8464fd0a9f1094786.ctex"]
+source_file="res://boats/boat_destroyed_albedo.png"
+dest_files=["res://.godot/imported/boat_destroyed_albedo.png-42cbb40fe11c0812f7744b8a09be72aa.ctex"]
 
 [params]
 
