@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://cx778xquauf53"
-path="res://.godot/imported/SmallFish.blend-d9bc11de31d42404e3db6f9cfad9a660.scn"
+path="res://.godot/imported/fish.blend-0419dd801e1d8f5cb9dc8953304f27f9.scn"
 
 [deps]
 
-source_file="res://fish/SmallFish.blend"
-dest_files=["res://.godot/imported/SmallFish.blend-d9bc11de31d42404e3db6f9cfad9a660.scn"]
+source_file="res://fish/fish.blend"
+dest_files=["res://.godot/imported/fish.blend-0419dd801e1d8f5cb9dc8953304f27f9.scn"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cd0a10e15kbht"
-path.s3tc="res://.godot/imported/SmallFish.png-77cd6e1dea6c95df0d71b1ed89699079.s3tc.ctex"
+path.s3tc="res://.godot/imported/fish_albedo.png-f417725c2430d2d7f8025960f2f510a1.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://fish/SmallFish.png"
-dest_files=["res://.godot/imported/SmallFish.png-77cd6e1dea6c95df0d71b1ed89699079.s3tc.ctex"]
+source_file="res://fish/fish_albedo.png"
+dest_files=["res://.godot/imported/fish_albedo.png-f417725c2430d2d7f8025960f2f510a1.s3tc.ctex"]
 
 [params]
 

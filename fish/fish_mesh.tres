@@ -1,6 +1,6 @@
 [gd_resource type="ArrayMesh" load_steps=3 format=3 uid="uid://cx778xquauf53"]
 
-[ext_resource type="Texture2D" uid="uid://cd0a10e15kbht" path="res://fish/SmallFish.png" id="1_qjnqb"]
+[ext_resource type="Texture2D" uid="uid://cd0a10e15kbht" path="res://fish/fish_albedo.png" id="1_qjnqb"]
 
 [sub_resource type="ORMMaterial3D" id="ORMMaterial3D_3nlnp"]
 albedo_texture = ExtResource("1_qjnqb")
