@@ -5,7 +5,7 @@ namespace DolphinForces;
 
 public partial class FishMultimesh : MultiMeshInstance3D {
 
-    [Export] Node3D _avoid;
+    [Export] Node3D _avoid = null!;
 
     const int NUM_FISH = 2500;
     const float MIN_DEPTH = -3f;
@@ -77,11 +77,11 @@ public partial class FishMultimesh : MultiMeshInstance3D {
         }
     }
 
-    Vector3 RandPos(Vector3 startingPos, float minDist, float maxDist) {
-        float randDist = RandInRange(minDist, maxDist);
-        float thetaAzimuthalAngle = (float)Main.Rng.NextDouble() * 2 * Mathf.Pi;
-        float phiPolarAngle = Mathf.Acos(2 * (float)Main.Rng.NextDouble() - 1);
-        Vector3 randDir = new Vector3(
+    static Vector3 RandPos(Vector3 startingPos, float minDist, float maxDist) {
+        var randDist = RandInRange(minDist, maxDist);
+        var thetaAzimuthalAngle = (float)Main.Rng.NextDouble() * 2 * Mathf.Pi;
+        var phiPolarAngle = Mathf.Acos(2 * (float)Main.Rng.NextDouble() - 1);
+        var randDir = new Vector3(
             Mathf.Sin(phiPolarAngle) * Mathf.Cos(thetaAzimuthalAngle),
             Mathf.Sin(phiPolarAngle) * Mathf.Sin(thetaAzimuthalAngle),
             Mathf.Cos(phiPolarAngle)

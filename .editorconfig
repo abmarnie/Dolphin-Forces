@@ -95,9 +95,9 @@ dotnet_style_predefined_type_for_member_access = true
 dotnet_style_require_accessibility_modifiers = omit_if_default
 dotnet_style_readonly_field = true
 
-# Explicitly add parenthesis when doing arithmetic or binary operators for clarity. 
+# Explicitly add parenthesis when doing binary operators for clarity. 
 # Don't use them for other operators, for succinctness.
-dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity
+dotnet_style_parentheses_in_arithmetic_binary_operators = never_if_unnecessary
 dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity
 dotnet_style_parentheses_in_other_binary_operators = always_for_clarity
 dotnet_style_parentheses_in_other_operators = never_if_unnecessary
