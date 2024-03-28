@@ -19,7 +19,6 @@ max_contacts_reported = 1
 contact_monitor = true
 script = ExtResource("1_rxo1l")
 _speed = 50.0
-_targetAcquisCooldown = 15.0
 _moneyIncrementOnKill = 1000.0
 _sfxPlayer = NodePath("ExplosionSfx")
 _deathPfxs = [NodePath("SmokePfx"), NodePath("SmokePfx2"), NodePath("ExplosionPfx")]

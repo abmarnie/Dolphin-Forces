@@ -1,11 +1,10 @@
 [gd_scene load_steps=4 format=3 uid="uid://c3i0cu420quni"]
 
-[ext_resource type="ArrayMesh" uid="uid://cx778xquauf53" path="res://fish/fish_mesh.tres" id="1_btvp3"]
-[ext_resource type="Script" path="res://fish/FishMultimesh.cs" id="2_0b5j5"]
+[ext_resource type="ArrayMesh" uid="uid://cx778xquauf53" path="res://fish_multimesh/fish_multimesh_mesh.tres" id="1_btvp3"]
+[ext_resource type="Script" path="res://fish_multimesh/FishMultimesh.cs" id="2_0b5j5"]
 
 [sub_resource type="MultiMesh" id="MultiMesh_totas"]
 transform_format = 1
-use_colors = true
 use_custom_data = true
 mesh = ExtResource("1_btvp3")
 

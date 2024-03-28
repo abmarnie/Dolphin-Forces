@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://main/Main.cs" id="1_befpe"]
 [ext_resource type="Environment" uid="uid://cefclkylmgwxx" path="res://main/main_environment.tres" id="2_3coom"]
 [ext_resource type="PackedScene" uid="uid://li41t3qh0gpx" path="res://player/player.tscn" id="2_ofsg3"]
-[ext_resource type="PackedScene" uid="uid://c3i0cu420quni" path="res://fish/fish_multimesh.tscn" id="2_tvkbb"]
+[ext_resource type="PackedScene" uid="uid://c3i0cu420quni" path="res://fish_multimesh/fish_multimesh.tscn" id="2_tvkbb"]
 [ext_resource type="Shader" uid="uid://xya1p4bapeha" path="res://main/water_caustic/water_caustic_visualshader.tres" id="5_aptly"]
 [ext_resource type="PackedScene" uid="uid://dosonc0o3fxy5" path="res://underwater_terrain/underwater_terrain.tscn" id="5_flkfk"]
 [ext_resource type="PackedScene" uid="uid://stofy3ce1kuw" path="res://boat/boat_camo/boat_camo.tscn" id="7_82of6"]
@@ -515,5 +515,5 @@ autowrap_mode = 2
 
 [node name="Fish" type="Node3D" parent="."]
 
-[node name="FishMultimesh" parent="Fish" node_paths=PackedStringArray("_avoid") instance=ExtResource("2_tvkbb")]
-_avoid = NodePath("../../Player")
+[node name="FishMultimesh" parent="Fish" node_paths=PackedStringArray("_playerToAvoid") instance=ExtResource("2_tvkbb")]
+_playerToAvoid = NodePath("../../Player")

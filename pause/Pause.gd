@@ -12,7 +12,7 @@ extends Control
 @onready var fullscreen_toggle: CheckButton = $ColorRect/SettingsPanelContainer/VBoxContainer/HBoxContainer/FullscreenCheckButton
 @onready var mouse_sens_label: Label = $ColorRect/SettingsPanelContainer/VBoxContainer/MouseSensLabel
 @onready var mouse_sens_h_slider: HSlider = $ColorRect/SettingsPanelContainer/VBoxContainer/MouseSensHSlider
-@onready var cheats_panel_container: Cheats = %CheatsPanelContainer
+#@onready var cheats_panel_container: Cheats = %CheatsPanelContainer
 @onready var player = get_parent().get_parent()
 var paused := false
 
@@ -24,7 +24,7 @@ func _ready():
 	mouse_sens_h_slider.value = LookInput.mouse_sens
 	visible = false
 	settings_panel.visible = false
-	cheats_panel_container.connect("new_scene_loaded", pause)
+	#cheats_panel_container.connect("new_scene_loaded", pause)
 
 
 func _input(event: InputEvent):
