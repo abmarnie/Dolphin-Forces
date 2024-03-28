@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://stofy3ce1kuw"]
 
-[ext_resource type="ArrayMesh" uid="uid://b6e8pcf0n1ly6" path="res://boats/boats_CamoBoatMesh.tres" id="1_2p2ce"]
+[ext_resource type="ArrayMesh" uid="uid://b6e8pcf0n1ly6" path="res://boats/boat_camo_mesh.tres" id="1_2p2ce"]
 [ext_resource type="Script" path="res://boats/Boat.cs" id="1_rxo1l"]
 [ext_resource type="Texture2D" uid="uid://13uj3h5ql64q" path="res://shared_images/shared_metal_texture.png" id="2_h3tla"]
 [ext_resource type="Texture2D" uid="uid://ddwx3auft8qnx" path="res://boats/boat_destroyed_albedo.png" id="3_drpkb"]
