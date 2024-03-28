@@ -1,12 +1,12 @@
 [gd_scene load_steps=9 format=3 uid="uid://bth55vlfy2a5l"]
 
-[ext_resource type="Script" path="res://boats/Boat.cs" id="1_tisu7"]
-[ext_resource type="ArrayMesh" uid="uid://bkpysn8jrejls" path="res://boats/boat_yellow_mesh.tres" id="2_er8su"]
+[ext_resource type="Script" path="res://boat/Boat.cs" id="1_tisu7"]
+[ext_resource type="ArrayMesh" uid="uid://bkpysn8jrejls" path="res://boat/boat_yellow/boat_yellow_mesh.tres" id="2_er8su"]
 [ext_resource type="Texture2D" uid="uid://13uj3h5ql64q" path="res://shared_images/shared_metal_texture.png" id="2_jy0ke"]
 [ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://pfxs/smoke/smoke_pfx.tscn" id="3_bt36k"]
-[ext_resource type="Texture2D" uid="uid://ddwx3auft8qnx" path="res://boats/boat_destroyed_albedo.png" id="3_nqlns"]
+[ext_resource type="Texture2D" uid="uid://ddwx3auft8qnx" path="res://boat/boat_destroyed_albedo.png" id="3_nqlns"]
 [ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://pfxs/explosion/explosion_pfx.tscn" id="6_mchty"]
-[ext_resource type="AudioStream" uid="uid://bfxiptv37ikt5" path="res://boats/boat_explosion_f_minor_sfx.wav" id="7_kpaph"]
+[ext_resource type="AudioStream" uid="uid://bfxiptv37ikt5" path="res://boat/boat_explosion_f_minor_sfx.wav" id="7_kpaph"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
 radius = 5.0

@@ -1,13 +1,13 @@
 [gd_scene load_steps=10 format=3 uid="uid://dd35f5c64qkfl"]
 
-[ext_resource type="Script" path="res://boats/Boat.cs" id="1_ex7w5"]
-[ext_resource type="ArrayMesh" uid="uid://b1wfe8u6rptbw" path="res://boats/boat_flag_mesh_1.tres" id="2_a5xu1"]
+[ext_resource type="Script" path="res://boat/Boat.cs" id="1_ex7w5"]
+[ext_resource type="ArrayMesh" uid="uid://b1wfe8u6rptbw" path="res://boat/boat_flag/boat_flag_mesh_1.tres" id="2_a5xu1"]
 [ext_resource type="Texture2D" uid="uid://13uj3h5ql64q" path="res://shared_images/shared_metal_texture.png" id="2_sdq3m"]
-[ext_resource type="Texture2D" uid="uid://ddwx3auft8qnx" path="res://boats/boat_destroyed_albedo.png" id="3_4w7mp"]
-[ext_resource type="ArrayMesh" uid="uid://biimikonkvanq" path="res://boats/boat_flag_mesh_2.tres" id="3_fhksw"]
+[ext_resource type="Texture2D" uid="uid://ddwx3auft8qnx" path="res://boat/boat_destroyed_albedo.png" id="3_4w7mp"]
+[ext_resource type="ArrayMesh" uid="uid://biimikonkvanq" path="res://boat/boat_flag/boat_flag_mesh_2.tres" id="3_fhksw"]
 [ext_resource type="PackedScene" uid="uid://8j57ml138fvb" path="res://pfxs/smoke/smoke_pfx.tscn" id="4_26dgs"]
 [ext_resource type="PackedScene" uid="uid://q7lhr1y4h4wl" path="res://pfxs/explosion/explosion_pfx.tscn" id="7_6iywe"]
-[ext_resource type="AudioStream" uid="uid://bfxiptv37ikt5" path="res://boats/boat_explosion_f_minor_sfx.wav" id="8_33h2q"]
+[ext_resource type="AudioStream" uid="uid://bfxiptv37ikt5" path="res://boat/boat_explosion_f_minor_sfx.wav" id="8_33h2q"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7vlyt"]
 radius = 5.0
@@ -27,11 +27,11 @@ _deathPfxs = [NodePath("SmokePfx"), NodePath("SmokePfx2"), NodePath("ExplosionPf
 _aliveTexture = ExtResource("2_sdq3m")
 _deathTexture = ExtResource("3_4w7mp")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="BoatModel" type="MeshInstance3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 mesh = ExtResource("2_a5xu1")
 
-[node name="FlagMesh" type="MeshInstance3D" parent="MeshInstance3D"]
+[node name="FlagModel" type="MeshInstance3D" parent="BoatModel"]
 transform = Transform3D(-4.37114e-08, -1, 0, 0.891007, -3.89471e-08, 0.453991, -0.453991, 1.98446e-08, 0.891007, 0, 5.155, -8.175)
 mesh = ExtResource("3_fhksw")
 
